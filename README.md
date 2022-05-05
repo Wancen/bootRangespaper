@@ -1,6 +1,7 @@
 # bootRanges.paper
-Code analysis for nullranges
+Code analysis for bootranges
 
-liver under script foldes saved all caQTL-GWAS analysis
-
-multiomics is the script modeling  Single Cell Multiome ATAC + Gene Expression assay by 10x Genomics
+script: 
+* liver: caQTL-GWAS analysis
+* macrophage: DEG + differential accessibility peaks
+* multiomics: modeling Single Cell Multiome ATAC + Gene Expression assay by 10x Genomics
