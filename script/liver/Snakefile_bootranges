@@ -1,0 +1,18 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bashrc;")
+
+configfile: "config_unseg.json"
+
+rule all:
+    input:
+        expand("bootranges_unseg/unseg_Lb{Lb}.rda", Lb=config["Lb"])
+
+rule smurf:
+    output: "bootranges_unseg/unseg_Lb{Lb}.rda"
+    benchmark: "bench/unseg_Lb{Lb}.bench"
+    shell:
+        """
+	module load r/4.0.3
+	R CMD BATCH --no-save --no-restore '--args {wildcards.Lb} {output}' segBootranges.R log/unseg_Lb{wildcards.Lb}.Rout
+
+	"""

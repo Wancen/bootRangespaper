@@ -1,0 +1,18 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bashrc;")
+
+configfile: "config_var.json"
+
+rule all:
+    input: 
+        expand("csv/{seg}_Lb{Lb}_var.csv", seg=config["seg"], Lb=config["Lb"])
+
+rule smurf:
+    output: "csv/{seg}_Lb{Lb}_var.csv"
+    benchmark: "bench/{seg}_Lb{Lb}_var.bench"
+    shell:
+        """
+	module load r/4.0.3
+	R CMD BATCH --no-save --no-restore '--args {wildcards.seg} {wildcards.Lb}' var.R log/{wildcards.seg}_Lb{wildcards.Lb}_var.Rout
+
+	"""
