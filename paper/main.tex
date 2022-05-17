@@ -1,0 +1,108 @@
+\PassOptionsToPackage{utf8}{inputenc}
+\documentclass{bioinfo}
+\copyrightyear{2021} \pubyear{2021}
+\usepackage{natbib} % reference
+\usepackage{xcite}
+\usepackage{xr}
+\usepackage{float}
+\usepackage{threeparttable}
+\usepackage[ruled,vlined,linesnumbered,noresetcount]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\usepackage{amsmath}  
+
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+
+\newcommand*{\myexternaldocument}[1]{%
+\externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{./supp}
+
+% hyperref breaks latex
+\usepackage{url}
+
+\usepackage[capitalise,noabbrev]{cleveref}
+\usepackage{stfloats}
+\usepackage{bm}
+\usepackage{amsfonts,amssymb} %font
+\usepackage{amsthm}
+\usepackage{bbm} % for indicator function
+\usepackage{booktabs}
+\usepackage{url}
+% \usepackage[pdftex]{graphicx}
+\usepackage{authblk}
+\usepackage{listings}
+% For commenting
+\usepackage{xcolor}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\bootranges}{\emph{bootRanges}\xspace}
+\newcommand{\GRanges}{\texttt{GRanges}\xspace}
+\newcommand{\plyranges}{\emph{plyranges}\xspace}
+\newcommand{\mike}[1]{\textcolor{red}{[Mike: #1]}}
+\newcommand{\wancen}[1]{\textcolor{blue}{[wancen: #1]}}
+\begin{document}
+\firstpage{1}
+
+\subtitle{Genome analysis}
+
+\title[short Title]{Flexible generation of genomic features sets for null hypothesis testing with bootRanges}
+\author[Sample \textit{et~al}.]{Wancen Mu\,$^{\text{\sfb 1}}$, Eric Davis\,$^{\text{\sfb 2}}$, Stuart Lee\,$^{\text{\sfb 3}}$, Mikhail Dozmorov\,$^{\text{\sfb 4}}$, Douglas H. Phanstiel\,$^{\text{\sfb 2}}$, Michael I. Love\,$^{\text{\sfb 1,2}*}$}
+% \author[1]{Wancen Mu}
+% \author[2]{Eric Davis}
+% \author[3]{Stuart Lee}
+% \author[4]{Mikhail Dozmorov}
+% \author[2]{Douglas H. Phanstiel}
+% \author[1,2]{Michael I. Love \thanks{michaelisaiahlove@gmail.com}}
+% \affil[1]{Department of Biostatistics, and}
+% \affil[2]{Department of Genetics, University of North Carolina-Chapel Hill, NC 27599}
+% \affil[3]{Department of Econometrics and Business Statistics, Monash University, Clayton, Australia}
+% \affil[4]{Department of Biostatistics, Department of Pathology, Virginia Commonwealth University, Richmond, VA 23298, USA}
+\address{$^{\text{\sf 1}}$Department of Biostatistics, and $^{\text{\sf 2}}$ Department of Genetics, University of North Carolina-Chapel Hill, NC 27599
+$^{\text{\sf 3}}$Department of Econometrics and Business Statistics, Monash University, Clayton, Australia $^{\text{\sf 4}}$Department of Biostatistics, Department of Pathology, Virginia Commonwealth University, Richmond, VA 23298.\\}
+% \address{$^{\text{\sf 1}}$Department, Institution, City, Post Code, Country and \\
+% $^{\text{\sf 2}}$Department, Institution, City, Post Code,
+% Country.}
+
+\corresp{$^\ast$To whom correspondence should be addressed.}
+
+\history{Received on XXXXX; revised on XXXXX; accepted on XXXXX}
+
+\editor{Associate Editor: XXXXXXX}
+
+\input{abstract}
+\maketitle
+\lstset{numbers=left, %设置行号位置
+        numberstyle=\tiny, %设置行号大小
+        keywordstyle=\color{blue}, %设置关键字颜色
+        commentstyle=\color[cmyk]{1,0,1,0}, %设置注释颜色
+        frame=single, %设置边框格式
+        escapeinside=``, %逃逸字符(1左面的键)，用于显示中文
+        %breaklines, %自动折行
+        extendedchars=false, %解决代码跨页时，章节标题，页眉等汉字不显示的问题
+        xleftmargin=2em,xrightmargin=1em, aboveskip=1em, %设置边距
+        tabsize=4, %设置tab空格数
+        showspaces=false %不显示空格
+       }
+\input{body}
+
+% \vspace*{-15pt}
+
+
+\bibliographystyle{natbib}
+%\bibliographystyle{achemnat}
+%\bibliographystyle{plainnat}
+%\bibliographystyle{abbrv}
+%\bibliographystyle{bioinformatics}
+%
+%\bibliographystyle{plain}
+%
+\bibliography{document}
+\end{document}

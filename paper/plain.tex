@@ -1,0 +1,90 @@
+\documentclass{article}
+
+\usepackage{authblk}
+\title{Flexible generation of genomic features sets for null hypothesis testing with \bootranges}
+\author[1]{Wancen Mu}
+\author[2]{Eric Davis}
+\author[3]{Stuart Lee}
+\author[4]{Mikhail Dozmorov}
+\author[2]{Douglas H. Phanstiel}
+\author[1,2]{Michael I. Love \thanks{michaelisaiahlove@gmail.com}}
+\affil[1]{Department of Biostatistics, and}
+\affil[2]{Department of Genetics, University of North Carolina-Chapel Hill, NC 27599}
+\affil[3]{Department of Econometrics and Business Statistics, Monash University, Clayton, Australia}
+\affil[4]{Department of Biostatistics, Department of Pathology, Virginia Commonwealth University, Richmond, VA 23298, USA}
+
+\renewcommand\Authands{, and \\}
+
+\date{\today}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[top=1in,left=1in,right=1in,bottom=1in]{geometry}
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage{xspace}
+% \usepackage{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=blue,urlcolor=blue,]{hyperref}
+\usepackage{natbib}
+\usepackage{threeparttable}
+
+% from Bioinf latex
+\usepackage{xr}
+\usepackage{xcite}
+\usepackage{float}
+
+\usepackage[ruled,vlined,linesnumbered,noresetcount]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+
+\newcommand*{\myexternaldocument}[1]{%
+\externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{supp}
+
+% hyperref breaks latex
+\usepackage{url}
+\usepackage{stfloats}
+\usepackage{bm}
+\usepackage{amsfonts,amssymb} %font
+\usepackage{amsthm}
+\usepackage{bbm} % for indicator function
+\usepackage{booktabs}
+% \usepackage[pdftex]{graphicx}
+\usepackage{authblk}
+\usepackage{listings}
+% For commenting
+\usepackage{xcolor}
+\usepackage[capitalise,noabbrev]{cleveref}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\bootranges}{\emph{bootRanges}\xspace}
+\newcommand{\mike}[1]{\textcolor{red}{[Mike: #1]}}
+\newcommand{\wancen}[1]{\textcolor{blue}{[wancen: #1]}}
+
+\begin{document}
+
+\maketitle
+
+\input{abstract}
+
+\input{body}
+
+\bibliographystyle{natbib}
+%\bibliographystyle{achemnat}
+%\bibliographystyle{plainnat}
+%\bibliographystyle{abbrv}
+%\bibliographystyle{bioinformatics}
+%
+%\bibliographystyle{plain}
+%
+\bibliography{Document}
+
+\end{document}
