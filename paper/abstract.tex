@@ -1,5 +1,16 @@
-\abstract{\bootranges provides fast functions for generation of background feature set to explore the null hypothesis of enrichment analysis, colocalization or connect cis-regulatory elements (cCREs) pairs. Result shows that the conventional bootstrap or permutation can have higher significance which may results low specificity in some cases. In addition, \bootranges provides statistical reasonable and flexible effect size cut-offs at different experiment designs, eg. \textit{p}value in GWAS, logFC in differential expression gene (DEG) analysis.
-The \bootranges is integrated into the an R/Bioconductor package \emph{nullranges}
+\abstract{\bootranges provides fast functions for generation of
+bootstrapped feature sets representing the null hypothesis in
+enrichment analysis. It can also be used in more complex analyses,
+such as computing correlations between cis-regulatory elements (CREs)
+and genes. 
+We show that conventional shuffling or permutation schemes may result
+in overly narrow null distributions, while creating new feature sets
+with a block bootstrap captures more variance in the null distribution.
+In addition, \bootranges provides for analyses with flexible effect
+size cut-offs, e.g. \textit{p}-value in GWAS, or log fold change in
+differential expression analysis.
+The \bootranges functions are available in the R/Bioconductor
+package \emph{nullranges} 
 at \url{https://bioconductor.org/packages/nullranges}.\\
 % \textbf{Supplementary information:} Supplementary data are available at Bioinformatics online.
 %\textbf{Contact:} \href{michaelisaiahlove@gmail.com}{michaelisaiahlove@gmail.com}
