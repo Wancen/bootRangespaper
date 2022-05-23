@@ -1,25 +1,54 @@
 \section{Introduction}
-In genomics analyses, there is a common belief in association 
+In genomics analyses, there is a common belief in association
 % or colocalization 
-analysis that significant enrichment(depletion) or correlation between genome features sets indicates biological relationship \citep{reviewdilemma2014}. 
-Therefore, there are always interest of finding association among genomic, transcriptomic and epigenomic features
+analysis that significant enrichment(depletion) or correlation between
+genome features sets indicates biological relationship
+\citep{reviewdilemma2014}.  Therefore, there are always interest of
+finding association among genomic, transcriptomic and epigenomic
+features
 % variant / gene expression, nearby chromatin accessibility and enhancer epigenetic profiles
-to verify differential expressed SNPs / genes set, or identify transcription factor binding motifs and potential enhancer-gene,
+to verify differential expressed SNPs / genes set, or identify
+transcription factor binding motifs and potential enhancer-gene,
 % \citep{enhancer_gene_regulation2021} 
-enhancer-promoter regulations. 
+enhancer-promoter regulations.
 % \citep{ABCmodel}
-While those analysis having statistical significance usually rely on a null distribution.
-One of the strategy is to permute or shuffle the genomic ranges given random start sites to existing features, possibly considering an exclusion list of regions where features should not be located, like GAT additionally allowing controlling for GC content \citep{GAT_2013}, and regioneR implement a circular randomization to preserve inter-feature distance \citep{gel2016regioner}.
-However, random-start feature sets will not generally exhibit natural clumping as well as keeping compositional changes of typical genomics features because there often exists a complex dependency structure between features, 
+While those analysis having statistical significance usually rely on a
+null distribution.  One of the strategy is to permute or shuffle the
+genomic ranges given random start sites to existing features, possibly
+considering an exclusion list of regions where features should not be
+located, like GAT additionally allowing controlling for GC content
+\citep{GAT_2013}, and regioneR implement a circular randomization to
+preserve inter-feature distance \citep{gel2016regioner}.  However,
+random-start feature sets will not generally exhibit natural clumping
+as well as keeping compositional changes of typical genomics features
+because there often exists a complex dependency structure between
+features,
 % e.g, transcription factor binding sites tend to occur in clusters \citep{ezer2014homotypic}, 
-even when excluded regions are considered.
-Therefore misleading conclusion can be derived without considering this. 
+even when excluded regions are considered.  Therefore misleading
+conclusion can be derived without considering this.
 
 The block bootstrap \citep{politis1999subsampling}
 % \citep{bickel2010subsampling}
-provides an alternative to random starts, where one instead generates random feature sets by sampling large blocks of features within the segments from the original set with replacement to preserve the features' cluster and isochoric property. However, the computational expensive has always been an issue to address, GSC \citep{bickel2010subsampling} kept swapping a pair of blocks to trying generate a block-wise bootstrap with limited number of statistics.
-However, we proposed an efficient vectorized code for operation on \emph{GRanges}\xspace \citep{lawrence2013software} objects to generate \bootranges. Its provides fully flexible frameworks includes 1) different block bootstrap strategy 2) summarize customizable interested statistics at either block or genome level given tidy downstream pipelines with \plyranges \citep{lee2019plyranges}. This paper concludes recommended segmentation and block length and shows their impact on the hypothesis test conclusion from shuffling.  
-We additionally sought to perform penalized splines across a range of effect sizes on the null sets, through which to derive confidence interval at the same time on every effect size. Therefore, an optimized effect size threshold could be derived, eg. rather than limiting DEG logFC at a arbitrary threshold.
+provides an alternative to random starts, where one instead generates
+random feature sets by sampling large blocks of features within the
+segments from the original set with replacement to preserve the
+features' cluster and isochoric property. However, the computational
+expensive has always been an issue to address, GSC
+\citep{bickel2010subsampling} kept swapping a pair of blocks to trying
+generate a block-wise bootstrap with limited number of statistics.
+However, we proposed an efficient vectorized code for operation on
+\emph{GRanges}\xspace \citep{lawrence2013software} objects to generate
+\bootranges. Its provides fully flexible frameworks includes 1)
+different block bootstrap strategy 2) summarize customizable
+interested statistics at either block or genome level given tidy
+downstream pipelines with \plyranges \citep{lee2019plyranges}. This
+paper concludes recommended segmentation and block length and shows
+their impact on the hypothesis test conclusion from shuffling.  We
+additionally sought to perform penalized splines across a range of
+effect sizes on the null sets, through which to derive confidence
+interval at the same time on every effect size. Therefore, an
+optimized effect size threshold could be derived, eg. rather than
+limiting DEG logFC at a arbitrary threshold.
 
 \vspace*{-20pt}
 
