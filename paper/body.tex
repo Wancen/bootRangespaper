@@ -1,25 +1,34 @@
 \section{Introduction}
-In genomics analyses, there is a common belief in association
-% or colocalization 
-analysis that significant enrichment(depletion) or correlation between
-genome features sets indicates biological relationship
-\citep{reviewdilemma2014}.  Therefore, there are always interest of
-finding association among genomic, transcriptomic and epigenomic
-features
+In genomic analyses, it is commonly of interest to assess whether
+there is enrichment of one set of features near another in the
+linear genome, or to assess correlation across samples for pairs of
+genomic features assayed for different modalities (e.g. RNA,
+accessibility) \citep{reviewdilemma2014}.
+%there is a common belief in association
+%analysis that significant enrichment(depletion) or correlation between
+%genome features sets indicates biological relationship
 % variant / gene expression, nearby chromatin accessibility and enhancer epigenetic profiles
-to verify differential expressed SNPs / genes set, or identify
-transcription factor binding motifs and potential enhancer-gene,
-% \citep{enhancer_gene_regulation2021} 
-enhancer-promoter regulations.
-% \citep{ABCmodel}
-While those analysis having statistical significance usually rely on a
-null distribution.  One of the strategy is to permute or shuffle the
-genomic ranges given random start sites to existing features, possibly
-considering an exclusion list of regions where features should not be
-located, like GAT additionally allowing controlling for GC content
-\citep{GAT_2013}, and regioneR implement a circular randomization to
-preserve inter-feature distance \citep{gel2016regioner}.  However,
-random-start feature sets will not generally exhibit natural clumping
+For example, enrichment of accessibility peaks near sets of genes may
+indicate a regulatory relationship \citep{lee2020fluent}, while
+enrichment of genetic variants associated with phenotype near
+tissue-specific accessibility may point to mechanisms of the inherited
+risk.
+%% Therefore, there are always interest of
+%% finding association among genomic, transcriptomic and epigenomic features
+%% to verify differential expressed SNPs / genes set, or identify
+%% transcription factor binding motifs and potential enhancer-gene,
+%% enhancer-promoter regulations.
+Such analyses often rely on a null distribution, and one strategy for
+generating a null distribution is to permute or shuffle the
+genomic features -- giving random positions to existing features, possibly
+while considering an exclusion list of regions where features should not be
+located. Some more sophisticated methods exist, for example
+GAT, which additionally allows for controlling feature placement with
+respect to local GC content
+\citep{GAT_2013}, and regioneR, which implements a circular chromosome
+shift to preserve inter-feature distance \citep{gel2016regioner}.
+% ... still thinking about how to transition here...
+However, random-start feature sets will not generally exhibit natural clumping
 as well as keeping compositional changes of typical genomics features
 because there often exists a complex dependency structure between
 features,
