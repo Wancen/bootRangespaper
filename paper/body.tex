@@ -20,29 +20,35 @@ risk.
 %% enhancer-promoter regulations.
 Such analyses often rely on a null distribution, and one strategy for
 generating a null distribution is to permute or shuffle the
-genomic features -- giving random positions to existing features, possibly
-while considering an exclusion list of regions where features should not be
-located. Some more sophisticated methods exist, for example
+genomic features -- giving random positions drawn uniformly along the
+genome to existing features, possibly while considering an exclusion
+list of regions where features should not be located.
+Uniformly distributed ``null feature sets'' will not generally exhibit
+natural clumping properties of
+% as well as keeping compositional changes of
+genomic feature sets where there often exists a complex
+dependency structure, both in terms of placement and correlation of
+metadata (signal strength, cell-type-specificity, etc.).
+% even when excluded regions are considered.
+Using an overly simplistic null feature set that doesn't take into
+account local dependency of features and metadata could result in
+misleading conclusions.
+% this two don't need a "but" after them re: overly simplistic, they
+% are valid attempts to deal with clustering... we just don't compare
+% to them in this work
+Some more sophisticated methods exist, for example
 GAT, which additionally allows for controlling feature placement with
 respect to local GC content
 \citep{GAT_2013}, and regioneR, which implements a circular chromosome
 shift to preserve inter-feature distance \citep{gel2016regioner}.
-% ... still thinking about how to transition here...
-However, random-start feature sets will not generally exhibit natural clumping
-as well as keeping compositional changes of typical genomics features
-because there often exists a complex dependency structure between
-features,
-% e.g, transcription factor binding sites tend to occur in clusters \citep{ezer2014homotypic}, 
-even when excluded regions are considered.  Therefore misleading
-conclusion can be derived without considering this.
 
 The block bootstrap \citep{politis1999subsampling}
-% \citep{bickel2010subsampling}
 provides an alternative to random starts, where one instead generates
 random feature sets by sampling large blocks of features within the
 segments from the original set with replacement to preserve the
-features' cluster and isochoric property. However, the computational
-expensive has always been an issue to address, GSC
+features' cluster and isochoric property, as proposed for genomic data
+by \citet{bickel2010subsampling}.
+However, the computational expensive has always been an issue to address, GSC
 \citep{bickel2010subsampling} kept swapping a pair of blocks to trying
 generate a block-wise bootstrap with limited number of statistics.
 However, we proposed an efficient vectorized code for operation on
