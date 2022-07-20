@@ -31,15 +31,21 @@ shift to preserve inter-feature distance \citep{gel2016regioner}.
 The block bootstrap \citep{politis1999subsampling}
 provides an alternative to random starts, where one instead generates
 random feature sets by sampling large blocks of features within the
-segments from the original set with replacement to preserve the
-features' cluster and isochoric property, as proposed for genomic data
+segments from the original set with replacement, as proposed for genomic data
 by \citet{bickel2010subsampling}.
-However, the computational expensive has always been an issue to address, GSC
-\citep{bickel2010subsampling} kept swapping a pair of blocks to trying
-generate a block-wise bootstrap with limited number of statistics.
-However, we proposed an efficient vectorized code for operation on
-\emph{GRanges}\xspace \citep{lawrence2013software} objects to generate
-\bootranges. Its provides fully flexible frameworks includes 1)
+Generating new genomic feature sets via the block bootstrap is more
+computationally intensive than a per-feature random start assignment.
+To address this, GSC \citep{bickel2010subsampling} implements a
+strategy of swapping pairs of blocks in order to generate a bootstrap
+distribution while avoiding generation of a genome-scale bootstrap
+sample.
+
+Here we describe the \bootranges software, which uses efficient
+vectorized code for performing block bootstrap sampling of
+\granges \citep{lawrence2013software} objects with the Bioconductor
+ecosystem.
+% mike is here
+Its provides fully flexible frameworks includes 1)
 different block bootstrap strategy 2) summarize customizable
 interested statistics at either block or genome level given tidy
 downstream pipelines with \plyranges \citep{lee2019plyranges}. This
@@ -62,7 +68,7 @@ Segway segments \citep{hoffman:Segway}, or ChromHMM segments\citep{ernst2012chro
 % Segments can be derived, e.g. based on gene density 
 % or given as known segments, e.g. Giemsa bands, 
 % Segway segments \citep{hoffman:Segway}, or ChromHMM segments\citep{ernst2012chromhmm}. 
-The \GRanges objects are taken as the inputs for feature \bm{$x$} and \bm{$y$} with optional metadata columns used for computing a test statistic. Given segmentation method and block length, a \bootranges object of \bm{$y$} is generated, which is a \GRanges object with all the ranges concatenated, and iteration, blocks and block length indicated by metadata columns. 
+The \granges objects are taken as the inputs for feature \bm{$x$} and \bm{$y$} with optional metadata columns used for computing a test statistic. Given segmentation method and block length, a \bootranges object of \bm{$y$} is generated, which is a \granges object with all the ranges concatenated, and iteration, blocks and block length indicated by metadata columns. 
 After deriving the bootstrap distribution of test statistics, an empirical p-value, the number of times that show an equal or greater statistics than the observed statistic, or any types of intervals can be reported for testing the null hypothesis that there is no true biological relevant association between features. 
 The \bootranges implementing algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
