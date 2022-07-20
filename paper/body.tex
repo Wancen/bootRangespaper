@@ -4,20 +4,11 @@ there is enrichment of one set of features near another in the
 linear genome, or to assess correlation across samples for pairs of
 genomic features assayed for different modalities (e.g. RNA,
 accessibility) \citep{reviewdilemma2014}.
-%there is a common belief in association
-%analysis that significant enrichment(depletion) or correlation between
-%genome features sets indicates biological relationship
-% variant / gene expression, nearby chromatin accessibility and enhancer epigenetic profiles
 For example, enrichment of accessibility peaks near sets of genes may
 indicate a regulatory relationship \citep{lee2020fluent}, while
 enrichment of genetic variants associated with phenotype near
 tissue-specific accessibility may point to mechanisms of the inherited
 risk.
-%% Therefore, there are always interest of
-%% finding association among genomic, transcriptomic and epigenomic features
-%% to verify differential expressed SNPs / genes set, or identify
-%% transcription factor binding motifs and potential enhancer-gene,
-%% enhancer-promoter regulations.
 Such analyses often rely on a null distribution, and one strategy for
 generating a null distribution is to permute or shuffle the
 genomic features -- giving random positions drawn uniformly along the
@@ -25,17 +16,12 @@ genome to existing features, possibly while considering an exclusion
 list of regions where features should not be located.
 Uniformly distributed ``null feature sets'' will not generally exhibit
 natural clumping properties of
-% as well as keeping compositional changes of
 genomic feature sets where there often exists a complex
 dependency structure, both in terms of placement and correlation of
 metadata (signal strength, cell-type-specificity, etc.).
-% even when excluded regions are considered.
 Using an overly simplistic null feature set that doesn't take into
 account local dependency of features and metadata could result in
 misleading conclusions.
-% this two don't need a "but" after them re: overly simplistic, they
-% are valid attempts to deal with clustering... we just don't compare
-% to them in this work
 Some more sophisticated methods exist, for example
 GAT, which additionally allows for controlling feature placement with
 respect to local GC content
