@@ -1,38 +1,39 @@
 \section{Introduction}
 In genomic analyses, it is commonly of interest to assess whether
-there is enrichment of one set of features near another in the
-linear genome, or to assess correlation across samples for pairs of
-genomic features assayed for different modalities (e.g. RNA,
-accessibility) \citep{reviewdilemma2014}.
-For example, enrichment of accessibility peaks near sets of genes may
-indicate a regulatory relationship \citep{lee2020fluent}, while
-enrichment of genetic variants associated with phenotype near
-tissue-specific accessibility may point to mechanisms of the inherited
-risk.
-Such analyses often rely on a null distribution, and one strategy for
-generating a null distribution is to permute or shuffle the
+there is position enrichment of one set of features near another
+\citep{reviewdilemma2014},
+or a correlation across samples between nearby genomic features of
+different modalities (e.g. gene expression, chromatin accessibility).
+For example, enrichment of accessible peaks near sets of genes may
+indicate a regulatory relationship \citep{lee2020fluent}, or
+enrichment of GWAS fine-mapped variants
+near tissue-specific ATAC-seq peaks may suggest
+mechanisms of heritability of the GWAS trait.
+Such analyses often rely on a null distribution, where one inference
+strategy is to permute or shuffle one set of the
 genomic features -- giving random positions drawn uniformly along the
-genome to existing features, possibly while considering an exclusion
-list of regions where features should not be located.
+genome to existing features, possibly while considering a set of
+excluded positions.
 Uniformly distributed ``null feature sets'' will not generally exhibit
 natural clumping properties of
-genomic feature sets where there often exists a complex
-dependency structure, both in terms of placement and correlation of
-metadata (signal strength, cell-type-specificity, etc.).
+genomic feature sets, where there often exists a complex
+dependency structure.
+% both in terms of placement and
+% correlation of metadata (signal strength, cell-type-specificity, etc.).
 Using an overly simplistic null feature set that doesn't take into
-account local dependency of features and metadata could result in
-misleading conclusions.
+account local dependency of features could result in misleading
+conclusions.
 Some more sophisticated methods exist, for example
-GAT, which additionally allows for controlling feature placement with
+GAT, which allows for controlling feature placement with
 respect to local GC content
-\citep{GAT_2013}, and regioneR, which implements a circular chromosome
-shift to preserve inter-feature distance \citep{gel2016regioner}.
+\citep{GAT_2013}, and regioneR, which implements a ``circular shift'' to
+preserve clumping \citep{gel2016regioner}.
 
 The block bootstrap \citep{politis1999subsampling}
 provides an alternative to random starts, where one instead generates
-random feature sets by sampling large blocks of features within the
-segments from the original set with replacement, as proposed for genomic data
-by \citet{bickel2010subsampling}.
+random feature sets by sampling large blocks of features from the
+original set with replacement, as proposed for features residing in a
+segmented genome by \citet{bickel2010subsampling}.
 Generating new genomic feature sets via the block bootstrap is more
 computationally intensive than a per-feature random start assignment.
 To address this, GSC \citep{bickel2010subsampling} implements a
