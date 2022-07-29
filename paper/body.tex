@@ -59,8 +59,6 @@ peaks.
 \vspace*{-20pt}
 
 \section{Features}
-The workflow of \bootranges includes downstream analysis with
-\plyranges (\cref{fig:framework}).
 \bootranges offers a simple ``unsegmented'' block bootstrap as well as
 a ``segmented'' block bootstrap:
 since the distribution of features in the genome exhibits multi-scale
@@ -73,20 +71,22 @@ density, or annotations, e.g. Giemsa bands or pre-computed segments
 % Segway segments \citep{hoffman:Segway}, or ChromHMM
 % segments\citep{ernst2012chromhmm}),
 The genome segments define large (e.g. on the order of $\sim 1$ MB),
-relatively homogeneous segments within which to sample blocks. 
-The \granges objects are taken as the inputs for feature \bm{$x$} and
-\bm{$y$} with optional metadata columns used for computing a test
-statistic. Given segmentation method and block length, a \bootranges
-object of \bm{$y$} is generated, which is a \granges object with all
-the ranges concatenated, and iteration, blocks and block length
-indicated by metadata columns.  
-After deriving the bootstrap distribution of test statistics, an
-empirical p-value, the number of times that show an equal or greater
-statistics than the observed statistic, or any types of intervals can
-be reported for testing the null hypothesis that there is no true
-biological relevant association between features.  
-The \bootranges algorithms are explained schematically in
-Supplementary \cref{sec:algorithm}.
+relatively homogeneous segments within which to sample blocks (\cref{fig:framework}A)
+
+The workflow of \bootranges includes downstream analysis with
+\plyranges (\cref{fig:framework}B).
+The input for the workflow is \granges features \bm{$x$} and
+\bm{$y$}, with optional metadata columns (\texttt{mcols}) used for
+computing a more complex test statistic than overlap.
+Given a segmentation and \texttt{blockLength} $L_b$, a \bootranges
+object is generated, which concatenates \granges across bootstrap
+iterations. This \bootranges object can be manipulated with \plyranges
+to derive the bootstrap distribution of test statistics, and an
+empirical p-value.
+% the number of times that show an equal or greater statistics than the observed statistic
+% or any types of intervals can be reported for testing the null hypothesis that there is no true
+% biological relevant association between features.
+The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
 \vspace{-0.3cm}
 \begin{figure}[htbp]
