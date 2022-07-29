@@ -103,6 +103,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 
 \vspace*{-20pt}
 \section{Application}
+
 First, \bootranges was evaluated on if there was significant overlap
 between caQTLs in human liver tissue and SNPs associated with total
 cholesterol \citep{CURRIN20211169}.  \cref{fig:result}A shows various
@@ -132,19 +133,22 @@ More details were given in Supplementary \cref{sec:results}.
 \setlength{\abovecaptionskip}{-0.1cm}
 \setlength{\belowcaptionskip}{-0.1cm}
 \includegraphics[scale=0.25]{Figures/fig2.jpeg}
-\caption{Results of liver caQTL-GWAS(A-C) and macrophage enrichment
-  analysis(D). A) Variance of overlap rate over various segmentation
-  and $L_b$ choice. B) {\it z} score over block length assuming block
-  bootstrap's overlap rate follow Gaussian distribution. Upper and
-  lower horizontal line represents shuffle and upper tailed
-  $z_{0.95}$, separately. C-D) Splines was observsed data's fitted
-  overlap rate over -log10(pvalue) from 5 to 20 or overlap count over
-  log(FC) from -8 to 10. Null sets' fitted value distribution on every
-  integer was plotted by conditional density plot. Color represents
-  the amount of standard deviation(SD) that observed fitted statistics
-  away from null sets' statistics distribution.}
+\caption{
+  Bootstrapping method comparison, and results for enrichment
+  analyses. 
+  A) Variance of the rate of overlaps
+  for various segmentation and $L_b$ combinations (for liver QTL dataset).
+  B) $z$ score for the observed overlap
+  Upper and lower horizontal line represents the $z$ score obtained
+  with naive shuffling and ---.
+  C and D) For liver QTL dataset and macrophage dataset, respectively,
+  the observed (black line) and bootstrapped (densities) overlap
+  seen across various thresholds for GWAS -log10(p-value) (C) and for
+  logFC of DE genes (D). Black lines indicate spline fits for the
+  observed overlap rate (C) and count (D). The bootstrap conditional
+  densities are shown at a grid along the x-axis. Color of density
+  represents the $z$ score for the observed overlap statistic.}
 \label{fig:result}
-\vspace{-1.2cm}
 \end{figure}
 
 The scientific conclusion of this example was there exists a strong
