@@ -59,17 +59,34 @@ peaks.
 \vspace*{-20pt}
 
 \section{Features}
-The schematic diagram of a block bootstrap, and the workflow of \bootranges in combination with \plyranges is provided in \cref{fig:framework}. \bootranges offers a simple ``unsegmented'' as well as a ``segmented'' block bootstrap:
-%A common assumption made of evolutionary path that there are global shits in base composition indicates segmenting DNA sequence into a number of large statistically homogeneous regions within which to block bootstrap features gives a better fit to the data.
-since the distribution of features in the genome is not uniform, we follow the logic of \citet{bickel2010subsampling} and consider to perform block bootstrapping within segments of the genome, which are more homogeneous in terms of base composition and inter-feature distance.
-We consider various genome segmentation procedures(e.g. based on gene density ) or annotations(e.g. Giemsa bands, 
-Segway segments \citep{hoffman:Segway}, or ChromHMM segments\citep{ernst2012chromhmm}), defining a number of large (e.g. on the order of megabase pairs), relatively homogeneous segments within which to block bootstrap features.
-% Segments can be derived, e.g. based on gene density 
-% or given as known segments, e.g. Giemsa bands, 
-% Segway segments \citep{hoffman:Segway}, or ChromHMM segments\citep{ernst2012chromhmm}. 
-The \granges objects are taken as the inputs for feature \bm{$x$} and \bm{$y$} with optional metadata columns used for computing a test statistic. Given segmentation method and block length, a \bootranges object of \bm{$y$} is generated, which is a \granges object with all the ranges concatenated, and iteration, blocks and block length indicated by metadata columns. 
-After deriving the bootstrap distribution of test statistics, an empirical p-value, the number of times that show an equal or greater statistics than the observed statistic, or any types of intervals can be reported for testing the null hypothesis that there is no true biological relevant association between features. 
-The \bootranges implementing algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
+The workflow of \bootranges includes downstream analysis with
+\plyranges (\cref{fig:framework}).
+\bootranges offers a simple ``unsegmented'' block bootstrap as well as
+a ``segmented'' block bootstrap:
+since the distribution of features in the genome exhibits multi-scale
+structure, we follow the logic of \citet{bickel2010subsampling} and consider to
+perform block bootstrapping within \textit{segments} of the genome, which are
+more homogeneous in terms of base composition and feature density.
+We consider various genome segmentation procedures based on gene
+density, or annotations, e.g. Giemsa bands or pre-computed segments
+(see software vignette for details).
+% Segway segments \citep{hoffman:Segway}, or ChromHMM
+% segments\citep{ernst2012chromhmm}),
+The genome segments define large (e.g. on the order of $\sim 1$ MB),
+relatively homogeneous segments within which to sample blocks. 
+The \granges objects are taken as the inputs for feature \bm{$x$} and
+\bm{$y$} with optional metadata columns used for computing a test
+statistic. Given segmentation method and block length, a \bootranges
+object of \bm{$y$} is generated, which is a \granges object with all
+the ranges concatenated, and iteration, blocks and block length
+indicated by metadata columns.  
+After deriving the bootstrap distribution of test statistics, an
+empirical p-value, the number of times that show an equal or greater
+statistics than the observed statistic, or any types of intervals can
+be reported for testing the null hypothesis that there is no true
+biological relevant association between features.  
+The \bootranges algorithms are explained schematically in
+Supplementary \cref{sec:algorithm}.
 
 \vspace{-0.3cm}
 \begin{figure}[htbp]
@@ -157,4 +174,4 @@ All of the R code and data used in this paper are available at the following rep
 \vspace*{-25pt}
 
 \section*{Funding}
-This work was funded by a CZI EOSS award to  M.I.L., and a grant to M.I.L. from NIH [NHGRI R01 HG009937].
+This work was funded by CZI EOSS and NIH [NHGRI R01 HG009937]. 
