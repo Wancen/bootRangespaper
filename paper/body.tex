@@ -70,7 +70,7 @@ density, or annotations, e.g. Giemsa bands or pre-computed segments
 (see software vignette for details).
 % Segway segments \citep{hoffman:Segway}, or ChromHMM
 % segments\citep{ernst2012chromhmm}),
-The genome segments define large (e.g. on the order of $\sim 1$ MB),
+The genome segments define large (e.g. on the order of ${\sim}1$ MB),
 relatively homogeneous segments within which to sample blocks (\cref{fig:framework}A)
 
 The workflow of \bootranges includes downstream analysis with
@@ -103,16 +103,28 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 
 \vspace*{-20pt}
 \section{Application}
-First, \bootranges was evaluated on if there was significant overlap between caQTLs in human liver tissue and SNPs associated with total cholesterol \citep{CURRIN20211169}.
-\cref{fig:result}A shows various segmentation method and block length effect on overlap rate distribution. Here overlap rate was defined as the proportion of SNPs across genome overlapping with peaks within 10kb. The fact that the estimated statistics variance increase at large $L_b$ indicated data were inhomogeneous and segmentation
+First, \bootranges was evaluated on if there was significant overlap
+between caQTLs in human liver tissue and SNPs associated with total
+cholesterol \citep{CURRIN20211169}.  \cref{fig:result}A shows various
+segmentation method and block length effect on overlap rate
+distribution. Here overlap rate was defined as the proportion of SNPs
+across genome overlapping with peaks within 10kb. The fact that the
+estimated statistics variance increase at large $L_b$ indicated data
+were inhomogeneous and segmentation
 % using either hidden Markov model(HMM) or circular binary search(CBS) \citep{cbs}
-could alleviate the scenario. The exceptional decreasing trend using ChromHMM annotations for Roadmap Epigenomics indicated too many short segments failed to random swap the block genome when $L_b$ close to $L_s$. 
-Regarding the choice of genome segmentation and of block length selection, we considered a number of diagnostic statistics including those recommended by \citet{bickel2010subsampling}: the variance of the null distribution of test statistics (\cref{fig:result}A) and a scaled version of the change in the width of the test statistic as $L_b$ changes; as well as examination of the inter-feature distance distribution (see Supplementary Methods).
-After evaluation, $L_b \in [300000,600000]$ was shown to be a good range for carfully defined null distribution(\cref{fig:suppfig}A-C). 
+could alleviate the scenario. The exceptional decreasing trend using
+ChromHMM annotations for Roadmap Epigenomics indicated too many short
+segments failed to random swap the block genome when $L_b$ close to
+$L_s$.  Regarding the choice of genome segmentation and of block
+length selection, we considered a number of diagnostic statistics
+including those recommended by \citet{bickel2010subsampling}: the
+variance of the null distribution of test statistics
+(\cref{fig:result}A) and a scaled version of the change in the width
+of the test statistic as $L_b$ changes; as well as examination of the
+inter-feature distance distribution (see Supplementary Methods).
+After evaluation, $L_b \in [300000,600000]$ was shown to be a good
+range for carfully defined null distribution(\cref{fig:suppfig}A-C).
 More details were given in Supplementary \cref{sec:results}.
-
-% One is trying to find $L_b$ that has the minimum value of a pseudostatistic $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}IQR(\mathcal{L}_{L_v})-IQR(\mathcal{L}_{L_{v-1}})|$ followed \citet{bickel2010subsampling}, where $\mathcal{L}_{L_v}$ is the statistic distribution at length $L_v$, $v=1,2,\cdots,V$ and $IQR(\mathcal{L})$ is the interquartile range.
-% \cref{fig:suppfig}A showed $d^*$ were in common had smaller values when $L_b\in[300000,800000]$. Another way was evaluating conversing spatial distribution by assuming generated null sets have similar properties with original sets, eg. inter-feature distance. The Earth Mover's Distance (EMD) was used to access two distribution similarity because it is proportional to the minimum amount of work required to change one distribution into the other. Since the EMD always decreased as $L_b$ increased as more neighbouring features were reserved, the right $L_b$ should be chosen that a longer length won’t improve much as well as requesting $L_b$ is much smaller than the $L_s$. So [200000,600000] was shown to be  a good range by visualization and according to the Elbow Method of EMD(\cref{fig:suppfig}B-C). 
 
 %\vspace{-0.5cm}
 \begin{figure}[hbtp]
@@ -120,54 +132,78 @@ More details were given in Supplementary \cref{sec:results}.
 \setlength{\abovecaptionskip}{-0.1cm}
 \setlength{\belowcaptionskip}{-0.1cm}
 \includegraphics[scale=0.25]{Figures/fig2.jpeg}
-\caption{Results of liver caQTL-GWAS(A-C) and macrophage enrichment analysis(D). A) Variance of overlap rate over various segmentation and $L_b$ choice. B) {\it z} score over block length assuming block bootstrap's overlap rate follow Gaussian distribution. Upper and lower horizontal line represents shuffle and upper tailed $z_{0.95}$, separately. C-D) Splines was observsed data's fitted overlap rate over -log10(pvalue) from 5 to 20 or overlap count over log(FC) from -8 to 10. Null sets' fitted value distribution on every integer was plotted by conditional density plot. Color represents the amount of standard deviation(SD) that observed fitted statistics away from null sets' statistics distribution. }
+\caption{Results of liver caQTL-GWAS(A-C) and macrophage enrichment
+  analysis(D). A) Variance of overlap rate over various segmentation
+  and $L_b$ choice. B) {\it z} score over block length assuming block
+  bootstrap's overlap rate follow Gaussian distribution. Upper and
+  lower horizontal line represents shuffle and upper tailed
+  $z_{0.95}$, separately. C-D) Splines was observsed data's fitted
+  overlap rate over -log10(pvalue) from 5 to 20 or overlap count over
+  log(FC) from -8 to 10. Null sets' fitted value distribution on every
+  integer was plotted by conditional density plot. Color represents
+  the amount of standard deviation(SD) that observed fitted statistics
+  away from null sets' statistics distribution.}
 \label{fig:result}
 \vspace{-1.2cm}
 \end{figure}
 
-The scientific conclusion of this example was there exists a strong association between liver caQTLs and total cholesterol SNPs because of the empirical p value = 0. z score, independent of number of bootstraps, was used to measure the distance between the expected value and the observed one according to the standard deviations.
-since the the $z = 4.10$ if look at circular binary search(CBS) \citep{cbs} segmentation method with $L_s = 2e6$ and $L_b=5e5$(\cref{fig:result}B). 
-As seen in applications of \citet{bickel2010subsampling}, the effect of segmentation did not greatly alter conclusions, e.g. rejection of the null hypothesis, in this case, although the z score varies greatly among the different segmentations and block lengths.
-Genome shuffling (Supplementary \cref{sec:shuffle}) that people usually used when performing such analysis had much higher $z = 18.5$. We believe it may result low specificity in some cases and block bootstrap was, as much as possible, close to actual distribution of genomics elements. 
+The scientific conclusion of this example was there exists a strong
+association between liver caQTLs and total cholesterol SNPs because of
+the empirical p value = 0. z score, independent of number of
+bootstraps, was used to measure the distance between the expected
+value and the observed one according to the standard deviations.
+since the the $z = 4.10$ if look at circular binary search(CBS)
+\citep{cbs} segmentation method with $L_s = 2e6$ and
+$L_b=5e5$(\cref{fig:result}B).  As seen in applications of
+\citet{bickel2010subsampling}, the effect of segmentation did not
+greatly alter conclusions, e.g. rejection of the null hypothesis, in
+this case, although the z score varies greatly among the different
+segmentations and block lengths.  Genome shuffling (Supplementary
+\cref{sec:shuffle}) that people usually used when performing such
+analysis had much higher $z = 18.5$. We believe it may result low
+specificity in some cases and block bootstrap was, as much as
+possible, close to actual distribution of genomics elements.
 
-% As we all known, $5\times 10^{-8}$ was always used as gold standard for GWAS study and stringent logFC threshold are needed sometimes after p value roughly filtration for DEG analysis, but there are no recognized thresholds for those indicators. 
-In this study, we showed optimized selection of data driven p-value and logFC through applying \bootranges on pairs of features: 
-% caQTL-GWAS for the liver dataset, 
-aforementioned example, and chromatin accessibility and gene expression in a macrophage immune response datasets data \citep{alasoo2018shared}. A generalized linear model (GLM) with penalized regression splines from \textit{gam} function in the \emph{mgcv} R package were fitted and \textit{predict\_gam} function in the \emph{tidymv} R package were predicted on observed and each null feature sets. 
+In this study, we showed optimized selection of data driven p-value
+and logFC through applying \bootranges on pairs of features:
+aforementioned example, and chromatin accessibility and gene
+expression in a macrophage immune response datasets data
+\citep{alasoo2018shared}. A generalized linear model (GLM) with
+penalized regression splines from \textit{gam} function in the
+\emph{mgcv} R package were fitted and \textit{predict\_gam} function
+in the \emph{tidymv} R package were predicted on observed and each
+null feature sets.
 $$
 \setlength{\abovedisplayskip}{3pt}
 \setlength{\belowdisplayskip}{3pt}
 log \left( \frac{\pi}{1-\pi} \right) = \beta_0  + f (-log_{10}p), log(\mu) = \beta_0 + f (log_{FC})
 $$ 
-for rate and count-based statistic, separately. 
-%X is all the regulation covariates that want to be accounted for. For simply guidance, we ignored the X in our example.
-All generated 95\% percentile intervals at the same time across a range of effect sizes were displayed by conditional density plot (\cref{fig:result} C,D). We found z score was highest when -log10(pvalue)=8 (\cref{fig:suppfig}D) which is quite close to Bonferroni correction and DEG logFC at -2 or 2(\cref{fig:suppfig}E). 
-%These numbers gives insight into future study cut-offs. 
+for rate and count-based statistic, separately.  All generated 95\%
+percentile intervals at the same time across a range of effect sizes
+were displayed by conditional density plot (\cref{fig:result} C,D). We
+found z score was highest when -log10(pvalue)=8 (\cref{fig:suppfig}D)
+which is quite close to Bonferroni correction and DEG logFC at -2 or
+2(\cref{fig:suppfig}E).
 
-%Since genes' expression is most \textit{cis}-regulated by transcription factors which influenced by the chromatin accessibility, there is a belief that two modalities would have significant high correlation across cell types.
-We additionally applied
-\bootranges to Chromium Single Cell Multiome ATAC + Gene Expression, to assess the correlation of the two modalities for all pairs of genes and promoter peaks, across the 14 cell types (pseudo-bulk).
-For the whole gene set, the mean correlation of RNA-seq and ATAC log read counts was 0.33 that was significantly far from the subsampling correlation distribution (\cref{fig:suppfig}F) with expectation 0.007 and empirical value indicated there was significant high correlation between genes expression and open chromatin. Additionally, average gene-promoter correlation per gene can be derived. XXX of genes have a significant higher correlation. 
-% Additionally, 5644 significant candidate gene-promoter pairs were identified, among which 5591 genes had only one pair, 25 genes had 2 pairs. By viewing in the UCSC, we found out 
-% The most negative correlation gene TET3 had $\rho = -0.963$(\cref{fig:suppfig}G) outside the subsampling 95\% CI [-0.85,0.78]. 
+We additionally applied \bootranges to Chromium Single Cell Multiome
+ATAC + Gene Expression, to assess the correlation of the two
+modalities for all pairs of genes and promoter peaks, across the 14
+cell types (pseudo-bulk).  For the whole gene set, the mean
+correlation of RNA-seq and ATAC log read counts was 0.33 that was
+significantly far from the subsampling correlation distribution
+(\cref{fig:suppfig}F) with expectation 0.007 and empirical value
+indicated there was significant high correlation between genes
+expression and open chromatin. Additionally, average gene-promoter
+correlation per gene can be derived. XXX of genes have a significant
+higher correlation.
 
-
-According to the time efficiency, we compared with GSC using the ENCODE kidney and bladder H3K27ac ChIP-seq peaks. The average time to block bootstrap the whole genome using \bootranges is around 0.3s and 0.37s if adding the \plyranges pipeline. While GSC approximate cost 7.56s. Therefore, \bootranges is 20 times faster.
-All of the R code and data used in this paper are available at the following repository:
-\url{https://github.com/Wancen/bootRangespaper}. 
-%So those significant pairs could provide important insights into perturb their corresponding promoter regions for future tumor treatment.
-% chr2:74000098-74003475 and chr6:14116971-14139988 for future tumor treatment. 
-
-% Various tidy code pipelines for working with \bootranges can be found in Supplementary \cref{sec:results}. One example for generating bootstrapped correlation is as simple as:
-
-% \begin{lstlisting}[language=R]
-% `y'` <- bootRanges(y,blockLength = 5e5, R=100)
-% boot_stats<-x %>% join_overlap_inner(`y'`,maxgap=1000) %>%
-%   mutate(rho = correlation(counts_x, counts_y)) %>%
-%   group_by(iter) %>%
-%   summarise(meanRho = mean(rho))
-  
-% \end{lstlisting} 
+According to the time efficiency, we compared with GSC using the
+ENCODE kidney and bladder H3K27ac ChIP-seq peaks. The average time to
+block bootstrap the whole genome using \bootranges is around 0.3s and
+0.37s if adding the \plyranges pipeline. While GSC approximate cost
+7.56s. Therefore, \bootranges is 20 times faster.  All of the R code
+and data used in this paper are available at the following repository:
+\url{https://github.com/Wancen/bootRangespaper}.
 
 \vspace*{-25pt}
 
