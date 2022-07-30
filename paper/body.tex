@@ -132,6 +132,13 @@ a scaled version of the change in the width of the
 and the inter-feature distance distribution (Supplementary Methods).
 Here $L_b \in [300\textrm{kb},600\textrm{kb}]$ was shown to be a good range for block
 lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}.
+The scientific conclusion of this example was that liver caQTLs were
+much closer to total cholesterol SNPs than expected even when placing
+blocks of SNPs to match a genome segmentation.
+Simple shuffling of features (Supplementary \cref{sec:shuffle})
+resulted in a much higher $z = 18.5$, compared to $z \approx 4$ for
+the methods that preserve local correlation and place blocks with
+respect to a genome segmentation.
 
 %\vspace{-0.5cm}
 \begin{figure}[hbtp]
@@ -157,29 +164,16 @@ lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}.
 \label{fig:result}
 \end{figure}
 
-The scientific conclusion of this example was there exists a strong
-association between liver caQTLs and total cholesterol SNPs because of
-the empirical p value = 0.
-
-z score, independent of number of bootstraps, was used to measure the
-distance between the expected value and the observed one according to
-the standard deviations.
-
-since the the $z = 4.10$ if look at circular binary search(CBS)
-\citep{cbs} segmentation method with $L_s = 2e6$ and
-$L_b=5e5$(\cref{fig:result}B).
-
-As seen in applications of \citet{bickel2010subsampling}, the effect
-of segmentation did not greatly alter conclusions, e.g. rejection of
-the null hypothesis, in this case, although the z score varies greatly
-among the different segmentations and block lengths.
-
-Genome shuffling (Supplementary \cref{sec:shuffle}) that people
-usually used when performing such analysis had much higher $z = 18.5$.
-
-We believe it may result low specificity in some cases and block
-bootstrap was, as much as possible, close to actual distribution of
-genomics elements.
+%% z score, independent of number of bootstraps, was used to measure the
+%% distance between the expected value and the observed one according to
+%% the standard deviations.
+%% the $z = 4.10$ if look at circular binary search(CBS)
+%% \citep{cbs} segmentation method with $L_s = 2e6$ and
+%% $L_b=5e5$(\cref{fig:result}B).
+%% As seen in applications of \citet{bickel2010subsampling}, the effect
+%% of segmentation did not greatly alter conclusions, e.g. rejection of
+%% the null hypothesis, in this case, although the z score varies greatly
+%% among the different segmentations and block lengths.
 
 In this study, we showed optimized selection of data driven p-value
 and logFC through applying \bootranges on pairs of features:
