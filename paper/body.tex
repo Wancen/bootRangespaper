@@ -104,28 +104,34 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \vspace*{-20pt}
 \section{Application}
 
-First, \bootranges was evaluated on if there was significant overlap
-between caQTLs in human liver tissue and SNPs associated with total
-cholesterol \citep{CURRIN20211169}.  \cref{fig:result}A shows various
-segmentation method and block length effect on overlap rate
-distribution. Here overlap rate was defined as the proportion of SNPs
-across genome overlapping with peaks within 10kb. The fact that the
-estimated statistics variance increase at large $L_b$ indicated data
-were inhomogeneous and segmentation
-% using either hidden Markov model(HMM) or circular binary search(CBS) \citep{cbs}
-could alleviate the scenario. The exceptional decreasing trend using
-ChromHMM annotations for Roadmap Epigenomics indicated too many short
-segments failed to random swap the block genome when $L_b$ close to
-$L_s$.  Regarding the choice of genome segmentation and of block
-length selection, we considered a number of diagnostic statistics
-including those recommended by \citet{bickel2010subsampling}: the
-variance of the null distribution of test statistics
-(\cref{fig:result}A) and a scaled version of the change in the width
-of the test statistic as $L_b$ changes; as well as examination of the
-inter-feature distance distribution (see Supplementary Methods).
-After evaluation, $L_b \in [300000,600000]$ was shown to be a good
-range for carfully defined null distribution(\cref{fig:suppfig}A-C).
-More details were given in Supplementary \cref{sec:results}.
+We first applied \bootranges to determine the significance of the
+overlap of caQTLs detected in human liver tissue
+\citep{CURRIN20211169} with SNPs associated with total cholesterol,
+\mike{...where we bootstrapped the SNPs}.
+While the observed overlap was significant across many combinations of
+various segmentation methods and block length, the variance of the
+bootstrap distribution and the resulting $z$ score varied greatly
+(\cref{fig:result}A-B). Overlap rate was defined as the proportion of
+SNPs within 10kb from peaks \mike{need more precise info.}
+That the variance of the distribution in \cref{fig:result}A for the
+unsegmented bootstrap increased with $L_b$ indicated that
+bootstrapping with respect to a genome
+segmentation may be a more appropriate choice
+\citep{bickel2010subsampling}. 
+% inhomogeneous and segmentation could alleviate the scenario.
+The decreasing trend using ChromHMM annotation from
+Roadmap Epigenomics indicated too many short segments,
+where $L_b$ is too close to $L_s$.
+\mike{maybe you can remind me how this happens}
+To choose an optimal block length and segmentation, 
+we considered a number of diagnostics including
+those recommended previously \citep{bickel2010subsampling}:
+the variance of the bootstrap distribution (\cref{fig:result}A),
+a scaled version of the change in the width of the
+\mike{bootstrap distribution} over $L_b$,
+and the inter-feature distance distribution (Supplementary Methods).
+Here $L_b \in [300\textrm{kb},600\textrm{kb}]$ was shown to be a good range for block
+lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}.
 
 %\vspace{-0.5cm}
 \begin{figure}[hbtp]
@@ -140,7 +146,7 @@ More details were given in Supplementary \cref{sec:results}.
   for various segmentation and $L_b$ combinations (for liver QTL dataset).
   B) $z$ score for the observed overlap
   Upper and lower horizontal line represents the $z$ score obtained
-  with naive shuffling and ---.
+  with naive shuffling and \mike{what is this}.
   C and D) For liver QTL dataset and macrophage dataset, respectively,
   the observed (black line) and bootstrapped (densities) overlap
   seen across various thresholds for GWAS -log10(p-value) (C) and for
@@ -153,20 +159,27 @@ More details were given in Supplementary \cref{sec:results}.
 
 The scientific conclusion of this example was there exists a strong
 association between liver caQTLs and total cholesterol SNPs because of
-the empirical p value = 0. z score, independent of number of
-bootstraps, was used to measure the distance between the expected
-value and the observed one according to the standard deviations.
+the empirical p value = 0.
+
+z score, independent of number of bootstraps, was used to measure the
+distance between the expected value and the observed one according to
+the standard deviations.
+
 since the the $z = 4.10$ if look at circular binary search(CBS)
 \citep{cbs} segmentation method with $L_s = 2e6$ and
-$L_b=5e5$(\cref{fig:result}B).  As seen in applications of
-\citet{bickel2010subsampling}, the effect of segmentation did not
-greatly alter conclusions, e.g. rejection of the null hypothesis, in
-this case, although the z score varies greatly among the different
-segmentations and block lengths.  Genome shuffling (Supplementary
-\cref{sec:shuffle}) that people usually used when performing such
-analysis had much higher $z = 18.5$. We believe it may result low
-specificity in some cases and block bootstrap was, as much as
-possible, close to actual distribution of genomics elements.
+$L_b=5e5$(\cref{fig:result}B).
+
+As seen in applications of \citet{bickel2010subsampling}, the effect
+of segmentation did not greatly alter conclusions, e.g. rejection of
+the null hypothesis, in this case, although the z score varies greatly
+among the different segmentations and block lengths.
+
+Genome shuffling (Supplementary \cref{sec:shuffle}) that people
+usually used when performing such analysis had much higher $z = 18.5$.
+
+We believe it may result low specificity in some cases and block
+bootstrap was, as much as possible, close to actual distribution of
+genomics elements.
 
 In this study, we showed optimized selection of data driven p-value
 and logFC through applying \bootranges on pairs of features:
