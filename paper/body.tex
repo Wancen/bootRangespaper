@@ -69,16 +69,15 @@ density, or annotations, e.g. Giemsa bands or pre-computed segments
 The genome segments define large (e.g. on the order of ${\sim}1$ MB),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
-The workflow of \bootranges includes downstream analysis with
-\plyranges (\cref{fig:framework}B).
+%The workflow of \bootranges includes downstream analysis with \plyranges.
 The input for the workflow is \granges features \bm{$x$} and
-\bm{$y$}, with optional metadata columns (\texttt{mcols}) used for
-computing a more complex test statistic than overlap.
+\bm{$y$}, with optional metadata columns (\texttt{mcols}) that can be
+used for computing a more complex test statistic than overlaps.
 Given a segmentation and \texttt{blockLength} $L_b$, a \bootranges
 object is generated, which concatenates \granges across bootstrap
 iterations. This \bootranges object can be manipulated with \plyranges
 to derive the bootstrap distribution of test statistics, and an
-empirical p-value.
+empirical p-value (\cref{fig:framework}B).
 % the number of times that show an equal or greater statistics than the observed statistic
 % or any types of intervals can be reported for testing the null hypothesis that there is no true
 % biological relevant association between features.
@@ -92,7 +91,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \caption{Overview of \bootranges workflow. (a) A schematic
   diagram of \bootranges with \texttt{blockLength} $L_b$ across chromosome.
   (b) Testing overlaps of features in \bm{$x$} with features in
-  \bm{$y$}, and comparing to a null distribution.} 
+  \bm{$y$}, and comparing to a bootstrap distribution.} 
 \label{fig:framework}
 \vspace{-0.5cm}
 \end{figure}
