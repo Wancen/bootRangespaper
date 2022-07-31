@@ -149,14 +149,15 @@ respect to a genome segmentation.
   dataset.
   %Upper and lower horizontal line represents the $z$ score obtained
   %with naive shuffling and ....
-  The observed (black line) and bootstrapped (densities) overlap
-  seen across various thresholds for
+  The GAM predicted trends for observed data (black line) and
+  bootstrapped data (densities)
   C) for the overlap rate over GWAS -log10(p-value) for the liver QTL
   dataset and
   D) for the overlap count over logFC of DE genes for the macrophage
   dataset. 
   Color of density represents the $z$ score for the observed overlap
-  statistic.
+  statistic with respect to the conditional density of GAM predicted
+  values.
 }
 \label{fig:result}
 \vspace{-0.7cm}
@@ -175,18 +176,17 @@ respect to a genome segmentation.
 
 We demonstrate using \bootranges to motivate the choice of thresholds 
 that are applied to feature sets during enrichment analyses.
-We applied different thresholds to one of the feature sets, and then 
-computed the observed overlap statistic and bootstrap distribution.
-\mike{I have a question about how this was performed}
 %In this study, we showed optimized selection of data driven p-value
 %and logFC through applying \bootranges on pairs of features:
-We tested this one the aforementioned liver caQTL example, to
-differential chromatin accessibility and gene expression 
+We tested this on the aforementioned liver caQTL example, and on a
+dataset of differential chromatin accessibility and gene expression 
 \citep{alasoo2018shared,lee2020fluent}.
 A generalized linear model (GLM) with penalized regression splines was
-fit to the observed rate or count over the -log10(p-value) or gene log
-fold change (Supplementary Methods). Condition densities plotted along
-with the GLM fit revealed how the threshold choice affected the
+fit to the overlap rate or count over the -log10(p-value) or
+gene log fold change (Supplementary Methods), both for the original
+data and to each of the bootstrap datasets.
+Condition densities were computed at various thresholds to reveal how
+the threshold choice affected the
 variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C-D).
 We found that the $z$ score was highest when -log10(p-value) = 8
