@@ -145,19 +145,18 @@ respect to a genome segmentation.
   Bootstrapping parameter evaluation and enrichment analyses. 
   A) Variance of the rate of overlaps and
   B) $z$ score for the observed overlap,
-  for various segmentation and $L_b$ combinations on the liver caQTL
+  for different segmentations and $L_b$ on the liver caQTL
   dataset.
   %Upper and lower horizontal line represents the $z$ score obtained
   %with naive shuffling and ....
-  The GAM predicted trends for observed data (black line) and
-  bootstrapped data (densities)
-  C) for the overlap rate over GWAS -log10(p-value) for the liver QTL
+  The GAM predicted curves for observed (black line) and
+  bootstrapped data (densities),
+  C) for the overlap rate over GWAS $-\log_{10}(p)$ for the liver QTL
   dataset and
   D) for the overlap count over logFC of DE genes for the macrophage
-  dataset. 
+  dataset.
   Color of density represents the $z$ score for the observed overlap
-  statistic with respect to the conditional density of GAM predicted
-  values.
+  with respect to the conditional density.
 }
 \label{fig:result}
 \vspace{-0.7cm}
@@ -182,16 +181,17 @@ We tested this on the aforementioned liver caQTL example, and on a
 dataset of differential chromatin accessibility and gene expression 
 \citep{alasoo2018shared,lee2020fluent}.
 A generalized linear model (GLM) with penalized regression splines was
-fit to the overlap rate or count over the -log10(p-value) or
+fit to the overlap rate or count over the $-\log_{10}(p)$ or
 gene log fold change (Supplementary Methods), both for the original
 data and to each of the bootstrap datasets.
-Condition densities were computed at various thresholds to reveal how
-the threshold choice affected the
+Condition densities of splines fit to bootstrap data
+were computed at various thresholds to reveal how
+the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C-D).
-We found that the $z$ score was highest when -log10(p-value) = 8
+We found that the $z$ score was highest when $-\log_{10}(p) = 8$
 (\cref{fig:suppfig}D),
-and when the log fold change was thresholded at $< -2$ or $> 2$
+and when $\textrm{logFC} < -2$ or $\textrm{logFC} > 2$
 (\cref{fig:suppfig}E).
 %% from \textit{gam} function in the
 %% \emph{mgcv} R package were fitted and \textit{predict\_gam} function
@@ -208,22 +208,22 @@ and when the log fold change was thresholded at $< -2$ or $> 2$
 %% were displayed by conditional density plot 
 
 We additionally applied \bootranges to Chromium Single Cell Multiome
-ATAC + Gene Expression, to assess the correlation of the two
-modalities for all pairs of genes and promoter peaks, across the 14
-cell types (pseudo-bulk).  For the whole gene set, the mean
-correlation of RNA-seq and ATAC log read counts was 0.33 that was
-significantly far from the subsampling correlation distribution
-(\cref{fig:suppfig}F) with expectation 0.007 and empirical value
-indicated there was significant high correlation between genes
-expression and open chromatin. Additionally, average gene-promoter
-correlation per gene can be derived. XXX of genes have a significant
-higher correlation.
+ATAC- and RNA-seq, to assess the correlation ($r$) of log counts for the two
+modalities for all pairs of genes and peaks, across
+14 cell types (pseudo-bulk). Across all genes, we observed
+$\bar{r} = 0.33$, which was 
+significantly higher than the bootstrap correlation
+(\cref{fig:suppfig}F, $\bar{r}_{b} = 0.007$). Thus, as expected, RNA
+and ATAC measured at local peaks had similar cell-type-specificity.
+Additionally, the average gene-promoter
+correlation per gene can be computed. XXX of genes had a
+significantly higher correlation than bootstrapped data.
 
-According to the time efficiency, we compared with GSC using the
-ENCODE kidney and bladder H3K27ac ChIP-seq peaks. The average time to
-block bootstrap the whole genome using \bootranges is around 0.3s and
-0.37s if adding the \plyranges pipeline. While GSC approximate cost
-7.56s. Therefore, \bootranges is 20 times faster.
+We compared \bootranges and GSC speed using
+ENCODE kidney and bladder ChIP-seq. The average time to
+block bootstrap the genome using \bootranges was 0.30s and
+0.37s adding overlap computation. A comparable
+analysis with GSC took 7.56s (see Supplementary Methods).
 % -- maybe we can mention the code link on page 1 to save space ...
 % All of the R code and data used in this paper are available at the
 % following repository: 
