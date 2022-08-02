@@ -19,7 +19,7 @@ excluded regions.
 %genome to existing features, possibly while considering a set of
 %excluded positions.
 However, uniformly distributed null feature sets will not exhibit the
-spatial clumping common with genomic feature sets.
+clumping property common with genomic feature sets.
 % where there often exists a complex dependency structure.
 % both in terms of placement and
 % correlation of metadata (signal strength, cell-type-specificity, etc.).
@@ -50,7 +50,7 @@ We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex
 downstream analyses, including to motivate thresholds chosen during
-enrichment analysis and single-cell multiomics.
+enrichment analysis and single-cell multi-omics.
 
 \vspace*{-20pt}
 
@@ -103,15 +103,16 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 We first applied \bootranges to determine the significance of the
 overlap of caQTLs detected in human liver tissue
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
-\wancen{where we bootstrapped the SNPs}.
+bootstrapping the SNPs to assess significance.
 While the observed overlap was significant across many combinations of
 various segmentation methods and block length according to empirical p-value, 
 the variance of the
 bootstrap distribution and the resulting $z$ score varied greatly
-(\cref{fig:result}A-B). \wancen{Here we use $z$ score to measure the distance between the expected
-value and the observed one according to the standard deviations. 
+(\cref{fig:result}A-B).
+We used the $z$ score to measure the distance between the observed
+value and bootstrap distribution in terms of standard deviations.
 Overlap rate was defined as the proportion of
-SNPs has peaks nearby within 10kb.} 
+SNPs that had peaks within 10kb.
 That the variance of the distribution in \cref{fig:result}A for the
 unsegmented bootstrap increased with $L_b$ indicated that
 bootstrapping with respect to a genome
@@ -125,9 +126,11 @@ To choose an optimal block length and segmentation,
 we considered a number of diagnostics including
 those recommended previously \citep{bickel2010subsampling}:
 the variance of the bootstrap distribution (\cref{fig:result}A),
-a scaled version of the change in the width of the \wancen{neighbouring}
+a scaled version of the change in the width of the previous iteration
+of the
 bootstrap distribution over $L_b$,
-and \wancen{examing conserved spatial pattern by the inter-feature distance distribution} (Supplementary Methods).
+and the inter-feature distance distribution to assess conserved
+clustering of features (Supplementary Methods).
 Here $L_b \in [300\textrm{kb},600\textrm{kb}]$ was shown to be a good range for block
 lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}).
 The scientific conclusion of this example was that liver caQTLs were
@@ -192,8 +195,10 @@ were computed at various thresholds to reveal how
 the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C-D).
-\wancen{Plots recommened $-\log_{10}(p) = 8$ and $\textrm{|logFC|} = 2$
-as optimized thresholds where the $z$ score was highest (\cref{fig:suppfig}D-E).}
+These analyses suggested that $-\log_{10}(p) = 8$ and
+$|\textrm{logFC}| = 2$
+are optimized thresholds where the $z$ score was highest
+(\cref{fig:suppfig}D-E).
 %We found that the $z$ score was highest when $-\log_{10}(p) = 8$
 %(\cref{fig:suppfig}D),
 %and when $\textrm{|logFC|} = 2$(\cref{fig:suppfig}E).
@@ -220,8 +225,8 @@ $\bar{r} = 0.33$, which was
 significantly higher than the bootstrap correlation
 (\cref{fig:suppfig}F, $\bar{r}_{b} = 0.007$). Thus, as expected, RNA
 and ATAC measured at local peaks had similar cell-type-specificity.
-\wancen{Additionally, the bootstrapped gene-peaks
-correlation per gene can be computed to idenitfy candidate gene-promoter pairs(\cref{fig:suppfig}G-H).}
+\wancen{The bootstrapped gene-peaks correlation per gene can be computed to
+idenitfy candidate gene-promoter pairs (\cref{fig:suppfig}G-H).}
 %Additionally, the average gene-promoter
 %correlation per gene can be computed. 
 %XXX of genes had a
