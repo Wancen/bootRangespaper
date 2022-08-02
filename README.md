@@ -2,7 +2,7 @@
 Code analysis for bootranges
 
 **script:**
-1. *liver*: Derive overlap rate of  caQTLs detected in human liver tissue-SNPs associated with total cholesterol: 
+1. [*liver*] (https://github.com/Wancen/bootRangespaper/tree/master/script/liver): Derive overlap rate of  caQTLs detected in human liver tissue-SNPs associated with total cholesterol: 
    * *GRanges_construct.R*(Preprocess) -> *segBootranges.R*(perform bootRanges) -> *var.R*(Variance of the rate of overlaps and $z$ score) -> *fit_splines.R*(conditional density plot) -> *plot.R*
    * *bootstrap.R*: perform conventional shuffling.
 2. *macrophage.R*: Derive overlap counts of differential expression genes and differential accessibility peaks.
