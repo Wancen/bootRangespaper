@@ -77,8 +77,9 @@ used for computing a more complex test statistic than overlaps.
 Given a segmentation and \texttt{blockLength} $L_b$, a \bootranges
 object is generated, which concatenates \granges across bootstrap
 iterations. This \bootranges object can be manipulated with \plyranges
-to derive the bootstrap distribution of test statistics, and an
-empirical $p = \frac{\#\ of\ times\ s_r >\hat{s}}{R}$ (\cref{fig:framework}B).
+to derive the bootstrap distribution of test statistics $\{s_b\}$, and a
+bootstrap p-value for observed test statistic $s$:
+$ \frac{1}{R} \sum_{b=1}^R 1_{\{s_b > s\}} $ (\cref{fig:framework}B).
 % the number of times that show an equal or greater statistics than the observed statistic
 % or any types of intervals can be reported for testing the null hypothesis that there is no true
 % biological relevant association between features.
