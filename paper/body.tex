@@ -50,22 +50,22 @@ a ``segmented'' block bootstrap:
 since the distribution of features in the genome exhibits multi-scale
 structure, we follow the logic of \citet{bickel2010subsampling} and consider to
 perform block bootstrapping within \textit{segments} of the genome, which are
-more homogeneous in terms of base composition and feature density.
-We consider various genome segmentation procedures based on gene
-density, or annotations, e.g. Giemsa bands or pre-computed segments
+more homogeneous in their feature density.
+We consider various genome segmentation procedures
+or annotations, e.g. Giemsa bands or published segmentations
 (see software vignette for details).
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
 The input for the workflow is \granges features \bm{$x$} and
-\bm{$y$}, with optional metadata columns (\texttt{mcols}) that can be
+\bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
-Given a segmentation and \texttt{blockLength} $L_b$, a \bootranges
+Given a segmentation and block length $L_b$, a \bootranges
 object is generated, which concatenates \granges across bootstrap
 iterations. This \bootranges object can be manipulated with \plyranges
-to derive the bootstrap distribution of test statistics $\{s_r\}$, and a
-bootstrap p-value for observed test statistic $s$:
-$ \frac{1}{R} \sum_{r=1}^R 1_{\{s_r > s\}} $ (\cref{fig:framework}B).
+to derive the bootstrap distribution of test statistics $\{s_r\}$ and a
+bootstrap p-value:
+$ \frac{1}{R} \sum_{r=1}^R 1_{\{s_r > s_{obs}\}} $ (\cref{fig:framework}B).
 The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
 \vspace{-0.5cm}
@@ -73,8 +73,8 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.05cm}
 \includegraphics[scale=0.65]{Figures/bootRanges.jpg}
-\caption{Overview of \bootranges workflow. (a) A schematic
-  diagram of \bootranges with \texttt{blockLength} $L_b$ across chromosome.
+\caption{Overview of \bootranges workflow. (A) A schematic
+  diagram of bootstrapping blocks of length $L_b$.
   (b) Testing overlaps of features in \bm{$x$} with features in
   \bm{$y$}, and comparing to a bootstrap distribution.} 
 \label{fig:framework}
@@ -85,7 +85,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \section{Application}
 
 We first applied \bootranges to determine the significance of the
-overlap of ATAC-seq on human liver tissue
+overlap of liver ATAC-seq
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
 bootstrapping the SNPs to assess significance.
 While the observed overlap was significant across many combinations of
@@ -114,10 +114,11 @@ a scaled version of the change in the width of the previous block length
 bootstrap distribution over $L_b$,
 and the inter-feature distance distribution to assess conserved
 clustering of features (Supplementary \cref{sec:length}).
-Here $L_s \approx 2Mb$ and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
-shown to be a good range for segmentation and block
+Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
+shown to be a good range for segment and block
 lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}).
-The scientific conclusion of this example was that liver ATAC-seq were
+The scientific conclusion of this example was that liver ATAC-seq
+peaks were
 much closer to total cholesterol SNPs than expected even when placing
 blocks of SNPs to match a genome segmentation.
 Shuffling of features (Supplementary \cref{sec:shuffle})
@@ -135,15 +136,12 @@ respect to a genome segmentation.
   Bootstrapping parameter evaluation and enrichment analyses. 
   A) Variance of the rate of overlaps and
   B) $z$ score for the observed overlap,
-  for different segmentations and $L_b$ on the liver ATAT-seq
+  for different segmentations and $L_b$ on the liver 
   dataset.
-  %Upper and lower horizontal line represents the $z$ score obtained
-  %with naive shuffling and ....
    C)The GAM predicted curves for observed (black line) and
   bootstrapped data (densities),
-  for the overlap count over logFC of DE genes for the macrophage
-  dataset.
-  Color of density represents the $z$ score for the observed overlap
+  for the overlap count over logFC of DE genes.
+  Color represents the $z$ score for the observed overlap
   with respect to the conditional density.
 }
 \label{fig:result}
@@ -161,7 +159,7 @@ respect to a genome segmentation.
 %% the null hypothesis, in this case, although the z score varies greatly
 %% among the different segmentations and block lengths.
 
-We demonstrate using \bootranges to motivate the choice of data-driven thresholds 
+We demonstrated using \bootranges to motivate the choice of data-driven thresholds 
 during enrichment analyses. We tested this on a dataset of differential chromatin accessibility and gene expression 
 \citep{alasoo2018shared,lee2020fluent}.
 A generalized linear model (GLM) with penalized splines was
@@ -173,7 +171,7 @@ the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C).
 These analyses suggested that $|\textrm{logFC}| = 2$
-are optimized thresholds where the $z$ score was highest
+were optimized thresholds where the $z$ score was highest
 (\cref{fig:suppfig}E).
 
 %We demonstrate using \bootranges to motivate the choice of thresholds 
@@ -213,7 +211,7 @@ are optimized thresholds where the $z$ score was highest
 %% percentile intervals at the same time across a range of effect sizes
 %% were displayed by conditional density plot 
 
-We additionally applied \bootranges to Chromium Single Cell Multiome
+We applied \bootranges to Chromium Single Cell Multiome
 ATAC- and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
 modalities for all pairs of genes and peaks, across
 14 cell types (pseudo-bulk). Across all genes, we observed
@@ -221,31 +219,33 @@ $\bar{\rho} = 0.33$, which was
 significantly higher than the bootstrap correlation mean
 (\cref{fig:suppfig}F, $\bar{\rho}_{R} = 0.007$). Thus, as expected, RNA
 and ATAC measured at local peaks had similar cell-type-specificity.
-Additionally, the average bootstrapped gene-peaks correlation per gene can be computed to
-idenitfy gene-promoter pairs that are significantly correlated across cell types (\cref{fig:suppfig}G-H).
-%Additionally, the average gene-promoter
-%correlation per gene can be computed. 
-%XXX of genes had a
-%significantly higher correlation than bootstrapped data.
+Additionally, the average gene-peaks correlation per gene can be
+computed and compared to a bootstrap distribution to
+identify gene-promoter pairs that were significantly correlated across cell types (\cref{fig:suppfig}G-H).
+
+To compare speed, we ran \bootranges and GSC on
+ENCODE kidney and bladder ChIP-seq. The average time to
+block bootstrap the genome using \bootranges was 0.30s and
+0.37s with overlap computation. A comparable analysis with GSC took
+7.56s.
 
 \vspace*{-20pt}
 \section{Conclusion}
-Overall, \bootranges generates null sets preserving 
-genome clumping property and therefore derives more acurate conclusion in genomic analysis. 
-It has great flexibility in variaous disciplines(e.g. identify putative transcription factor binding site according to enriched peak regions)
- and fast implementation time. We compared \bootranges and GSC speed using
-ENCODE kidney and bladder ChIP-seq. The average time to
-block bootstrap the genome using \bootranges was 0.30s and
-0.37s adding overlap computation. A comparable
-analysis with GSC took 7.56s.
-% -- maybe we can mention the code link on page 1 to save space ...
+
+\bootranges efficiently generates null feature sets preserving 
+local genomic correlations, and can be used easily in combination with
+other range-based tools such as \plyranges.
+It has great flexibility in various disciplines (e.g. identify
+putative transcription factor binding site according to enriched peak
+regions).
+
 % All of the R code and data used in this paper are available at the
 % following repository: 
 % \url{https://github.com/Wancen/bootRangespaper}.
 
-\vspace*{-25pt}
+\vspace*{-20pt}
 
 \section*{Funding}
 This work was funded by CZI EOSS and NIH [NHGRI R01 HG009937]. 
 
-\vspace*{-25pt}
+\vspace*{-20pt}
