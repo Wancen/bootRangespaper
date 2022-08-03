@@ -67,7 +67,7 @@ density, or annotations, e.g. Giemsa bands or pre-computed segments
 (see software vignette for details).
 % Segway segments \citep{hoffman:Segway}, or ChromHMM segments
 % \citep{ernst2012chromhmm})
-The genome segments define large (e.g. on the order of ${\sim}1$ MB),
+The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
 %The workflow of \bootranges includes downstream analysis with \plyranges.
@@ -131,7 +131,8 @@ a scaled version of the change in the width of the previous block length
 bootstrap distribution over $L_b$,
 and the inter-feature distance distribution to assess conserved
 clustering of features (Supplementary \cref{sec:length}).
-Here $L_b \in [300\textrm{kb},600\textrm{kb}]$ was shown to be a good range for block
+Here $L_s \approx 2Mb$ and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
+shown to be a good range for segmentation and block
 lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}).
 The scientific conclusion of this example was that liver ATAC-seq were
 much closer to total cholesterol SNPs than expected even when placing
@@ -146,7 +147,7 @@ respect to a genome segmentation.
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.1cm}
 \setlength{\belowcaptionskip}{-0.1cm}
-\includegraphics[scale=0.25]{Figures/fig2.jpeg}
+\includegraphics[scale=0.28]{Figures/fig2_3.jpeg}
 \caption{
   Bootstrapping parameter evaluation and enrichment analyses. 
   A) Variance of the rate of overlaps and
@@ -155,11 +156,9 @@ respect to a genome segmentation.
   dataset.
   %Upper and lower horizontal line represents the $z$ score obtained
   %with naive shuffling and ....
-  The GAM predicted curves for observed (black line) and
+   C)The GAM predicted curves for observed (black line) and
   bootstrapped data (densities),
-  C) for the overlap rate over GWAS $-\log_{10}(p)$ for the liver QTL
-  dataset and
-  D) for the overlap count over logFC of DE genes for the macrophage
+  for the overlap count over logFC of DE genes for the macrophage
   dataset.
   Color of density represents the $z$ score for the observed overlap
   with respect to the conditional density.
@@ -179,26 +178,40 @@ respect to a genome segmentation.
 %% the null hypothesis, in this case, although the z score varies greatly
 %% among the different segmentations and block lengths.
 
-We demonstrate using \bootranges to motivate the choice of thresholds 
-that are applied to feature sets during enrichment analyses.
-%In this study, we showed optimized selection of data driven p-value
-%and logFC through applying \bootranges on pairs of features:
-We tested this on the aforementioned liver ATAC-seq example, and on a
-dataset of differential chromatin accessibility and gene expression 
+We demonstrate using \bootranges to motivate the choice of data-driven thresholds 
+during enrichment analyses. We tested this on a dataset of differential chromatin accessibility and gene expression 
 \citep{alasoo2018shared,lee2020fluent}.
-A generalized linear model (GLM) with penalized regression splines was
-fit to the overlap rate or count over the $-\log_{10}(p)$ or
-gene logFC, both for the original
+A generalized linear model (GLM) with penalized splines was
+fit to the overlap count over gene logFC, both for the original
 data and to each of the bootstrap datasets.
-Condition densities of splines fit to bootstrap data
+Conditional densities of splines fit to bootstrap data
 were computed at various thresholds to reveal how
 the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
-(\cref{fig:result}C-D).
-These analyses suggested that $-\log_{10}(p) = 8$ and
-$|\textrm{logFC}| = 2$
+(\cref{fig:result}C).
+These analyses suggested that $|\textrm{logFC}| = 2$
 are optimized thresholds where the $z$ score was highest
-(\cref{fig:suppfig}D-E).
+(\cref{fig:suppfig}E).
+
+%We demonstrate using \bootranges to motivate the choice of thresholds 
+%that are applied to feature sets during enrichment analyses.
+%We tested this on the aforementioned liver ATAC-seq example, and on a
+%dataset of differential chromatin accessibility and gene expression 
+%\citep{alasoo2018shared,lee2020fluent}.
+%A generalized linear model (GLM) with penalized regression splines was
+%fit to the overlap rate or count over the $-\log_{10}(p)$ or
+%gene logFC, both for the original
+%data and to each of the bootstrap datasets.
+%Condition densities of splines fit to bootstrap data
+%were computed at various thresholds to reveal how
+%the threshold choice would affect the
+%variance of the bootstrap density and the resulting $z$ score
+%(\cref{fig:result}C-D).
+%These analyses suggested that $-\log_{10}(p) = 8$ and
+%$|\textrm{logFC}| = 2$
+%are optimized thresholds where the $z$ score was highest
+%(\cref{fig:suppfig}D-E).
+
 %We found that the $z$ score was highest when $-\log_{10}(p) = 8$
 %(\cref{fig:suppfig}D),
 %and when $\textrm{|logFC|} = 2$(\cref{fig:suppfig}E).
@@ -232,6 +245,8 @@ idenitfy gene-promoter pairs that are significantly correlated across cell types
 %XXX of genes had a
 %significantly higher correlation than bootstrapped data.
 
+\vspace*{-20pt}
+\section{Conclusion}
 Overall, \bootranges generates null sets preserving 
 genome clumping property and therefore derives more acurate conclusion in genomic analysis. 
 It has great flexibility in variaous disciplines(e.g. identify putative transcription factor binding site according to enriched peak regions)
