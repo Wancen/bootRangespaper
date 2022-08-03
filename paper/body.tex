@@ -3,26 +3,16 @@
 In genomic analysis, to assess whether
 there is an enrichment of one set of features near another 
 one must choose an appropriate null model \citep{reviewdilemma2014}.
-% -- better save this for later...
-%or a correlation across samples between nearby genomic features of
-%different modalities (e.g. gene expression, chromatin accessibility).
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
-%\wancen{or identify putative transcription factor binding site according to enriched peak regions,}
 and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
 suggest mechanisms underlying the GWAS trait.
 Such analyses rely on specifying a null distribution, where one
 strategy is to uniformly shuffle one set of the
 genomic features in the genome, possibly while considering a set of
 excluded regions.
-%giving random positions drawn uniformly along the
-%genome to existing features, possibly while considering a set of
-%excluded positions.
 However, uniformly distributed null feature sets will not exhibit the
 clumping property common with genomic feature sets.
-% where there often exists a complex dependency structure.
-% both in terms of placement and
-% correlation of metadata (signal strength, cell-type-specificity, etc.).
 Using an overly simplistic null distribution that doesn't take into
 account local dependencies could result in misleading conclusions.
 More sophisticated methods exist, for example
@@ -42,7 +32,6 @@ avoiding a genome-scale bootstrap.
 Here we describe the \bootranges software, with efficient
 vectorized code for performing block bootstrap sampling of
 \granges \citep{lawrence2013software} objects.
-%within the Bioconductor ecosystem.
 \bootranges is part of a modular analysis workflow, where bootstrapped
 \granges can be analyzed at block or genome scale using tidy
 analysis with \plyranges \citep{lee2019plyranges}.
@@ -65,12 +54,9 @@ more homogeneous in terms of base composition and feature density.
 We consider various genome segmentation procedures based on gene
 density, or annotations, e.g. Giemsa bands or pre-computed segments
 (see software vignette for details).
-% Segway segments \citep{hoffman:Segway}, or ChromHMM segments
-% \citep{ernst2012chromhmm})
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
-%The workflow of \bootranges includes downstream analysis with \plyranges.
 The input for the workflow is \granges features \bm{$x$} and
 \bm{$y$}, with optional metadata columns (\texttt{mcols}) that can be
 used for computing a more complex test statistic than overlaps.
@@ -80,9 +66,6 @@ iterations. This \bootranges object can be manipulated with \plyranges
 to derive the bootstrap distribution of test statistics $\{s_r\}$, and a
 bootstrap p-value for observed test statistic $s$:
 $ \frac{1}{R} \sum_{r=1}^R 1_{\{s_r > s\}} $ (\cref{fig:framework}B).
-% the number of times that show an equal or greater statistics than the observed statistic
-% or any types of intervals can be reported for testing the null hypothesis that there is no true
-% biological relevant association between features.
 The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
 \vspace{-0.5cm}
@@ -122,7 +105,7 @@ segmentation may be a more appropriate choice
 % inhomogeneous and segmentation could alleviate the scenario.
 The decreasing trend using pre-defined segmentation from
 Roadmap Epigenomics indicated too many short segments,
-where $L_b$ is too close to $L_s$ \wancen{results failed to random select the blocks place}.
+where $L_b$ is too close to $L_s$ for effective block randomization.
 To choose an optimal block length and segmentation, 
 we considered a number of diagnostics including
 those recommended previously \citep{bickel2010subsampling}:
