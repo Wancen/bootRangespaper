@@ -92,16 +92,40 @@
 
 \section{Supplementary Methods}\label{sec:suppmethods}
 
-\subsection{Previous methods}
-In order to generate background data sets for null hypothesis testing of association analysis, there are two ways to formulate.  
+\subsection{Comparison to previous methods}
+In order to generate background feature sets for null hypothesis
+testing of association analysis, there are two general categories of methods.  
 One method for generating background genomic features sets is to sample from a larger experimental pool or database, like 
 LOLA \citep{sheffield2016lola} using Fisher's exact test, and Poly-Enrich \citep{lee2020poly} using likelihood ratio test based on negative binomial likelihood. 
-Another method is to permute or shuffle the genomic ranges given random start sites to existing features, possibly considering an exclusion list of regions where features should not be located, like 
-bedtools \citep{quinlan2010bedtools}, ChIP-Enrich \citep{welch2014chip},
-GenometriCorr \citep{GenometriCorrfavorov2012}, GAT additionally allowing controlling for GC content \citep{GAT_2013}, and one of strategies of regioneR implement a circular randomization to preserve inter-feature distance \citep{gel2016regioner}.
+Another method is to permute or shuffle the genomic ranges, giving
+random start sites to existing features, possibly considering an
+exclusion list of regions where features should not be
+located. Examples of this type of method include 
+bedtools \citep{quinlan2010bedtools}, ChIP-Enrich
+\citep{welch2014chip}, or
+GenometriCorr \citep{GenometriCorrfavorov2012}.
+GAT additionally allows controlling for GC content \citep{GAT_2013},
+and regioneR also implement a circular randomization to preserve
+inter-feature distance \citep{gel2016regioner}.
+Our methods are similar to the second type, in that we redistribute
+features along the genome, but we preserve inter-feature distances, as
+in regioneR, but using a block resampling scheme, as in GSC
+\citep{bickel2010subsampling}.
 
 \subsection{Segmentation formulation}
-From annotation databases generated from Ensembl, we can obtain a sequence of gene density count per million base $\{X_1,...,X_n\}$ positioned linearly. We assume there exist integers $\bm{\tau}=\bm{\tau^{(n)}}=(\tau_0,...,\tau_U)$, where $0=\tau_0 < \tau_1 < ... <\tau_U = n$, such that the collections of variables, ${\bm{X}_{\tau_i},...,\bm{X}_{\tau_i+1}}$, are separately stationary for each $i=0,...,U-1$. We let $n_i=\tau_i-\tau_{i-1}$ be the length of the \textit{i}th region. Hence, we introduce the mapping $$\pi:\{1,...,n\}\rightarrow\{(i,j):1\leq i \leq U,1\leq j \leq n_i\}$$ which relates the original sequence $\{X_1,...,X_n\}$ to the segmentation sequence $\{X_{ij}:1\leq i \leq U,1\leq j \leq n_i\}$\\
+From Ensembl annotation databases, we can obtain the position of all
+genes, so that we can compute
+gene density as the count of genes per million basepairs
+$\{X_1,...,X_n\}$.
+We assume there exist integers
+$\bm{\tau}=\bm{\tau^{(n)}}=(\tau_0,...,\tau_U)$, where $0=\tau_0 <
+\tau_1 < ... <\tau_U = n$, such that the collections of variables,
+${\bm{X}_{\tau_i},...,\bm{X}_{\tau_i+1}}$, are separately stationary
+for each $i=0,...,U-1$. We let $n_i=\tau_i-\tau_{i-1}$ be the length
+of the \textit{i}th region. Hence, we introduce the
+mapping $$\pi:\{1,...,n\}\rightarrow\{(i,j):1\leq i \leq U,1\leq j
+\leq n_i\}$$ which relates the original sequence $\{X_1,...,X_n\}$ to
+the segmentation sequence $\{X_{ij}:1\leq i \leq U,1\leq j \leq n_i\}$ 
 
 \subsection{ChromHMM annotations for Roadmap Epigenomics}
 \wancen{Should we talk about what is HMM and CBS?}
