@@ -65,7 +65,7 @@ object is generated, which concatenates \granges across bootstrap
 iterations. This \bootranges object can be manipulated with \plyranges
 to derive the bootstrap distribution of test statistics $\{s_r\}$ and a
 bootstrap p-value:
-$ \frac{1}{R} \sum_{r=1}^R 1_{\{s_r > s_{obs}\}} $ (\cref{fig:framework}B).
+$ \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}} $ (\cref{fig:framework}B).
 The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
 \vspace{-0.5cm}
@@ -116,7 +116,7 @@ and the inter-feature distance distribution to assess conserved
 clustering of features (Supplementary \cref{sec:length}).
 Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
 shown to be a good range for segment and block
-lengths (\cref{fig:suppfig}A-C, and Supplementary \cref{sec:results}).
+lengths (\cref{fig:suppfig0}A-C, and Supplementary \cref{sec:results}).
 The scientific conclusion of this example was that liver ATAC-seq
 peaks were
 much closer to total cholesterol SNPs than expected even when placing
@@ -131,7 +131,7 @@ respect to a genome segmentation.
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.1cm}
 \setlength{\belowcaptionskip}{-0.1cm}
-\includegraphics[scale=0.28]{Figures/fig2_3.jpeg}
+\includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
 \caption{
   Bootstrapping parameter evaluation and enrichment analyses. 
   A) Variance of the rate of overlaps and
@@ -172,7 +172,7 @@ variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C).
 These analyses suggested that $|\textrm{logFC}| = 2$
 were optimized thresholds where the $z$ score was highest
-(\cref{fig:suppfig}E).
+(\cref{fig:suppfig2}B).
 
 %We demonstrate using \bootranges to motivate the choice of thresholds 
 %that are applied to feature sets during enrichment analyses.
@@ -191,12 +191,12 @@ were optimized thresholds where the $z$ score was highest
 %These analyses suggested that $-\log_{10}(p) = 8$ and
 %$|\textrm{logFC}| = 2$
 %are optimized thresholds where the $z$ score was highest
-%(\cref{fig:suppfig}D-E).
+%(\cref{fig:suppfig2}A-B).
 
 %We found that the $z$ score was highest when $-\log_{10}(p) = 8$
-%(\cref{fig:suppfig}D),
-%and when $\textrm{|logFC|} = 2$(\cref{fig:suppfig}E).
-%(\cref{fig:suppfig}E).
+%(\cref{fig:suppfig2}A),
+%and when $\textrm{|logFC|} = 2$(\cref{fig:suppfig2}B).
+%(\cref{fig:suppfig2}B).
 %% from \textit{gam} function in the
 %% \emph{mgcv} R package were fitted and \textit{predict\_gam} function
 %% in the \emph{tidymv} R package were predicted on observed and each
@@ -217,11 +217,11 @@ modalities for all pairs of genes and peaks, across
 14 cell types (pseudo-bulk). Across all genes, we observed
 $\bar{\rho} = 0.33$, which was 
 significantly higher than the bootstrap correlation mean
-(\cref{fig:suppfig}F, $\bar{\rho}_{R} = 0.007$). Thus, as expected, RNA
+(\cref{fig:suppfig3}A, $\bar{\rho}_{R} = 0.007$). Thus, as expected, RNA
 and ATAC measured at local peaks had similar cell-type-specificity.
 Additionally, the average gene-peaks correlation per gene can be
 computed and compared to a bootstrap distribution to
-identify gene-promoter pairs that were significantly correlated across cell types (\cref{fig:suppfig}G-H).
+identify gene-promoter pairs that were significantly correlated across cell types (\cref{fig:suppfig3}B-C).
 
 To compare speed, we ran \bootranges and GSC on
 ENCODE kidney and bladder ChIP-seq. The average time to
@@ -246,6 +246,6 @@ regions).
 \vspace*{-20pt}
 
 \section*{Funding}
-This work was funded by CZI EOSS and NIH [NHGRI R01 HG009937]. 
+This work was funded by CZI EOSS, NIH [R35-GM128645 to D.H.P., R01-HG009937 to M.I.L.]. 
 
 \vspace*{-20pt}
