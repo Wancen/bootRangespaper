@@ -2,7 +2,7 @@
 
 In genomic analysis, to assess whether
 there is an enrichment of one set of features near another 
-one must choose an appropriate null model \citep{reviewdilemma2014}.
+one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
 and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
@@ -30,10 +30,10 @@ a strategy of swapping pairs of blocks to compute overlaps, while
 avoiding a genome-scale bootstrap.
 
 Here we describe the \bootranges software, with efficient
-vectorized code for performing block bootstrap sampling of
-\granges \citep{lawrence2013software} objects.
+vectorized code for performing block bootstrap sampling of genomic ranges.
+%\granges \citep{lawrence2013software} objects.
 \bootranges is part of a modular analysis workflow, where bootstrapped
-\granges can be analyzed at block or genome scale using tidy
+ranges can be analyzed at block or genome scale using tidy
 analysis with \plyranges \citep{lee2019plyranges}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
@@ -57,31 +57,31 @@ or annotations, e.g. Giemsa bands or published segmentations
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
-The input for the workflow is \granges features \bm{$x$} and
+The input for the workflow is features \bm{$x$} and
 \bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
 Given a segmentation and block length $L_b$, a \bootranges
-object is generated, which concatenates \granges across bootstrap
+object is generated, which concatenates ranges across bootstrap
 iterations. This \bootranges object can be manipulated with \plyranges
 to derive the bootstrap distribution of test statistics $\{s_r\}$ and a
 bootstrap p-value:
 $ \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}} $ (\cref{fig:framework}B).
 The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
-\vspace{-0.5cm}
-\begin{figure}[htbp]
+%\vspace{-0.5cm}
+\begin{figure}[t]
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.05cm}
 \includegraphics[scale=0.65]{Figures/bootRanges.jpg}
-\caption{Overview of \bootranges workflow. (A) A schematic
-  diagram of bootstrapping blocks of length $L_b$.
-  (b) Testing overlaps of features in \bm{$x$} with features in
-  \bm{$y$}, and comparing to a bootstrap distribution.} 
+\caption{Overview of \bootranges workflow.
+  A) Bootstrapping blocks of length $L_b$.
+  B) Testing overlaps of features in \bm{$x$} with features in
+  \bm{$y$}, comparing to a bootstrap distribution.} 
 \label{fig:framework}
-\vspace{-0.5cm}
+\vspace{-0.55cm}
 \end{figure}
 
-\vspace*{-21pt}
+\vspace*{-.5cm}
 \section{Application}
 
 We first applied \bootranges to determine the significance of the
@@ -89,7 +89,7 @@ overlap of liver ATAC-seq
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
 bootstrapping the SNPs to assess significance.
 While the observed overlap was significant across many combinations of
-various segmentation methods and block length according to empirical p-value, 
+various segmentation methods and $L_b$ according to empirical p-value, 
 the variance of the
 bootstrap statistics distribution and the resulting $z$ score varied greatly
 (\cref{fig:result}A-B).
@@ -106,14 +106,12 @@ segmentation may be a more appropriate choice
 The decreasing trend using pre-defined segmentation from
 Roadmap Epigenomics indicated too many short segments,
 where $L_b$ is too close to $L_s$ for effective block randomization.
-To choose an optimal block length and segmentation, 
+To choose an optimal $L_b$ and segmentation, 
 we considered a number of diagnostics including
 those recommended previously \citep{bickel2010subsampling}:
 the variance of the bootstrap distribution (\cref{fig:result}A),
-a scaled version of the change in the width of the previous block length
-bootstrap distribution over $L_b$,
-and the inter-feature distance distribution to assess conserved
-clustering of features (Supplementary \cref{sec:length}).
+a scaled version of the changes in this variance over $L_b$,
+and the inter-feature distances (Supplementary \cref{sec:length}).
 Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
 shown to be a good range for segment and block
 lengths (\cref{fig:suppfig0}A-C, and Supplementary \cref{sec:results}).
@@ -133,19 +131,18 @@ respect to a genome segmentation.
 \setlength{\belowcaptionskip}{-0.1cm}
 \includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
 \caption{
-  Bootstrapping parameter evaluation and enrichment analyses. 
-  A) Variance of the rate of overlaps and
-  B) $z$ score for the observed overlap,
+  Parameter selection and overlap analysis.
+  A) Variance of the rate of overlaps and,
+  B) $z$ score for the overlap,
   for different segmentations and $L_b$ on the liver 
   dataset.
-   C)The GAM predicted curves for observed (black line) and
+  C) GAM predicted curves for observed (black line) and
   bootstrapped data (densities),
-  for the overlap count over logFC of DE genes.
-  Color represents the $z$ score for the observed overlap
-  with respect to the conditional density.
+  for the overlap count over gene logFC.
+  Conditional densities are colored by the $z$ score for the overlap.
 }
 \label{fig:result}
-\vspace{-0.7cm}
+\vspace{-.5cm}
 \end{figure}
 
 %% z score, independent of number of bootstraps, was used to measure the
@@ -211,17 +208,19 @@ were optimized thresholds where the $z$ score was highest
 %% percentile intervals at the same time across a range of effect sizes
 %% were displayed by conditional density plot 
 
-We applied \bootranges to Chromium Single Cell Multiome
-ATAC- and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
+We applied \bootranges to
+%Chromium Single Cell Multiome
+single cell ATAC-seq and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
 modalities for all pairs of genes and peaks, across
-14 cell types (pseudo-bulk). Across all genes, we observed
+14 cell types. Across all genes, we observed
 $\bar{\rho} = 0.33$, which was 
 significantly higher than the bootstrap correlation mean
-(\cref{fig:suppfig3}A, $\bar{\rho}_{R} = 0.007$). Thus, as expected, RNA
-and ATAC measured at local peaks had similar cell-type-specificity.
+(\cref{fig:suppfig3}A, $\bar{\rho}_{R} = 0.007$). As expected, RNA
+and ATAC measured at local peaks had significant positive correlation.
 Additionally, the average gene-peaks correlation per gene can be
 computed and compared to a bootstrap distribution to
-identify gene-promoter pairs that were significantly correlated across cell types (\cref{fig:suppfig3}B-C).
+identify gene-promoter pairs that were significantly correlated across
+cell types (\cref{fig:suppfig3}B-C).
 
 To compare speed, we ran \bootranges and GSC on
 ENCODE kidney and bladder ChIP-seq. The average time to
@@ -246,6 +245,6 @@ regions).
 \vspace*{-20pt}
 
 \section*{Funding}
-This work was funded by CZI EOSS, NIH [R35-GM128645 to D.H.P., R01-HG009937 to M.I.L.]. 
+CZI EOSS and R01-HG009937 to M.I.L, NIH R35-GM128645 to D.H.P.
 
 \vspace*{-20pt}
