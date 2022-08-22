@@ -1,7 +1,7 @@
 \section{Introduction}
 
 In genomic analysis, to assess whether
-there is an enrichment of one set of features near another 
+there is an significant association between two sets of regions, 
 one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
@@ -9,19 +9,19 @@ and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
 suggest mechanisms underlying the GWAS trait.
 Such analyses rely on specifying a null distribution, where one
 strategy is to uniformly shuffle one set of the
-genomic features in the genome, possibly while considering a set of
+genomic features in the genome, possibly considering a set of
 excluded regions.
-However, uniformly distributed null feature sets will not exhibit the
-clumping property common with genomic feature sets.
+However, uniformly distributed null sets will not exhibit the
+clumping property common with genomic regions.
 Using an overly simplistic null distribution that doesn't take into
 account local dependencies could result in misleading conclusions.
 More sophisticated methods exist, for example
 GAT, which allows for controlling by local GC content
 \citep{GAT_2013}, and regioneR, which implements a circular shift to
-preserve clumping \citep{gel2016regioner}.
+preserve clumping property\citep{gel2016regioner}.
 The block bootstrap \citep{politis1999subsampling}
 provides an alternative, where one instead generates
-random feature sets by sampling large blocks of features from the
+random sets by sampling large blocks of features from the
 original set with replacement, as proposed for 
 genomic features by \citet{bickel2010subsampling} in Genome Structure
 Correlation (GSC).
@@ -39,7 +39,7 @@ analysis with \plyranges \citep{lee2019plyranges}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex
-downstream analyses, including to motivate thresholds chosen during
+downstream analyses, including choosing the thresholds during
 enrichment analysis and single-cell multi-omics.
 
 \vspace*{-20pt}
@@ -54,7 +54,7 @@ perform block bootstrapping within \textit{segments} of the genome, which are
 more homogeneous in their feature density.
 We consider various genome segmentation procedures
 or annotations, e.g. Giemsa bands or published segmentations
-(see software vignette for details).
+(see Supplementary for details).
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments within which to sample blocks
 (\cref{fig:framework}A). 
@@ -79,7 +79,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
   B) Testing overlaps of features in \bm{$x$} with features in
   \bm{$y$}, comparing to a bootstrap distribution.} 
 \label{fig:framework}
-\vspace{-0.55cm}
+\vspace{-0.5cm}
 \end{figure}
 
 \vspace*{-.5cm}
@@ -100,6 +100,7 @@ Overlap rate was defined as the proportion of
 SNPs that had peaks within 10kb.
 That the variance of the distribution in \cref{fig:result}A for the
 unsegmented bootstrap increased with $L_b$ indicated that
+ranges are inhomogeneous and
 bootstrapping with respect to a genome
 segmentation may be a more appropriate choice
 \citep{bickel2010subsampling}. 
@@ -112,7 +113,8 @@ we considered a number of diagnostics including
 those recommended previously \citep{bickel2010subsampling}:
 the variance of the bootstrap distribution (\cref{fig:result}A),
 a scaled version of the changes in this variance over $L_b$,
-and the inter-feature distances (Supplementary \cref{sec:length}).
+and the inter-feature distances distribution to assess conserved
+clustering of features (Supplementary \cref{sec:length}).
 Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
 shown to be a good range for segment and block
 lengths (\cref{fig:suppfig0}A-C, and Supplementary \cref{sec:results}).
@@ -121,30 +123,9 @@ peaks were
 much closer to total cholesterol SNPs than expected even when placing
 blocks of SNPs to match a genome segmentation.
 Shuffling of features (Supplementary \cref{sec:shuffle})
-resulted in a much higher $z = 18.5$, compared to $z \approx 4$ for
-the methods that preserve local correlation and place blocks with
-respect to a genome segmentation.
-
-%\vspace{-0.5cm}
-\begin{figure}[hbtp]
-\centering% default with `floatrow`
-\setlength{\abovecaptionskip}{-0.1cm}
-\setlength{\belowcaptionskip}{-0.1cm}
-\includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
-\caption{
-  Parameter selection and overlap analysis.
-  A) Variance of the rate of overlaps and,
-  B) $z$ score for the overlap,
-  for different segmentations and $L_b$ on the liver 
-  dataset.
-  C) GAM predicted curves for observed (black line) and
-  bootstrapped data (densities),
-  for the overlap count over gene logFC.
-  Conditional densities are colored by the $z$ score for the overlap.
-}
-\label{fig:result}
-\vspace{-.5cm}
-\end{figure}
+resulted in a much higher $z = 18.5$, compared to $z \approx 4$ 
+consistent with previous conclusions that shuffling may 
+overestimate significance leading to misinterpretation of enrichment.
 
 %% z score, independent of number of bootstraps, was used to measure the
 %% distance between the expected value and the observed one according to
@@ -172,8 +153,30 @@ These analyses suggested that $|\textrm{logFC}| = 2$
 were optimized thresholds where the $z$ score was highest
 (\cref{fig:suppfig2}B).
 
+%\vspace{-0.5cm}
+\newpage
+\begin{figure}[t]
+\centering% default with `floatrow`
+\setlength{\abovecaptionskip}{-0.1cm}
+\setlength{\belowcaptionskip}{-0.1cm}
+\includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
+\caption{
+  Parameter selection and overlap analysis.
+  A) Variance of the rate of overlaps and,
+  B) $z$ score for the overlap,
+  for different segmentations and $L_b$ on the liver 
+  dataset.
+  C) GAM predicted curves for observed (black line) and
+  bootstrapped data (densities),
+  for the overlap count over gene logFC.
+  Conditional densities are colored by the $z$ score for the overlap.
+}
+\label{fig:result}
+\vspace{-.7cm}
+\end{figure}
+
 %We demonstrate using \bootranges to motivate the choice of thresholds 
-%that are applied to feature sets during enrichment analyses.
+%that are applied to genomic regions during enrichment analyses.
 %We tested this on the aforementioned liver ATAC-seq example, and on a
 %dataset of differential chromatin accessibility and gene expression 
 %\citep{alasoo2018shared,lee2020fluent}.
@@ -198,7 +201,7 @@ were optimized thresholds where the $z$ score was highest
 %% from \textit{gam} function in the
 %% \emph{mgcv} R package were fitted and \textit{predict\_gam} function
 %% in the \emph{tidymv} R package were predicted on observed and each
-%% null feature sets.
+%% null sets.
 %% $$
 %% \setlength{\abovedisplayskip}{3pt}
 %% \setlength{\belowdisplayskip}{3pt}
@@ -210,18 +213,19 @@ were optimized thresholds where the $z$ score was highest
 %% were displayed by conditional density plot 
 
 We applied \bootranges to
-%Chromium Single Cell Multiome
-single cell ATAC-seq and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
+Chromium Single Cell Multiome
+ATAC-seq and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
 modalities for all pairs of genes and peaks, across
-14 cell types. Across all genes, we observed
+14 cell types (pseudo-bulk). Across all genes, we observed
 $\bar{\rho} = 0.33$, which was 
 significantly higher than the bootstrap correlation mean
 (\cref{fig:suppfig3}A, $\bar{\rho}_{R} = 0.007$). As expected, RNA
-and ATAC measured at local peaks had significant positive correlation.
+and ATAC measured at local peaks had similar cell-type-specificity.
 Additionally, the average gene-peaks correlation per gene can be
 computed and compared to a bootstrap distribution to
 identify gene-promoter pairs that were significantly correlated across
 cell types (\cref{fig:suppfig3}B-C).
+
 
 To compare speed, we ran \bootranges and GSC on
 ENCODE kidney and bladder ChIP-seq. The average time to
@@ -229,10 +233,11 @@ block bootstrap the genome using \bootranges was 0.30s and
 0.37s with overlap computation. A comparable analysis with GSC took
 7.56s.
 
+
 \vspace*{-20pt}
 \section{Conclusion}
 
-\bootranges efficiently generates null feature sets preserving 
+\bootranges efficiently generates null models of genomic regions preserving 
 local genomic correlations, and can be used easily in combination with
 other range-based tools such as \plyranges.
 It has great flexibility in various disciplines (e.g. identify

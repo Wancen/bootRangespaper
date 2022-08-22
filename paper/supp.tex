@@ -97,49 +97,58 @@
 \section{Supplementary Methods}\label{sec:suppmethods}
 
 \subsection{Comparison to previous methods}
-In order to generate background feature sets for null hypothesis
+In order to generate background regions for hypothesis
 testing of association analysis, there are two general categories of methods.  
-One method for generating background genomic features sets is to sample from a larger experimental pool or database, like 
+One category is to sample from a larger experimental pool or database, such as 
 LOLA \citep{sheffield2016lola} using Fisher's exact test, and Poly-Enrich \citep{lee2020poly} using likelihood ratio test based on negative binomial likelihood. 
-Another method is to permute or shuffle the genomic ranges, giving
-random start sites to existing features, possibly considering an
+Another category is to permute or shuffle the genomic ranges, possibly considering an
 exclusion list of regions where features should not be
-located. Examples of this type of method include 
+located. Example methods belong to this category include
 bedtools \citep{quinlan2010bedtools}, ChIP-Enrich
-\citep{welch2014chip}, or
+\citep{welch2014chip}, and
 GenometriCorr \citep{GenometriCorrfavorov2012}.
-GAT additionally allows controlling for GC content \citep{GAT_2013},
-and regioneR also implement a circular randomization to preserve
-inter-feature distance \citep{gel2016regioner}.
-Our methods are similar to the second type, in that we redistribute
-features along the genome, but we preserve inter-feature distances, as
-in regioneR, but using a block resampling scheme, as in GSC
-\citep{bickel2010subsampling}.
+In addition, GAT allows controlling for GC content \citep{GAT_2013},
+and regioneR implements a circular shift to
+preserve clumping property \citep{gel2016regioner}.
+Our method falls in the second category in that we redistribute
+features along the genome. But we use a block resampling scheme 
+to preserve local genome structure, as proposed for genomic features by
+\cite{bickel2010subsampling}.
 
-\subsection{Segmentation formulation}
-In the following we define variables for genome segmentation and use the notation as defined by \citep{bickel2010subsampling}.
-From Ensembl annotation databases, we can obtain the position of all
-genes, so that we can compute
-gene density as the count of genes per million basepairs. Suppose original sequences are $\{X_1,...,X_n\}$
-and we assume there exist integers
+\subsection{Segmentation}
+In the following, we define variables for genome segmentation and use the notation denoted by \cite{bickel2010subsampling}.
+One way to derive segmentation is based on gene density. 
+From Ensembl annotation databases, we could obtain the position of all
+genes. Then, we could compute
+gene density as the count of genes per million base pairs. Suppose original sequences are $\{X_1,...,X_n\}$
+and we assume there exists integers
 $\bm{\tau}=\bm{\tau^{(n)}}=(\tau_0,...,\tau_U)$, where $0=\tau_0 <
 \tau_1 < ... <\tau_U = n$, such that the collections of variables,
 ${\bm{X}_{\tau_i},...,\bm{X}_{\tau_{i+1}}}$, are separately stationary
-for each $i=0,...,U-1$. Here stationary means more homogeneous in their feature density.
-We let $n_i=\tau_i-\tau_{i-1}$ be the length
-of the \textit{i}th region. Hence, we introduce the
+for each $i=0,...,U-1$. 
+Here, stationary means similar gene density within each segment.
+Let $n_i=\tau_i-\tau_{i-1}$ be the length
+of the \textit{i}th region. We introduce the
 mapping $$\pi:\{1,...,n\}\rightarrow\{(i,j):1\leq i \leq U,1\leq j
-\leq n_i\},$$ which relates the original sequence $\{X_1,...,X_n\}$ to
+\leq n_i\},$$ through which the original sequence $\{X_1,...,X_n\}$ relates to
 the segmentation sequence $\{X_{ij}:1\leq i \leq U,1\leq j \leq n_i\}$.
 
-We considered various genome segmentation procedures or annotations in the paper, e.g. Circular Binary Search (CBS) \citep{cbs}, HMM \citep{rcpphmm}, and published segmentations(Roadmap). CBS and HMM are implemented as a built-in function in \nullranges as follows. We tile the genome based on segmentation length ($L_s$, e.g. on the order of ${\sim}1$ Mb) first and derive the gene density within each tile genome. CBS will recursively splits chromosomes into either two or three subsegments of estimated equal gene density and then use kmeans to cluster the subsegments. While HMM will model the gene density by a multinomial distribution given the number of hidden states and use Viterbi algorithm for hidden state decoding. Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were downloaded from \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on a multivariate Hidden Markov Model that explicitly models the presence or absence of each chromatin mark. It generated segmentation including 15 small states and we summeraized them into 3 big categories: low density("E9","E13","E14","E15"), middle density("E10","E11","E12"), high density("E1-E8"). 8,797 ranges left after merging states and mean width was around 0.33Mb. 
+We considered various genome segmentation procedures or annotations in the paper, e.g. Circular Binary Search (CBS) \citep{cbs}, HMM \citep{rcpphmm}, and published segmentations (Roadmap). CBS and HMM are implemented as a built-in function in \nullranges as follows. First, we tile the genome based on segmentation length ($L_s$, e.g. on the order of ${\sim}1$ Mb) and derive the gene density within each tiled genome. CBS recursively splits chromosomes into either two or three subsegments of estimated equal gene density and then uses kmeans to cluster the subsegments. While HMM models the gene density by a multinomial distribution given the number of hidden states and uses Viterbi algorithm for hidden state decoding. Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were downloaded from \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on a multivariate Hidden Markov Model that explicitly models the presence or absence of each chromatin mark. It generated segmentation including 15 small states and we summarized them into 3 big categories: low density(`E9',`E13',`E14',`E15'), middle density(`E10',`E11',`E12'), and high density(`E1-E8').
+After mergeing, 8,797 ranges were left and mean width was around 0.33Mb. 
 
 \subsection{Shuffling}\label{sec:shuffle}
-Genome shuffling was performed by random sample SNPs in acceptance region on Genome with probability proportional to SNPs count on each chromosome. The acceptance region excluded all ENCODE excludable regions plus telomere,centromere from UCSC and rCGH derived from \code{excluderanges} for hg38 \citep{excluderanges}.
+Genome shuffling was performed by random sample SNPs in acceptance region on Genome with probability proportional to SNPs count on each chromosome. For the paper, we defined acceptance region by excluding ENCODE-produced excludable regions, centromere, and telomere from UCSC that stored in \code{excluderanges} \citep{excluderanges}.
 
 
 \subsection{Assessment of \bootranges}
-Suppose we are interested in region overlap between one feature $\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,..., \tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$ with lengths $\rho_1, ..., \rho_\beta$, then the region overlap is defined as $s_{obs} \equiv  \frac{1}{\alpha}\sum_{t=1}^\alpha V_t$ where $V_t=1-\prod_{k\in (T_t+\theta)}(1-J_k)$ and $J_k=1$ if position $k$ belongs to feature $\bm{y}$ and 0 otherwise. $\theta$ is the shift among feature $\bm{x}$ and $\bm{y'}$, such as 1kb when linking promoters to gene. After we do the block bootstrap according to the segmentation region, we generate $R$ new sets of null features $\bm{y'}$ and $R\times \frac{n}{L_b}$ blocks. Therefore, we can do both genome-wise or block-wise analysis based on the question being addressed. Either using $s_{1}, s_{2}, ..., s_{R}$ to derive empirical \textit{p}-value $=  \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or $s_{1}, s_{2}, ..., s_{R\times \frac{n}{L_b}}$ to derive empirical \textit{p}-value $=  \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$. Additionally, we could used the $z$ score to measure the distance between the observed statistics and the bootstrap statistics distribution in terms of standard deviations. Specifically, the z score in \cref{fig:result} is calculated by $$z = \frac{s_\text{obs} - \widehat{s}}{ \text{sd}_R(\widehat{s})},$$ where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample mean of the $R$ replications and $\text{sd}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
+Suppose we are interested in region overlap between one feature $\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,..., \tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$ with lengths $\rho_1, ..., \rho_\beta$.
+Then, the region overlap is defined as $s_{obs} \equiv  \frac{1}{\alpha}\sum_{t=1}^\alpha V_t$, where $V_t=1-\prod_{k\in (T_t+\theta)}(1-J_k)$ and $J_k=1$ if position $k$ belongs to feature $\bm{y}$ and 0 otherwise. 
+$\theta$ is the shift among feature $\bm{x}$ and $\bm{y}$, such as 1kb when linking promoters to gene. 
+After block bootstrapping, we generate $R$ new sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks. 
+Therefore, we can do both genome-wise or block-wise analysis based on the question to be addressed.
+Then, we could use $s_{1}, s_{2}, ..., s_{R}$ to derive genome-wise empirical \textit{p}-value $=  \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or $s_{1}, s_{2}, ..., s_{R\times \frac{n}{L_b}}$ to derive block-wise empirical \textit{p}-value $=  \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$, respectatively. 
+Additionally, we could use $z$ score to measure the distance between the observed statistics and the bootstrap statistics distribution in terms of standard deviations (SD). 
+Specifically, the $z$ score in \cref{fig:result} is calculated by $$z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$ where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample mean of the $R$ replications and $\text{SD}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
 Note that, if block-wise analysis is preferred, the SD of bootstrap distribution should be scaled by $\sqrt{L_b}$.
 
 
@@ -147,7 +156,7 @@ Note that, if block-wise analysis is preferred, the SD of bootstrap distribution
 
 % $$P_{H_0}[R_n\geq r_{n}]\approx 0.05$$
 
-\subsection{Swaping algorithm}\label{sec:algorithm}
+\subsection{Swapping algorithm}\label{sec:algorithm}
 
 
 % \begin{algorithm}
@@ -181,7 +190,7 @@ Note that, if block-wise analysis is preferred, the SD of bootstrap distribution
          \textbf{random blocks:} Generate $n_b$ blocks with replacement and number of blocks per chromosome is proportional to $L_c$\\ %\tcp*[l]
       }
 %Find overlap of random blocks and feature $\bm{y}$\\% \tcp*[l]
-Move featues in $\bm{y}$ that fall into random blocks to rearranges blocks given the shift as difference between random blocks and rearranged blocks start sites
+Move features in $\bm{y}$ that fall into random blocks to rearranges blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \caption{Block bootstrap GRanges across chromosome} \label{alg:supp_unseg}
 \end{algorithm}
@@ -203,7 +212,7 @@ Move featues in $\bm{y}$ that fall into random blocks to rearranges blocks given
          \textbf{Return:} rearranged and random  block start and chromosome names
     }
 Construct random blocks Granges\\
-Move featues in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
+Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \end{algorithm}
 
@@ -223,29 +232,33 @@ Move featues in $\bm{y}$ that fall into random blocks to rearranged blocks given
          \textbf{Return:} random block start sites and chromosome names, rearranged block start sites and chromosome names
     }
 Construct random blocks Granges \\
-Move featues in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
+Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \end{algorithm}
 
 
-
-% \input{dataprocess}\label{section:preprocessing}
-
 \section{Supplementary Results} \label{sec:results}
-\subsection{Liver caQTL-GWAS colocalizations}
+\subsection{Overlap analysis of liver ATAC-seq with SNPs associated with
+total cholesterol}
 1872 SNPs data were download from the NHGRI-EBI GWAS catalog \citep{gwascatalog} on September 22, 2021. We only extracted single variant  associated with total cholesterol. Liver ATAC-seq
 \citep{CURRIN20211169} information of 20 samples were downloaded from GSE164870.
 Then genomic coordinates of consensus peaks were converted from hg19 to hg38 using \code{liftOver} to construct 221,606 peaks GRanges.
 
 \subsubsection{$L_b$ selection}\label{sec:length}
 On the issue of 
-block length selection, we considered it in two ways. One is trying to find $L_b$ that has the minimum value of a pseudometric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$ where $\mathcal{L}_{L_v}$ is the statistic distribution at length $L_v$, $v=1,2,\cdots,V$, and $V$ is the number of candidate block lengths and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics distribution following \citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ were in common had smaller values when $L_b\in[300000,800000]$. The second way is evaluating conserved spatial pattern that generated null sets have similar properties with original sets, eg. inter-feature distance. We used the Earth's Mover distance (EMD) to quantify the similarity between the distributions of an inter-feature distance in the original  and  null  dataset,  resulting  in  values  between  zero  (identical  distributions)  to  one  (totally  disjoint  distributions). The EMD between two distributions is proportional to the minimum amount of work required to change one distribution($y$) into the other($y'$). Here $y$ and $y'$ is the histogram of original and null inter-feature distance with bin size = 0.3. Since the EMD always decreased as $L_b$ increased because more neighbouring features reserved, the right $L_b$ should be chosen so that longer length doesn’t improve much as well as it is much smaller than the $L_s$. So,[200000,600000] was shown to be  a good range by visualization and according to the Elbow Method of EMD (\cref{fig:suppfig0}B-C). 
+block length selection, we considered it in two ways. 
+One is trying to find $L_b$ that has the minimum value of a pseudometric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$, 
+where $\mathcal{L}_{L_v}$ is the statistic distribution at length $L_v$, $v=1,2,\cdots,V$, $V$ is the number of candidate block lengths and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics distribution following \citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ had smaller values in most cases when $L_b\in[300kb,800kb]$. 
+Another way is evaluating conserved spatial pattern. Because we assume that generated null sets should have similar spatial properties with original sets, eg. inter-feature distance. 
+We used the Earth's Mover Distance (EMD) to quantify the similarity of the distributions of an inter-feature distance between the original  and  null  models,  resulting  in  values  from  zero  (identical  distributions)  to  one  (totally  disjoint  distributions). 
+The EMD between two distributions is proportional to the minimum amount of work required to change one distribution($y$) into the other ($y'$). 
+Here $y$ and $y'$ are the histograms of original and null model inter-feature distance with bin size = 0.3. We observsed that EMD always decreased as $L_b$ increased because more neighboring features reserved. However, $L_b$ cannot be too large and close to $L_s$. Otherwise, the blocks randomization process would not be effective. Hence, the right $L_b$ falls in the range where EMD around elbow of the line plot. In this practice, [300kb,600kb] was shown to be  a good range by visualization of density plot (\cref{fig:suppfig0}B) and according to the Elbow Method of EMD (\cref{fig:suppfig0}C). 
 
 
-\subsection{Macrophage cell lines}\label{sec:splines}
-Processed 24 macrophage samples' RNA-seq  and 145 samples' ATAC-seq were loaded from \code{fluentGenomics}\citep{lee2020fluent}. They were measured after interferon gamma(IFNg) stimulation. Since the transcriptomic response to IFNg stimulation may be mediated through an increasing transcription factors bindings on nearby regions and ATAC-seq can captioned those regions' accessibility, we expect there would have an enrichment of differentially accessible (DA) ATAC-seq peaks in the vicinity of differentially expressed (DE) genes. 
+\subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
+Processed 24 macrophage samples' RNA-seq  and 145 samples' ATAC-seq were loaded from \code{fluentGenomics}\citep{lee2020fluent}. They were measured after interferon gamma (IFNg) stimulation. Since the transcriptomic response to IFNg stimulation may be mediated through an increasing transcription factors binding on nearby regions and ATAC-seq can captured those regions' accessibility, we expect there would have an enrichment of differentially accessible (DA) ATAC-seq peaks in the vicinity of differentially expressed (DE) genes. 
 
-When performing block bootstrap with 500kb block length on 100 times, we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the null hypothesis and concluded that there was significant enrichment of DA peaks near DE genes by finding overlaps.
+When performing block bootstrap with 500kb block length on 100 times, we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the null hypothesis and concluded that there was significant enrichment of DA peaks near DE genes by counting overlaps.
 
 For fitting the generalized penalized splines, \code{gam} function in the \code{mgcv} package was used to fit the model, which was based on a penalized likelihood maximization, and generalized cross-validation was utilized to choose the optimal value for the smoothing parameter, $\lambda$. Then, \code{tidymv} package was implemented to predict and extract the fitted value. 
 
@@ -264,10 +277,18 @@ boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
 
 \end{lstlisting} 
 
-\subsection{Chromium Single Cell Multiome ATAC + Gene Expression assay}
-Data were downloaded according to \citet{Vignette} which includes genes and peaks in 10,032 cells. Cell type annotations have been done as a priori by the 10x Genomics R\&D team. Then information on chromosome 1 to 22 were selected to construct gene and peak GRanges. Since the main goal is not to accurately find gene-promoter pairs but the realization, the following preprocess may not be the most suitable way. First, we aggregated cells within same cell types, to form ‘pseudobulks’ with 14 samples according to the metadata because psuedobulking provided smoother correlation statistics without loss of the information of interest. Next, we removed all the features with 0 standard deviation. Then, log counts per million (CPM) were computed from \code{edgeR} for accounting for different library size.
+\subsection{Correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay}
+Data were downloaded according to \citet{Vignette} which includes genes and peaks in 10,032 cells. 
+Cell type annotations have been done as a priori by the 10x Genomics R\&D team. 
+Then, information on chromosome 1 to 22 were selected to construct gene and peak GRanges. 
+Since the main goal is not to accurately find gene-promoter pairs but the realization, the following preprocess may not be the most suitable way. 
+First, we aggregated cells within same cell types, to form ‘pseudobulks’ with 14 samples according to the metadata because pseudo-bulk provided smoother correlation statistics without loss of the information of interest. 
+Next, we removed all the features with 0 standard deviation. 
+Then, log counts per million (CPM) were computed from \code{edgeR} to account for different library size.
 
-Since genes' expression is most \textit{cis}-regulated by chromatin accessibility, there is a belief that two modalities would have significant high correlation. And extremely high expressed or low expressed genes would also have high or low accessibility in corresponding cell types. For the whole gene set, the mean correlation of genes and ATAC-seq read counts was 0.33, while the subsampling correlation distribution in \cref{fig:suppfig3} A had mean 0.007 across 1000 times block bootstraps. Additionally, the average gene-peaks correlation per gene can be
+Since genes' expression is most \textit{cis}-regulated by chromatin accessibility, there is a belief that two modalities would have significant high correlation. For the whole gene set, the mean correlation of genes and ATAC-seq read counts was 0.33, while the subsampling correlation distribution in \cref{fig:suppfig3} A had mean 0.007 across 1000 times block bootstraps. As expected,
+RNA and ATAC measured at local peaks had similar cell-type-specificity.
+Additionally, the average gene-peaks correlation per gene can be
 computed and compared to a bootstrap distribution to
 identify 5644 gene-promoter pairs that were significantly correlated across cell types, among which 5591 genes had only
 one pair, 25 genes had 2 pairs. 
@@ -299,14 +320,14 @@ boot_stats<-x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.35]{Figures/sfig1.jpeg}
-\caption{$L_b$ selection assesment. A) A pseudometric $d^*$ over $L_b$, B) The null sets' log2(inter-feature distance+1) density plots generated by various block bootstrapped settings over observed feature set's log2(inter-feature distance+1) distance. The more null sets' density plots overlapped with observsed features, the better conversing spatial distribution of original set captured by block bootstrapped. Median EMD were shown as text in each panel. C) Median EMD over $L_b$ where EMD quantified similarity between two distributions. } 
+\caption{$L_b$ selection assessment. A) A pseudo-metric $d^*$ over $L_b$, B) The null sets' log2(inter-feature distance+1) density plots generated by various block bootstrapped settings over observed feature set's log2(inter-feature distance+1) distance. The more null sets' density plots overlapped with observed features, the better conversing spatial distribution of original set captured by block bootstrapped. Median EMD were shown as text in each panel. C) Median EMD over $L_b$ where EMD quantified similarity between two distributions.} 
 \label{fig:suppfig0}
 \end{figure*}
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.3]{Figures/zscore.jpeg}
-\caption{ A)\textit{z} score over -log10(pvalue) on the liver dataset. B) \textit{z} score over DE genes' logFC on the macrophage dataset. \textit{z} score indicated the amount of standard deviations that observed fitted overlap count away from 1000 times block bootstrap's fitted overlap count.} 
+\caption{ A)\textit{z} score over -log10 (\textit{p}-value) of the liver dataset. B) \textit{z} score over gene logFC of the macrophage dataset. \textit{z} score indicated the amount of standard deviations that observed fitted overlap count away from 1000 times block bootstrap's fitted overlap count.} 
 \label{fig:suppfig2}
 \end{figure*}
 
