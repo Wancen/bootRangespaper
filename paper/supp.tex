@@ -256,7 +256,7 @@ Here $y$ and $y'$ are the histograms of original and null model inter-feature di
 
 
 \subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
-Processed 24 macrophage samples' RNA-seq  and 145 samples' ATAC-seq were loaded from \code{fluentGenomics}\citep{lee2020fluent}. They were measured after interferon gamma (IFNg) stimulation. Since the transcriptomic response to IFNg stimulation may be mediated through an increasing transcription factors binding on nearby regions and ATAC-seq can captured those regions' accessibility, we expect there would have an enrichment of differentially accessible (DA) ATAC-seq peaks in the vicinity of differentially expressed (DE) genes. 
+Processed 24 macrophage samples' RNA-seq  and 145 samples' ATAC-seq were loaded from \code{fluentGenomics} \citep{lee2020fluent}. They were measured after interferon gamma (IFNg) stimulation. Since the transcriptomic response to IFNg stimulation may be mediated through an increasing transcription factors binding on nearby regions and ATAC-seq can captured those regions' accessibility, we expect there would have an enrichment of differentially accessible (DA) ATAC-seq peaks in the vicinity of differentially expressed (DE) genes. 
 
 When performing block bootstrap with 500kb block length on 100 times, we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the null hypothesis and concluded that there was significant enrichment of DA peaks near DE genes by counting overlaps.
 
