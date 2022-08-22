@@ -133,8 +133,8 @@ mapping $$\pi:\{1,...,n\}\rightarrow\{(i,j):1\leq i \leq U,1\leq j
 \leq n_i\},$$ through which the original sequence $\{X_1,...,X_n\}$ relates to
 the segmentation sequence $\{X_{ij}:1\leq i \leq U,1\leq j \leq n_i\}$.
 
-We considered various genome segmentation procedures or annotations in the paper, e.g. Circular Binary Search (CBS) \citep{cbs}, HMM \citep{rcpphmm}, and published segmentations (Roadmap). CBS and HMM are implemented as a built-in function in \nullranges as follows. First, we tile the genome based on segmentation length ($L_s$, e.g. on the order of ${\sim}1$ Mb) and derive the gene density within each tiled genome. CBS recursively splits chromosomes into either two or three subsegments of estimated equal gene density and then uses kmeans to cluster the subsegments. While HMM models the gene density by a multinomial distribution given the number of hidden states and uses Viterbi algorithm for hidden state decoding. Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were downloaded from \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on a multivariate Hidden Markov Model that explicitly models the presence or absence of each chromatin mark. It generated segmentation including 15 small states and we summarized them into 3 big categories: low density(`E9',`E13',`E14',`E15'), middle density(`E10',`E11',`E12'), and high density(`E1-E8').
-After mergeing, 8,797 ranges were left and mean width was around 0.33Mb. 
+We considered various genome segmentation procedures or annotations in the paper, e.g. Circular Binary Search (CBS) \citep{cbs}, HMM \citep{rcpphmm}, and published segmentations (Roadmap). CBS and HMM are implemented as a built-in function in \nullranges as follow. First, we tile the genome based on segmentation length ($L_s$, e.g. on the order of ${\sim}1$ Mb) and derive the gene density within each tiled genome. CBS recursively splits chromosomes into either two or three subsegments of estimated equal gene density and then uses K-means to cluster the subsegments. While HMM models the gene density by a multinomial distribution given the number of hidden states and uses Viterbi algorithm for hidden state decoding. Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were downloaded from \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on a multivariate Hidden Markov Model that explicitly models the presence or absence of each chromatin mark. It generated segmentation including 15 small states and we summarized them into 3 big categories: low density(`E9',`E13',`E14',`E15'), middle density(`E10',`E11',`E12'), and high density(`E1-E8').
+After merging, 8,797 ranges were left and mean width was around 0.33Mb. 
 
 \subsection{Shuffling}\label{sec:shuffle}
 Genome shuffling was performed by random sample SNPs in acceptance region on Genome with probability proportional to SNPs count on each chromosome. For the paper, we defined acceptance region by excluding ENCODE-produced excludable regions, centromere, and telomere from UCSC that stored in \code{excluderanges} \citep{excluderanges}.
@@ -146,7 +146,7 @@ Then, the region overlap is defined as $s_{obs} \equiv  \frac{1}{\alpha}\sum_{t=
 $\theta$ is the shift among feature $\bm{x}$ and $\bm{y}$, such as 1kb when linking promoters to gene. 
 After block bootstrapping, we generate $R$ new sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks. 
 Therefore, we can do both genome-wise or block-wise analysis based on the question to be addressed.
-Then, we could use $s_{1}, s_{2}, ..., s_{R}$ to derive genome-wise empirical \textit{p}-value $=  \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or $s_{1}, s_{2}, ..., s_{R\times \frac{n}{L_b}}$ to derive block-wise empirical \textit{p}-value $=  \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$, respectatively. 
+Then, we could use $s_{1}, s_{2}, ..., s_{R}$ to derive genome-wise empirical \textit{p}-value $=  \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or $s_{1}, s_{2}, ..., s_{R\times \frac{n}{L_b}}$ to derive block-wise empirical \textit{p}-value $=  \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$, respectively.
 Additionally, we could use $z$ score to measure the distance between the observed statistics and the bootstrap statistics distribution in terms of standard deviations (SD). 
 Specifically, the $z$ score in \cref{fig:result} is calculated by $$z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$ where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample mean of the $R$ replications and $\text{SD}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
 Note that, if block-wise analysis is preferred, the SD of bootstrap distribution should be scaled by $\sqrt{L_b}$.
@@ -247,12 +247,12 @@ Then genomic coordinates of consensus peaks were converted from hg19 to hg38 usi
 \subsubsection{$L_b$ selection}\label{sec:length}
 On the issue of 
 block length selection, we considered it in two ways. 
-One is trying to find $L_b$ that has the minimum value of a pseudometric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$, 
+One is trying to find $L_b$ that has the minimum value of a pseudo-metric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$, 
 where $\mathcal{L}_{L_v}$ is the statistic distribution at length $L_v$, $v=1,2,\cdots,V$, $V$ is the number of candidate block lengths and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics distribution following \citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ had smaller values in most cases when $L_b\in[300kb,800kb]$. 
 Another way is evaluating conserved spatial pattern. Because we assume that generated null sets should have similar spatial properties with original sets, eg. inter-feature distance. 
 We used the Earth's Mover Distance (EMD) to quantify the similarity of the distributions of an inter-feature distance between the original  and  null  models,  resulting  in  values  from  zero  (identical  distributions)  to  one  (totally  disjoint  distributions). 
 The EMD between two distributions is proportional to the minimum amount of work required to change one distribution($y$) into the other ($y'$). 
-Here $y$ and $y'$ are the histograms of original and null model inter-feature distance with bin size = 0.3. We observsed that EMD always decreased as $L_b$ increased because more neighboring features reserved. However, $L_b$ cannot be too large and close to $L_s$. Otherwise, the blocks randomization process would not be effective. Hence, the right $L_b$ falls in the range where EMD around elbow of the line plot. In this practice, [300kb,600kb] was shown to be  a good range by visualization of density plot (\cref{fig:suppfig0}B) and according to the Elbow Method of EMD (\cref{fig:suppfig0}C). 
+Here $y$ and $y'$ are the histograms of original and null model inter-feature distance with bin size = 0.3. We observed that EMD always decreased as $L_b$ increased because more neighboring features reserved. However, $L_b$ cannot be too large and close to $L_s$. Otherwise, the blocks randomization process would not be effective. Hence, the right $L_b$ falls in the range where EMD around elbow of the line plot. In this practice, [300kb,600kb] was shown to be  a good range by visualization of density plot (\cref{fig:suppfig0}B) and according to the Elbow Method of EMD (\cref{fig:suppfig0}C). 
 
 
 \subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
@@ -320,21 +320,21 @@ boot_stats<-x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.35]{Figures/sfig1.jpeg}
-\caption{$L_b$ selection assessment. A) A pseudo-metric $d^*$ over $L_b$, B) The null sets' log2(inter-feature distance+1) density plots generated by various block bootstrapped settings over observed feature set's log2(inter-feature distance+1) distance. The more null sets' density plots overlapped with observed features, the better conversing spatial distribution of original set captured by block bootstrapped. Median EMD were shown as text in each panel. C) Median EMD over $L_b$ where EMD quantified similarity between two distributions.} 
+\caption{$L_b$ selection assessment. A) A pseudo-metric $d^*$ over $L_b$, B) The null sets' log2(inter-feature distance+1) density plots over various $L_b$ and segmentation settings. Red line represents observed feature set's log2(inter-feature distance+1) distance. The more null sets' density plots overlapped with observed features, the better conversing spatial distribution of original set captured by block bootstrapped. Median EMD were shown as text in each panel. C) Median EMD over $L_b$ where EMD quantified similarity of inter-feature distance distributions between nulls sets and observed sets.} 
 \label{fig:suppfig0}
 \end{figure*}
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.3]{Figures/zscore.jpeg}
-\caption{ A)\textit{z} score over -log10 (\textit{p}-value) of the liver dataset. B) \textit{z} score over gene logFC of the macrophage dataset. \textit{z} score indicated the amount of standard deviations that observed fitted overlap count away from 1000 times block bootstrap's fitted overlap count.} 
+\caption{ A) \textit{z} score over -log10 (\textit{p}-value) of the liver dataset. B) \textit{z} score over gene logFC of the macrophage dataset. \textit{z} score indicated the amount of standard deviations that observed fitted overlap count away from 1000 times block bootstrap's fitted overlap count.} 
 \label{fig:suppfig2}
 \end{figure*}
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.08]{Figures/sfig2.jpeg}
-\caption{Results of Chromium Single Cell Multiome ATAC + Gene Expression assay. A)The mean correlation distribution of genes expression with 1000 times block bootstrapped ATAC's read counts. B) Gene TET3 read counts over peak chr2:74000098-74003475 read counts, colored by cell types. TET3 has the most negative correlation $\rho = −0.963$. C) Gene CD83 read counts over peak chr6:14116971-14139988 read counts, colored by cell types. The correlation of this gene-promoter pair is 0.992.} 
+\caption{Results of correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay. A) The mean correlation distribution of genes expression with 1000 times block bootstrapped ATAC's read counts. B) Gene TET3 read counts over peak chr2:74000098-74003475 read counts, colored by cell types. TET3 has the most negative correlation $\rho = −0.963$. C) Gene CD83 read counts over peak chr6:14116971-14139988 read counts, colored by cell types. The correlation of this gene-promoter pair is 0.992.} 
 \label{fig:suppfig3}
 \end{figure*}
 
