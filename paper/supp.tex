@@ -97,47 +97,92 @@
 \section{Supplementary Methods}\label{sec:suppmethods}
 
 \subsection{Comparison to previous methods}
+
 In order to generate background regions for hypothesis
 testing of association analysis, there are two general categories of methods.  
-One category is to sample from a larger experimental pool or database, such as 
-LOLA \citep{sheffield2016lola} using Fisher's exact test, and Poly-Enrich \citep{lee2020poly} using likelihood ratio test based on negative binomial likelihood. 
-Another category is to permute or shuffle the genomic ranges, possibly considering an
-exclusion list of regions where features should not be
-located. Example methods belong to this category include
-bedtools \citep{quinlan2010bedtools}, ChIP-Enrich
+One strategy is to sample from a larger experimental pool or
+database.
+Methods following this strategy include
+LOLA \citep{sheffield2016lola} using Fisher's exact test, and
+Poly-Enrich \citep{lee2020poly} using a likelihood ratio test based on
+a Negative Binomial likelihood.
+\mike{should we mention matchRanges here?}
+Another strategy is to permute or shuffle the genomic regions, possibly considering an
+exclusion list of regions where the original region set should not be
+re-located. Example methods belonging to this category include
+bedtools shuffleBed \citep{quinlan2010bedtools}, ChIP-Enrich
 \citep{welch2014chip}, and
 GenometriCorr \citep{GenometriCorrfavorov2012}.
-In addition, GAT allows controlling for GC content \citep{GAT_2013},
+In addition, the method GAT allows controlling for GC content \citep{GAT_2013},
 and regioneR implements a circular shift to
-preserve clumping property \citep{gel2016regioner}.
+preserve the clumping property of genomic regions \citep{gel2016regioner}.
 Our method falls in the second category in that we redistribute
-features along the genome. But we use a block resampling scheme 
-to preserve local genome structure, as proposed for genomic features by
-\cite{bickel2010subsampling}.
+regions along the genome, though we use a block resampling scheme 
+to preserve local genome structure, as proposed for genomic region sets by
+\citet{bickel2010subsampling}.
 
 \subsection{Segmentation}
-In the following, we define variables for genome segmentation and use the notation denoted by \cite{bickel2010subsampling}.
-One way to derive segmentation is based on gene density. 
-From Ensembl annotation databases, we could obtain the position of all
-genes. Then, we could compute
-gene density as the count of genes per million base pairs. Suppose original sequences are $\{X_1,...,X_n\}$
-and we assume there exists integers
-$\bm{\tau}=\bm{\tau^{(n)}}=(\tau_0,...,\tau_U)$, where $0=\tau_0 <
-\tau_1 < ... <\tau_U = n$, such that the collections of variables,
-${\bm{X}_{\tau_i},...,\bm{X}_{\tau_{i+1}}}$, are separately stationary
-for each $i=0,...,U-1$. 
-Here, stationary means similar gene density within each segment.
-Let $n_i=\tau_i-\tau_{i-1}$ be the length
-of the \textit{i}th region. We introduce the
-mapping $$\pi:\{1,...,n\}\rightarrow\{(i,j):1\leq i \leq U,1\leq j
-\leq n_i\},$$ through which the original sequence $\{X_1,...,X_n\}$ relates to
-the segmentation sequence $\{X_{ij}:1\leq i \leq U,1\leq j \leq n_i\}$.
 
-We considered various genome segmentation procedures or annotations in the paper, e.g. Circular Binary Search (CBS) \citep{cbs}, HMM \citep{rcpphmm}, and published segmentations (Roadmap). CBS and HMM are implemented as a built-in function in \nullranges as follow. First, we tile the genome based on segmentation length ($L_s$, e.g. on the order of ${\sim}1$ Mb) and derive the gene density within each tiled genome. CBS recursively splits chromosomes into either two or three subsegments of estimated equal gene density and then uses K-means to cluster the subsegments. While HMM models the gene density by a multinomial distribution given the number of hidden states and uses Viterbi algorithm for hidden state decoding. Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were downloaded from \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on a multivariate Hidden Markov Model that explicitly models the presence or absence of each chromatin mark. It generated segmentation including 15 small states and we summarized them into 3 big categories: low density(`E9',`E13',`E14',`E15'), middle density(`E10',`E11',`E12'), and high density(`E1-E8').
-After merging, 8,797 ranges were left and mean width was around 0.33Mb. 
+In the following, we define genome segmentation and how it pertains to
+block bootstrap resampling, as proposed by \citet{bickel2010subsampling}.
+The overall motivation for bootstrapping with respect to a segmented
+genome is to preserve large scale genomic structure, e.g. large
+regions with low or high density of genomic features such as
+genes. This preservation of structure through segmentation is in
+addition to the preservation of local clumping of features, which is
+accomplished by resampling blocks.
+
+In this work, we segmented the genome based on gene density. We
+downloaded the Ensembl genes \citep{ensemblTrimmedEntry} \mike{which
+  version}, and counted the 
+number of genes per million base pairs. We then supplied this vector
+of counts to various methods for segmentation. We sought to define
+sections of the genome that exhibit stationarity, where in this case,
+stationary means similar gene density within a segment. We
+additionally sought to group together segments across the genome that
+had similar gene density, such that a segmentation state
+$i \in [1,\dots,S]$ consisted of one or more non-contiguous regions of
+the genome with similar gene density.
+
+We considered various genome segmentation methods, or pre-defined
+annotations,
+e.g. Circular Binary Search (CBS) \citep{cbs}, HMM
+\citep{rcpphmm}, and published segmentations (ChromHMM applied to
+Roadmap Epigenomics data \citep{ernst2012chromhmm}).
+CBS and HMM
+have R package implementations, and so we incorporated these
+into a utility function in \nullranges, \texttt{segmentDensity()}.
+CBS, implemented in the \textit{DNAcopy} package, was used to recursively split
+chromosomes into subsegments with similar density, in this case based
+on gene count per megabase. We then used k-means to cluster
+chromosome subsegments into groups with similar gene
+density. Typically this would result in genome segmentations with
+about three states, corresponding to low, medium, and high gene
+density. 
+HMM was used to model the number of genes per megabase as an emission
+density. We then used the
+Viterbi algorithm for the hidden state decoding. \mike{can you talk
+  about the normalization of the gene counts?}
+Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were
+downloaded from
+\url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on
+a multivariate Hidden Markov Model that explicitly models the presence
+or absence of many chromatin marks. The original ChromHMM annotation
+generated segmentation including 
+15 small states. We then summarized these into 3 general categories: low
+density(`E9',`E13',`E14',`E15'), middle density(`E10',`E11',`E12'),
+and high density(`E1-E8'). 
+After merging, our version of ChromHMM applied to Roadmap data had
+8,797 ranges were left and the mean width was around 
+0.33 Mb.
 
 \subsection{Shuffling}\label{sec:shuffle}
-Genome shuffling was performed by random sample SNPs in acceptance region on Genome with probability proportional to SNPs count on each chromosome. For the paper, we defined acceptance region by excluding ENCODE-produced excludable regions, centromere, and telomere from UCSC that stored in \code{excluderanges} \citep{excluderanges}.
+
+Genome shuffling was performed by random sample SNPs in acceptance
+region on Genome with probability proportional to SNPs count on each
+chromosome. For the paper, we defined acceptance region by excluding
+ENCODE-produced excludable regions, centromere, and telomere from UCSC
+that stored in \code{excluderanges} \citep{excluderanges}.
 
 
 \subsection{Assessment of \bootranges}
