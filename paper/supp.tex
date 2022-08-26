@@ -240,7 +240,8 @@ where
 $\bar{s} = \frac{1}{R} \sum_{r=1}^R s_r$
 is the sample mean of the overlap statistic $s_r$ over the $R$
 bootstrap samples and 
-$\text{SD}_R = \sqrt{\frac{1}{R-1} \sum_{r=1}^R [s_r - \bar{s}]^2}$.
+$\text{SD}_R = \sqrt{\frac{1}{R-1} \sum_{r=1}^R [s_r - \bar{s}]^2}$ is
+the sample standard deviation.
 Note that, if block-wise analysis is preferred, the SD of bootstrap
 distribution should be scaled by $\sqrt{L_b}$ \mike{in the case of
 a segmented bootstrap with proportion block length? should we cite
@@ -320,13 +321,27 @@ Move features in $\bm{y}$ that fall into random blocks to rearranged blocks give
 
 
 \section{Supplementary Results} \label{sec:results}
-\subsection{Overlap analysis of liver ATAC-seq with SNPs associated with
-total cholesterol}
-1872 SNPs data were download from the NHGRI-EBI GWAS catalog \citep{gwascatalog} on September 22, 2021. We only extracted single variant  associated with total cholesterol. Liver ATAC-seq
-\citep{CURRIN20211169} information of 20 samples were downloaded from GSE164870.
-Then genomic coordinates of consensus peaks were converted from hg19 to hg38 using \code{liftOver} to construct 221,606 peaks GRanges.
+
+\subsection{Overlap analysis of liver ATAC-seq peaks with GWAS SNPs}
+
+1,872 SNPs were download from the NHGRI-EBI GWAS catalog
+\citep{gwascatalog} on September 22, 2021. We only extracted single
+nucleotide variants associated with ``total cholesterol''. Liver ATAC-seq peaks
+\citep{CURRIN20211169} aggregated from 20 samples were downloaded from
+the GEO accession: GSE164870.
+Genomic coordinates of consensus peaks were converted from hg19 to
+hg38 using \code{liftOver} to obtain 221,606 peaks.
+
+\mike{what about distance btwn peak and gene for an overlap? was there
+a minimal FDR or p-value associated with the 221k peaks? maybe find
+the largest adjusted p-value or check the GEO page to see what was
+used to define this set}
 
 \subsubsection{$L_b$ selection}\label{sec:length}
+
+\mike{is this section just specific to the Liver ATAC analysis? or if it's
+  more general should we move it to a different place in the Supplement?}
+
 On the issue of 
 block length selection, we considered it in two ways. 
 One is trying to find $L_b$ that has the minimum value of a pseudo-metric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$, 
