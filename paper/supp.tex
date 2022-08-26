@@ -353,7 +353,7 @@ block length $L_v$, $v = 1,2,\dots,V$, $V$ is the number of candidate
 block lengths, and $\text{IQR}(\mathcal{L})$ is the interquartile
 range of a distribution $\mathcal{L}$.
 We found that $d^*$ had
-smaller values in most cases when $L_b\in[300kb,800kb]$
+smaller values in most cases when $L_b \in [300kb,800kb]$
 (\cref{fig:suppfig0}A).
 Another aspect for block length selection is evaluating the
 conservation of the spatial pattern. In order to provide robust
@@ -376,38 +376,50 @@ neighboring \mike{regions?} features' distances were preserved in the
 block bootstrap with larger blocks (block boundaries break original
 distances).
 However, $L_b$ cannot be too large and close to $L_s$.
-Otherwise, the blocks randomization process would not
-be effective (the blocks will not sufficiently shuffle across segments
-within a particular segmentation state).
+Otherwise, the randomization of blocks would not
+be effective: the blocks will not sufficiently shuffle regions across
+segments within a particular segmentation state.
 Hence, we decided an optimal $L_b$ falls in the range where EMD
 was around elbow of the line plot. Considering this aspect of
-inter-feature distances, [300kb,600kb] was
+inter-feature distances, $L_b \in [300kb,600kb]$ was
 shown to be a good range by visualization of density plot
 (\cref{fig:suppfig0}B) and according to the elbow of the EMD statistic
 (\cref{fig:suppfig0}C).
 
-\subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
+\subsection{Enrichment analysis of macrophage ATAC-seq and gene expression}\label{sec:splines}
 
-Processed 24 macrophage samples' RNA-seq and 145 samples' ATAC-seq
-were loaded from \code{fluentGenomics} \citep{lee2020fluent}. They
-were measured after interferon gamma (IFNg) stimulation. Since the
-transcriptomic response to IFNg stimulation may be mediated through an
-increasing transcription factors binding on nearby regions and
-ATAC-seq can captured those regions' accessibility, we expect there
-would have an enrichment of differentially accessible (DA) ATAC-seq
-peaks in the vicinity of differentially expressed (DE) genes.
+We used the differential results for RNA-seq and ATAC-seq as
+described in the \textit{fluentGenomics} workflow \citep{lee2020fluent}, with
+the original data from a human macrophage experiment by \citet{alasoo2018shared}.
+The contrast of interest was interferon gamma (IFNg) treatment. Since the
+transcriptomic response to IFNg stimulation may involve increased
+transcription factor binding to \textit{cis}-regulatory elements near
+genes, and as ATAC-seq captures the accessibility and activity at
+these regions, \citet{lee2020fluent} hypothesized and demonstrated an
+enrichment of differentially accessible (DA) ATAC-seq peaks near
+differentially expressed (DE) genes. While \citet{lee2020fluent}
+assessed significance by randomly sub-setting the non-DE genes and
+re-computing overlap with DA peaks, here we considered the block
+bootstrap for statistical significance.
 
-When performing block bootstrap with 500kb block length on 100 times,
-we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the
-null hypothesis and concluded that there was significant enrichment of
-DA peaks near DE genes by counting overlaps.
+When performing block bootstrap on the number of overlaps,
+using $L_b = 500kb$ and $R = 100$,
+we obtained $z_{99} = -108.1$ and $\textit{p}$-value $<.05$ \mike{say
+  more about why 99 not 100}.
+We therefore rejected the null hypothesis and concluded that there was
+significant enrichment of DA peaks near DE genes.
 
-For fitting the generalized penalized splines, \code{gam} function in
-the \code{mgcv} package was used to fit the model, which was based on
-a penalized likelihood maximization, and generalized cross-validation
-was utilized to choose the optimal value for the smoothing parameter,
-$\lambda$. Then, \code{tidymv} package was implemented to predict and
-extract the fitted value.
+For fitting the generalized penalized splines, we used the \code{gam} function in
+the \code{mgcv} package \mike{cite?} to fit the model, based on
+a penalized likelihood maximization. Generalized cross-validation
+was used to choose the optimal value for the smoothing parameter,
+$\lambda$. Then, the \code{tidymv} package was used to predict and
+extract the fitted value. \mike{more description on the conditional
+  distributions in Fig 2C?}
+
+\mike{below, what is x? what is bootRanges? why max LFC? why length =
+  2000? can you provide a sentence
+or two that briefly says how this code relates to the above paragraph?}
 
 \begin{lstlisting}[language=R]
 boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
@@ -420,7 +432,7 @@ boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
   dplyr::mutate(
 	 fit= map(data, ~gam(count ~ s(logFC), data = ., family=poisson)),
          pred  = map(fit, ~predict_gam(model = ., length_out = 2000)),
-         fitted = map(pred,~find_fit(data=., logFC = seq(-8,10,1))))
+         fitted = map(pred, ~find_fit(data=., logFC = seq(-8,10,1))))
 
 \end{lstlisting} 
 
