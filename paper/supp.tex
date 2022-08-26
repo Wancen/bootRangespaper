@@ -229,7 +229,7 @@ $s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$.
 
 Alternatively, we could use $z$ score to measure the
 distance between $s_{obs}$ and the
-distribution of $\{s_r\}$ in terms of standard deviations (SD).
+set of $\{s_r\}$ in terms of standard deviations (SD).
 
 Specifically, the
 $z$ score in \cref{fig:result} is calculated by
@@ -342,33 +342,48 @@ used to define this set}
 \mike{is this section just specific to the Liver ATAC analysis? or if it's
   more general should we move it to a different place in the Supplement?}
 
-On the issue of block length selection, we considered it in two ways.
-One is trying to find $L_b$ that has the minimum value of a
-pseudo-metric
-$d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$,
-where $\mathcal{L}_{L_v}$ is the statistic distribution at length
-$L_v$, $v=1,2,\cdots,V$, $V$ is the number of candidate block lengths
-and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics
-distribution following
-\citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ had
-smaller values in most cases when $L_b\in[300kb,800kb]$.  Another way
-is evaluating conserved spatial pattern. Because we assume that
-generated null sets should have similar spatial properties with
-original sets, eg. inter-feature distance.  We used the Earth's Mover
-Distance (EMD) to quantify the similarity of the distributions of an
-inter-feature distance between the original and null models, resulting
+We considered two aspects of the block bootstrap datasets to select
+block length $L_b$.
+First, following \citet{bickel2010subsampling}, we tried to find $L_b$
+that provided the minimum value of a pseudo-metric,
+
+$$ d^*(v)= \left| \sqrt{\frac{L_{v-1}}{L_v}} [\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})] \right|,$$
+where $\mathcal{L}_{L_v}$ is the distribution of the test statistic at
+block length $L_v$, $v = 1,2,\dots,V$, $V$ is the number of candidate
+block lengths, and $\text{IQR}(\mathcal{L})$ is the interquartile
+range of a distribution $\mathcal{L}$.
+We found that $d^*$ had
+smaller values in most cases when $L_b\in[300kb,800kb]$
+(\cref{fig:suppfig0}A).
+Another aspect for block length selection is evaluating the
+conservation of the spatial pattern. In order to provide robust
+statistical inference in terms of significance testing,
+generated \mike{bootstrap?} null sets should have similar spatial properties with
+the original sets, e.g. inter-feature distances.
+We used the Earth's Mover
+Distance (EMD) to quantify the similarity of the distributions of
+inter-feature distances between the original and \mike{bootstrap?}
+null models, resulting 
 in values from zero (identical distributions) to one (totally disjoint
-distributions).  The EMD between two distributions is proportional to
-the minimum amount of work required to change one distribution($y$)
-into the other ($y'$).  Here $y$ and $y'$ are the histograms of
-original and null model inter-feature distance with bin size = 0.3. We
-observed that EMD always decreased as $L_b$ increased because more
-neighboring features reserved. However, $L_b$ cannot be too large and
-close to $L_s$. Otherwise, the blocks randomization process would not
-be effective. Hence, the right $L_b$ falls in the range where EMD
-around elbow of the line plot. In this practice, [300kb,600kb] was
+distributions) \citep{emd}.
+The EMD between two distributions is proportional to
+the minimum amount of ``work'' required to change one distribution ($y$)
+into the other ($y'$). Here $y$ and $y'$ are the histograms of
+original and \mike{bootstrap?}
+null model inter-feature distance with bin size = 0.3 \mike{why this number?}.
+We observed that EMD always decreased as $L_b$ increased, because more
+neighboring \mike{regions?} features' distances were preserved in the
+block bootstrap with larger blocks (block boundaries break original
+distances).
+However, $L_b$ cannot be too large and close to $L_s$.
+Otherwise, the blocks randomization process would not
+be effective (the blocks will not sufficiently shuffle across segments
+within a particular segmentation state).
+Hence, we decided an optimal $L_b$ falls in the range where EMD
+was around elbow of the line plot. Considering this aspect of
+inter-feature distances, [300kb,600kb] was
 shown to be a good range by visualization of density plot
-(\cref{fig:suppfig0}B) and according to the Elbow Method of EMD
+(\cref{fig:suppfig0}B) and according to the elbow of the EMD statistic
 (\cref{fig:suppfig0}C).
 
 \subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
@@ -408,6 +423,8 @@ boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
          fitted = map(pred,~find_fit(data=., logFC = seq(-8,10,1))))
 
 \end{lstlisting} 
+
+\pagebreak
 
 \subsection{Correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay}
 
