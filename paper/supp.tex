@@ -190,61 +190,67 @@ as provided in the \code{excluderanges} Bioconductor package
 \citep{excluderanges}.
 
 \subsection{Assessment of \bootranges}
-Suppose we are interested in region overlap between one feature $\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,..., \tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$ with lengths $\rho_1, ..., \rho_\beta$.
-Then, the region overlap is defined as $s_{obs} \equiv  \frac{1}{\alpha}\sum_{t=1}^\alpha V_t$, where $V_t=1-\prod_{k\in (T_t+\theta)}(1-J_k)$ and $J_k=1$ if position $k$ belongs to feature $\bm{y}$ and 0 otherwise. 
-$\theta$ is the shift among feature $\bm{x}$ and $\bm{y}$, such as 1kb when linking promoters to gene. 
-After block bootstrapping, we generate $R$ new sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks. 
-Therefore, we can do both genome-wise or block-wise analysis based on the question to be addressed.
-Then, we could use $s_{1}, s_{2}, ..., s_{R}$ to derive genome-wise empirical \textit{p}-value $=  \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or $s_{1}, s_{2}, ..., s_{R\times \frac{n}{L_b}}$ to derive block-wise empirical \textit{p}-value $=  \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$, respectively.
-Additionally, we could use $z$ score to measure the distance between the observed statistics and the bootstrap statistics distribution in terms of standard deviations (SD). 
-Specifically, the $z$ score in \cref{fig:result} is calculated by $$z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$ where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample mean of the $R$ replications and $\text{SD}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
-Note that, if block-wise analysis is preferred, the SD of bootstrap distribution should be scaled by $\sqrt{L_b}$.
 
+Suppose we are interested in computing and assessing the significance
+of the overlap between one feature
+\mike{set of regions? are we not using feature anymore?}
+$\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,...,
+\tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$
+with lengths $\rho_1, ..., \rho_\beta$.
 
+Then, the region overlap is
+defined as $s_{obs} \equiv \frac{1}{\alpha}\sum_{t=1}^\alpha V_t$,
+where $V_t=1-\prod_{k\in (T_t+\theta)}(1-J_k)$ and $J_k=1$ if position
+$k$ belongs to feature $\bm{y}$ and 0 otherwise.
 
+$\theta$ is the
+shift among feature $\bm{x}$ and $\bm{y}$, such as 1kb when linking
+promoters to gene.
 
-% $$P_{H_0}[R_n\geq r_{n}]\approx 0.05$$
+After block bootstrapping, we generate $R$ new
+sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks.
+
+Therefore, we can do both genome-wise or block-wise analysis based on
+the question to be addressed.
+
+Then, we could use $s_{1}, s_{2}, ...,
+s_{R}$ to derive genome-wise empirical \textit{p}-value
+$= \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or
+$s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$
+to derive block-wise empirical
+\textit{p}-value
+$= \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$,
+respectively.  Additionally, we could use $z$ score to measure the
+distance between the observed statistics and the bootstrap statistics
+distribution in terms of standard deviations (SD).  Specifically, the
+$z$ score in \cref{fig:result} is calculated by
+
+$$ z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$
+
+where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample
+mean of the $R$ replications and
+$\text{SD}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
+Note that, if block-wise analysis is preferred, the SD of bootstrap
+distribution should be scaled by $\sqrt{L_b}$.
 
 \subsection{Swapping algorithm}\label{sec:algorithm}
-
-
-% \begin{algorithm}
-% \SetNoFillComment
-% \caption{Block bootstrap GRanges across chromosome} \label{alg:supp_unseg}
-%   \KwData{Feature GRanges, Block length($L_b$), bootstrap times(R), type('permute' or 'bootstrap')}
-% \KwResult{Bootstrapped distribution of test statistics}
-% \While{r \leq R}{
-% \textbf{rearranges block:} Generate consecutive tiling blocks with width = $L_b$ \tcp*[l]{where 'bait' blocks will be moved} \\
-% \uIf{permutation}{
-% \textbf{random block:} Sample blocks without replacement from \textbf{rearranged block} \\
-% }\ElseIf{bootstrap}{ 
-%          $n_b = \sum_{j=1}^{24} ceiling(L_{c} / L_b)$\\
-%          \textbf{random block:} Generate $n_b$ blocks with replacement and probability weights proportional to $L_c$ \tcp*[l]{these blocks are the 'bait' for capturing features in $\bm{y}$}\\}
-% Find overlap of random blocks and feature $\bm{y}$ \tcp*[l]{use the bait to sample features in $\bm{y}$}\\
-% Swap the ranges in those bait blocks given the shift between random block and rearranged block} \\
-% Bind bootranges object which has $r$ and $L_b$ as metadata columns $\gets$ plyranges.
-% \end{algorithm}
-
 
 \begin{algorithm}[H]
   \SetAlgoLined
   \KwData{Feature GRanges ($\bm{y}$), Block length ($L_b$), Length of chromosome $c$ ($L_c$), Total number of chromosome ($C$), Bootstrap times ($R$), Type(`permute' or `bootstrap')}
   \KwResult{$\bm{bootRanges}$ object, a GRanges object with all the ranges concatenated, and iteration and block length indicated by metadata columns}
   \While{$r \leq R$}{
-    \textbf{rearranged blocks:} Generate consecutive tiling blocks with width = $L_b$\\% \tcp*[l]
+    \textbf{rearranged blocks:} Generate consecutive tiling blocks with width = $L_b$\\
     \uIf{permutation}{
 \textbf{random blocks:} Sample blocks without replacement from rearranged blocks
 }\ElseIf{bootstrap}{ 
          $n_b = \sum_{c=1}^{C} \text{ceiling}(L_c / L_b)$\\
-         \textbf{random blocks:} Generate $n_b$ blocks with replacement and number of blocks per chromosome is proportional to $L_c$\\ %\tcp*[l]
+         \textbf{random blocks:} Generate $n_b$ blocks with replacement and number of blocks per chromosome is proportional to $L_c$\\ 
       }
-%Find overlap of random blocks and feature $\bm{y}$\\% \tcp*[l]
 Move features in $\bm{y}$ that fall into random blocks to rearranges blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \caption{Block bootstrap GRanges across chromosome} \label{alg:supp_unseg}
 \end{algorithm}
-
-
 
 \begin{algorithm}
 \SetNoFillComment
