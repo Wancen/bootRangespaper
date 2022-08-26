@@ -198,40 +198,53 @@ $\bm{x}$ and another feature $\bm{y}$.
 
 We compute the overlap $s_{obs}$, i.e. the number of 
 features in $\bm{x}$ that overlapped a feature in $\bm{y}$.
-This statistic can vary in many ways, including counting fraction of
-overlap, restricting by the amount of overlap, and allowing for a gap
-between the features, e.g. we may allow 1 kb of gap to connect local
-chromatin accessibility peaks to transcription start sites (TSS).
+This statistic can vary in many ways, including computing the fraction of
+basepair overlap, restricting by a minimal amount of overlap, and
+allowing for a gap between the regions, e.g. we may allow 1 kb of gap
+to connect local chromatin accessibility peaks to transcription start
+sites (TSS).
 
-After block bootstrapping, we generate $R$ new
-sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks.
+Via block bootstrap resampling, we generate $R$ new
+sets of regions $\bm{y_r}$ within $R \times \frac{n}{L_b}$ blocks, for
+a total genome size of $n$.
+\mike{can we define R x n / L\_b as a new variable so you can use it without
+  having to write it out again. Also do you need to account for the
+  fact that blocks don't evenly divide the chromosomes? e.g. ceiling()?}
 
-Therefore, we can do both genome-wise or block-wise analysis based on
-the question to be addressed.
+We can perform either genome-wise, block-wise, or region-wise analysis
+based on the question to be addressed. For example, if we want to test
+the significance of the genome-wide amount of overlap, we would compare
+to the genome-wise distribution. However, if we want to
+test the significance of the number of overlaps for a particular
+block or even a particular region, we could use a lower $R$ as there
+will be many more bootstrapped blocks and bootstrapped features for a
+block-wise or region-wise analysis.
 
-Then, we could use $s_{1}, s_{2}, ...,
-s_{R}$ to derive genome-wise empirical \textit{p}-value
+Without loss of generality, we will consider the genome-wise case.
+We use the overlaps per bootstrap sample $\bm{y_r}$ to calculate the
+overlap statistics $s_{1}, s_{2}, \dots, s_{R}$
+to derive a genome-wise empirical \textit{p}-value
 $= \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or
-$s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$
-to derive block-wise empirical
-\textit{p}-value
-$= \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$,
-respectively.
+$s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$.
 
-Additionally, we could use $z$ score to measure the
-distance between the observed statistics and the bootstrap statistics
-distribution in terms of standard deviations (SD).
+Alternatively, we could use $z$ score to measure the
+distance between $s_{obs}$ and the
+distribution of $\{s_r\}$ in terms of standard deviations (SD).
 
 Specifically, the
 $z$ score in \cref{fig:result} is calculated by
 
-$$ z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$
+$$ z = \frac{s_{obs} - \bar{s}}{ \text{SD}_R },$$
 
-where $\widehat{s} = \frac{\sum_{r=1}^R \widehat{s_r}}{R}$ is the sample
-mean of the $R$ replications and
-$\text{SD}_R(\widehat{s}) = \sqrt{\frac{\sum_{r=1}^R [\widehat{s_r}-\widehat{s}]^2}{R-1}}$.
+where
+$\bar{s} = \frac{1}{R} \sum_{r=1}^R s_r$
+is the sample mean of the overlap statistic $s_r$ over the $R$
+bootstrap samples and 
+$\text{SD}_R = \sqrt{\frac{1}{R-1} \sum_{r=1}^R [s_r - \bar{s}]^2}$.
 Note that, if block-wise analysis is preferred, the SD of bootstrap
-distribution should be scaled by $\sqrt{L_b}$.
+distribution should be scaled by $\sqrt{L_b}$ \mike{in the case of
+a segmented bootstrap with proportion block length? should we cite
+Bickel for this fact?}
 
 \subsection{Swapping algorithm}\label{sec:algorithm}
 
