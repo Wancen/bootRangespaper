@@ -220,9 +220,13 @@ $s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$
 to derive block-wise empirical
 \textit{p}-value
 $= \frac{1}{R\times \frac{n}{L_b}} \sum_{r=1}^{R\times \frac{n}{L_b}} \mathbb{I}_{\{s_r > s_{obs}\}}$,
-respectively.  Additionally, we could use $z$ score to measure the
+respectively.
+
+Additionally, we could use $z$ score to measure the
 distance between the observed statistics and the bootstrap statistics
-distribution in terms of standard deviations (SD).  Specifically, the
+distribution in terms of standard deviations (SD).
+
+Specifically, the
 $z$ score in \cref{fig:result} is calculated by
 
 $$ z = \frac{s_\text{obs} - \widehat{s}}{ \text{SD}_R(\widehat{s})},$$
@@ -237,19 +241,33 @@ distribution should be scaled by $\sqrt{L_b}$.
 
 \begin{algorithm}[H]
   \SetAlgoLined
-  \KwData{Feature GRanges ($\bm{y}$), Block length ($L_b$), Length of chromosome $c$ ($L_c$), Total number of chromosome ($C$), Bootstrap times ($R$), Type(`permute' or `bootstrap')}
-  \KwResult{$\bm{bootRanges}$ object, a GRanges object with all the ranges concatenated, and iteration and block length indicated by metadata columns}
+  \KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of
+    chromosome $c$ ($L_c$), Total number of chromosomes ($C$),
+    Bootstrap iterations ($R$), Type ($permute$ or $bootstrap$),
+    Excluded regions ($\bm{e}$)}
+  \KwResult{$\texttt{bootRanges}$ object, contains the bootstrapped
+    region sets from each iteration, concatenated across $R$ total
+    iterations. Iteration and $L_b$ recorded as metadata}
+  $r \gets 1$\\
   \While{$r \leq R$}{
-    \textbf{rearranged blocks:} Generate consecutive tiling blocks with width = $L_b$\\
+    \texttt{rearranged blocks} $\gets$ Generate consecutive tiling
+    blocks with width = $L_b$ (except last tile per chromosome which
+    is cut to fit $L_c$ for chromosome $c$)\\
     \uIf{permutation}{
-\textbf{random blocks:} Sample blocks without replacement from rearranged blocks
+\texttt{random blocks} $\gets$ Sample blocks without replacement from rearranged blocks
 }\ElseIf{bootstrap}{ 
-         $n_b = \sum_{c=1}^{C} \text{ceiling}(L_c / L_b)$\\
-         \textbf{random blocks:} Generate $n_b$ blocks with replacement and number of blocks per chromosome is proportional to $L_c$\\ 
+         $n_b \gets \sum_{c=1}^{C} \text{ceiling}(L_c / L_b)$\\
+         \texttt{random blocks} $\gets$ Sample $n_b$ blocks with
+         replacement from the genome, where sampling probability per
+         chromosome is proportional to $L_c$\\
       }
-Move features in $\bm{y}$ that fall into random blocks to rearranges blocks given the shift as difference between random blocks and rearranged blocks start sites
+\texttt{bootstrap[r]} $\gets$ Shift regions in $\bm{y}$ that fall in the \texttt{random blocks} to their
+respective positions in the \texttt{rearranged blocks}\\
+\texttt{bootstrap[r]} $\gets$ Trimming applied to any
+regions in \texttt{bootstrap[r]} that extend past chromosome end or into
+excluded regions $\bm{e}$
 }
-\caption{Block bootstrap GRanges across chromosome} \label{alg:supp_unseg}
+\caption{Un-segmented block bootstrap / permutation} \label{alg:supp_unseg}
 \end{algorithm}
 
 \begin{algorithm}
