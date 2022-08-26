@@ -144,11 +144,12 @@ had similar gene density, such that a segmentation state
 $i \in [1,\dots,S]$ consisted of one or more non-contiguous regions of
 the genome with similar gene density.
 
-We considered various genome segmentation methods, or pre-defined
-annotations,
-e.g. Circular Binary Search (CBS) \citep{cbs}, HMM
-\citep{rcpphmm}, and published segmentations (ChromHMM applied to
-Roadmap Epigenomics data \citep{ernst2012chromhmm}).
+For block bootstrapping with respect to genome segmentations,
+we considered various genome segmentation methods,
+Circular Binary Search (CBS) \citep{cbs} and a hidden Markov model (HMM)
+\citep{rcpphmm}, as well as pre-defined segmentations,
+ChromHMM applied to 
+Roadmap Epigenomics data \citep{ernst2012chromhmm}.
 CBS and HMM
 have R package implementations, and so we incorporated these
 into a utility function in \nullranges, \texttt{segmentDensity()}.
@@ -159,10 +160,10 @@ chromosome subsegments into groups with similar gene
 density. Typically this would result in genome segmentations with
 about three states, corresponding to low, medium, and high gene
 density. 
-HMM was used to model the number of genes per megabase as an emission
-density. We then used the
+HMM was used to model the genes per megabase as an emission
+density \mike{how many states}. We then used the
 Viterbi algorithm for the hidden state decoding. \mike{can you talk
-  about the normalization of the gene counts?}
+about the normalization of the gene counts used to run the HMM?}
 Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were
 downloaded from
 \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on
@@ -176,14 +177,17 @@ After merging, our version of ChromHMM applied to Roadmap data had
 8,797 ranges were left and the mean width was around 
 0.33 Mb.
 
-\subsection{Shuffling}\label{sec:shuffle}
+\subsection{Simple region shuffling}\label{sec:shuffle}
 
-Genome shuffling was performed by random sample SNPs in acceptance
-region on Genome with probability proportional to SNPs count on each
-chromosome. For the paper, we defined acceptance region by excluding
-ENCODE-produced excludable regions, centromere, and telomere from UCSC
-that stored in \code{excluderanges} \citep{excluderanges}.
-
+Simple region shuffling was performed by placing regions of interest
+uniformly in acceptance regions with probability proportional to the
+original SNP count per chromosome. For the paper, we defined
+acceptance regions as the inverse of
+ENCODE excluded regions \mike{cite Kundaje paper for this, see
+Mikhail's vignette for which one to cite},
+centromeres, and telomeres from UCSC,
+as provided in the \code{excluderanges} Bioconductor package
+\citep{excluderanges}.
 
 \subsection{Assessment of \bootranges}
 Suppose we are interested in region overlap between one feature $\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,..., \tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$ with lengths $\rho_1, ..., \rho_\beta$.
