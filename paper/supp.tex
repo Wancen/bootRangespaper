@@ -342,22 +342,57 @@ used to define this set}
 \mike{is this section just specific to the Liver ATAC analysis? or if it's
   more general should we move it to a different place in the Supplement?}
 
-On the issue of 
-block length selection, we considered it in two ways. 
-One is trying to find $L_b$ that has the minimum value of a pseudo-metric $d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$, 
-where $\mathcal{L}_{L_v}$ is the statistic distribution at length $L_v$, $v=1,2,\cdots,V$, $V$ is the number of candidate block lengths and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics distribution following \citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ had smaller values in most cases when $L_b\in[300kb,800kb]$. 
-Another way is evaluating conserved spatial pattern. Because we assume that generated null sets should have similar spatial properties with original sets, eg. inter-feature distance. 
-We used the Earth's Mover Distance (EMD) to quantify the similarity of the distributions of an inter-feature distance between the original  and  null  models,  resulting  in  values  from  zero  (identical  distributions)  to  one  (totally  disjoint  distributions). 
-The EMD between two distributions is proportional to the minimum amount of work required to change one distribution($y$) into the other ($y'$). 
-Here $y$ and $y'$ are the histograms of original and null model inter-feature distance with bin size = 0.3. We observed that EMD always decreased as $L_b$ increased because more neighboring features reserved. However, $L_b$ cannot be too large and close to $L_s$. Otherwise, the blocks randomization process would not be effective. Hence, the right $L_b$ falls in the range where EMD around elbow of the line plot. In this practice, [300kb,600kb] was shown to be  a good range by visualization of density plot (\cref{fig:suppfig0}B) and according to the Elbow Method of EMD (\cref{fig:suppfig0}C). 
-
+On the issue of block length selection, we considered it in two ways.
+One is trying to find $L_b$ that has the minimum value of a
+pseudo-metric
+$d^*(v)=|\sqrt{\frac{L_{v-1}}{L_v}}\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})|$,
+where $\mathcal{L}_{L_v}$ is the statistic distribution at length
+$L_v$, $v=1,2,\cdots,V$, $V$ is the number of candidate block lengths
+and $\text{IQR}(\mathcal{L})$ is the interquartile range of statistics
+distribution following
+\citet{bickel2010subsampling}. \cref{fig:suppfig0}A showed $d^*$ had
+smaller values in most cases when $L_b\in[300kb,800kb]$.  Another way
+is evaluating conserved spatial pattern. Because we assume that
+generated null sets should have similar spatial properties with
+original sets, eg. inter-feature distance.  We used the Earth's Mover
+Distance (EMD) to quantify the similarity of the distributions of an
+inter-feature distance between the original and null models, resulting
+in values from zero (identical distributions) to one (totally disjoint
+distributions).  The EMD between two distributions is proportional to
+the minimum amount of work required to change one distribution($y$)
+into the other ($y'$).  Here $y$ and $y'$ are the histograms of
+original and null model inter-feature distance with bin size = 0.3. We
+observed that EMD always decreased as $L_b$ increased because more
+neighboring features reserved. However, $L_b$ cannot be too large and
+close to $L_s$. Otherwise, the blocks randomization process would not
+be effective. Hence, the right $L_b$ falls in the range where EMD
+around elbow of the line plot. In this practice, [300kb,600kb] was
+shown to be a good range by visualization of density plot
+(\cref{fig:suppfig0}B) and according to the Elbow Method of EMD
+(\cref{fig:suppfig0}C).
 
 \subsection{Enrichment analysis of ATAC-seq and gene expressions}\label{sec:splines}
-Processed 24 macrophage samples' RNA-seq  and 145 samples' ATAC-seq were loaded from \code{fluentGenomics} \citep{lee2020fluent}. They were measured after interferon gamma (IFNg) stimulation. Since the transcriptomic response to IFNg stimulation may be mediated through an increasing transcription factors binding on nearby regions and ATAC-seq can captured those regions' accessibility, we expect there would have an enrichment of differentially accessible (DA) ATAC-seq peaks in the vicinity of differentially expressed (DE) genes. 
 
-When performing block bootstrap with 500kb block length on 100 times, we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the null hypothesis and concluded that there was significant enrichment of DA peaks near DE genes by counting overlaps.
+Processed 24 macrophage samples' RNA-seq and 145 samples' ATAC-seq
+were loaded from \code{fluentGenomics} \citep{lee2020fluent}. They
+were measured after interferon gamma (IFNg) stimulation. Since the
+transcriptomic response to IFNg stimulation may be mediated through an
+increasing transcription factors binding on nearby regions and
+ATAC-seq can captured those regions' accessibility, we expect there
+would have an enrichment of differentially accessible (DA) ATAC-seq
+peaks in the vicinity of differentially expressed (DE) genes.
 
-For fitting the generalized penalized splines, \code{gam} function in the \code{mgcv} package was used to fit the model, which was based on a penalized likelihood maximization, and generalized cross-validation was utilized to choose the optimal value for the smoothing parameter, $\lambda$. Then, \code{tidymv} package was implemented to predict and extract the fitted value. 
+When performing block bootstrap with 500kb block length on 100 times,
+we got $z_{99}=-108.1$ and $\textit{p}$-value $<.05$. We rejected the
+null hypothesis and concluded that there was significant enrichment of
+DA peaks near DE genes by counting overlaps.
+
+For fitting the generalized penalized splines, \code{gam} function in
+the \code{mgcv} package was used to fit the model, which was based on
+a penalized likelihood maximization, and generalized cross-validation
+was utilized to choose the optimal value for the smoothing parameter,
+$\lambda$. Then, \code{tidymv} package was implemented to predict and
+extract the fitted value.
 
 \begin{lstlisting}[language=R]
 boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
@@ -375,22 +410,37 @@ boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
 \end{lstlisting} 
 
 \subsection{Correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay}
-Data were downloaded according to \citet{Vignette} which includes genes and peaks in 10,032 cells. 
-Cell type annotations have been done as a priori by the 10x Genomics R\&D team. 
-Then, information on chromosome 1 to 22 were selected to construct gene and peak GRanges. 
-Since the main goal is not to accurately find gene-promoter pairs but the realization, the following preprocess may not be the most suitable way. 
-First, we aggregated cells within same cell types, to form ‘pseudobulks’ with 14 samples according to the metadata because pseudo-bulk provided smoother correlation statistics without loss of the information of interest. 
-Next, we removed all the features with 0 standard deviation. 
-Then, log counts per million (CPM) were computed from \code{edgeR} to account for different library size.
 
-Since genes' expression is most \textit{cis}-regulated by chromatin accessibility, there is a belief that two modalities would have significant high correlation. For the whole gene set, the mean correlation of genes and ATAC-seq read counts was 0.33, while the subsampling correlation distribution in \cref{fig:suppfig3} A had mean 0.007 across 1000 times block bootstraps. As expected,
-RNA and ATAC measured at local peaks had similar cell-type-specificity.
+Data were downloaded according to \citet{Vignette} which includes
+genes and peaks in 10,032 cells.  Cell type annotations have been done
+as a priori by the 10x Genomics R\&D team.  Then, information on
+chromosome 1 to 22 were selected to construct gene and peak GRanges.
+Since the main goal is not to accurately find gene-promoter pairs but
+the realization, the following preprocess may not be the most suitable
+way.  First, we aggregated cells within same cell types, to form
+‘pseudobulks’ with 14 samples according to the metadata because
+pseudo-bulk provided smoother correlation statistics without loss of
+the information of interest.  Next, we removed all the features with 0
+standard deviation.  Then, log counts per million (CPM) were computed
+from \code{edgeR} to account for different library size.
+
+Since genes' expression is most \textit{cis}-regulated by chromatin
+accessibility, there is a belief that two modalities would have
+significant high correlation. For the whole gene set, the mean
+correlation of genes and ATAC-seq read counts was 0.33, while the
+subsampling correlation distribution in \cref{fig:suppfig3} A had mean
+0.007 across 1000 times block bootstraps. As expected, RNA and ATAC
+measured at local peaks had similar cell-type-specificity.
 Additionally, the average gene-peaks correlation per gene can be
-computed and compared to a bootstrap distribution to
-identify 5644 gene-promoter pairs that were significantly correlated across cell types, among which 5591 genes had only
-one pair, 25 genes had 2 pairs. 
-% The most negative correlation gene TET3 has $\rho = -0.963$\cref{fig:suppfig}G outside the subsampling confidence interval [-0.85,0.78] and previous studies have assessed down-regulation TET3 are essential for B-cell development and tumorigenesis\citep{lio2019dysregulation}. Similarly, CD83\cref{fig:suppfig}H with $\rho = 0.992$ outside [-0.80, 0.68] was a well known myeloid markers\citep{li2019cd83}. 
-Those significant pairs could provide important insights into perturbation experiments for validation. Two examples were shown in \cref{fig:suppfig3}B-C. The block below shows example code for running analysis.
+computed and compared to a bootstrap distribution to identify 5644
+gene-promoter pairs that were significantly correlated across cell
+types, among which 5591 genes had only one pair, 25 genes had 2 pairs.
+
+Those significant pairs could provide important insights into
+perturbation experiments for validation. Two examples were shown in
+\cref{fig:suppfig3}B-C. The block below shows example code for running
+analysis.
+
 \begin{lstlisting}[language=R]
 # split sparse count matrix into NumericList
 x <- x_Granges %>%
@@ -413,25 +463,59 @@ boot_stats<-x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
 \end{lstlisting} 
  
 \newpage
+
 \section{Supplementary Figures}
+
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.35]{Figures/sfig1.jpeg}
-\caption{$L_b$ selection assessment. A) A pseudo-metric $d^*$ over $L_b$, B) The null sets' log2(inter-feature distance+1) density plots over various $L_b$ and segmentation settings. Red line represents observed feature set's log2(inter-feature distance+1) distance. The more null sets' density plots overlapped with observed features, the better conversing spatial distribution of original set captured by block bootstrapped. Median EMD were shown as text in each panel. C) Median EMD over $L_b$ where EMD quantified similarity of inter-feature distance distributions between nulls sets and observed sets.} 
+\caption{$L_b$ selection assessment. A) A pseudo-metric $d^*$
+  \citep{bickel2010subsampling} over $L_b$ , B) 
+  log2(inter-feature distance+1) density plots over various $L_b$ and
+  segmentation settings. Red curve represents the observed
+  \mike{region?} feature set's
+  log2(inter-feature distance+1) density. The more \mike{bootstrap?}
+  null sets' density
+  plots overlapped with observed features, the better we conserved the
+  spatial distribution of the original set via block
+  bootstrapping. Median EMD shown as text in each panel. C) Median
+  EMD over $L_b$ where EMD quantified the similarity of inter-feature
+  distance distributions between \mike{bootstrap?} nulls sets and observed sets.}
 \label{fig:suppfig0}
 \end{figure*}
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.3]{Figures/zscore.jpeg}
-\caption{ A) \textit{z} score over -log10 (\textit{p}-value) of the liver dataset. B) \textit{z} score over gene logFC of the macrophage dataset. \textit{z} score indicated the amount of standard deviations that observed fitted overlap count away from 1000 times block bootstrap's fitted overlap count.} 
+\caption{
+  $z$ scores over thresholds for liver ATAC-seq and macrophage experiments.
+  The $z$ scores indicated the distance of the observed overlap
+  count in terms of standard deviations from the 
+  bootstrap distribution of the overlap count ($R = 1,000$).
+  A) \textit{z} score over -log10 (\textit{p}-value) \mike{of
+    what? need to explain again what you are doing here, ... when
+    thresholding ... by p-value and computing overlap} of the liver
+  dataset. B) \textit{z} score over gene expression logFC of the
+  macrophage dataset.}
 \label{fig:suppfig2}
 \end{figure*}
 
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.08]{Figures/sfig2.jpeg}
-\caption{Results of correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay. A) The mean correlation distribution of genes expression with 1000 times block bootstrapped ATAC's read counts. B) Gene TET3 read counts over peak chr2:74000098-74003475 read counts, colored by cell types. TET3 has the most negative correlation $\rho = −0.963$. C) Gene CD83 read counts over peak chr6:14116971-14139988 read counts, colored by cell types. The correlation of this gene-promoter pair is 0.992.} 
+\caption{Correlation analysis of Chromium Single Cell
+  Multiome ATAC + Gene Expression dataset. A) The distribution of mean
+  correlation of gene expression with bootstrapped
+  ATAC-seq peaks and their read counts ($R = 1000$) \mike{why are
+    there less than 1000 mean correlations here? is it 100?}.
+  B) TET3 read counts (``rna value'') over peak
+  chr2:74000098-74003475 read counts (``peak value''),
+  colored by cell type. TET3 had
+  the most negative observed correlation $\rho = −0.963$.
+  C) CD83 read
+  counts over peak chr6:14116971-14139988 read counts, colored by cell
+  type. The correlation of this gene-promoter pair was
+  0.992. \mike{was this the highest?}}
 \label{fig:suppfig3}
 \end{figure*}
 
