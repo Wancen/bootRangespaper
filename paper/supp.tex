@@ -438,54 +438,69 @@ boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
 
 \pagebreak
 
-\subsection{Correlation analysis of Chromium Single Cell Multiome ATAC + Gene Expression assay}
+\subsection{Correlation analysis of Single Cell ATAC + Gene Expression}
 
-Data were downloaded according to \citet{Vignette} which includes
-genes and peaks in 10,032 cells.  Cell type annotations have been done
-as a priori by the 10x Genomics R\&D team.  Then, information on
-chromosome 1 to 22 were selected to construct gene and peak GRanges.
-Since the main goal is not to accurately find gene-promoter pairs but
-the realization, the following preprocess may not be the most suitable
-way.  First, we aggregated cells within same cell types, to form
-‘pseudobulks’ with 14 samples according to the metadata because
-pseudo-bulk provided smoother correlation statistics without loss of
-the information of interest.  Next, we removed all the features with 0
-standard deviation.  Then, log counts per million (CPM) were computed
-from \code{edgeR} to account for different library size.
+We were interested in demonstrating \bootranges on data from single
+cell experiments, in particular looking at correlations at
+pseudo-bulk resolution in single cell multi-omics datasets.
+For this purpose, 
+data were downloaded from \citet{Vignette}, including
+RNA-seq for genes and ATAC-seq for peaks in 10,032 cells.
+Cell type annotations had already bee performed
+by the 10x Genomics R\&D team. Information on genes and peaks from
+chromosomes 1-22 were selected.
+First, we aggregated data from cells within same cell type, to form
+pseudo-bulks data with $n=14$ cell types according to the metadata. 
+The pseudo-bulk data provided smoother correlation statistics without
+loss of the information of interest (correlation of cell-type-specific
+expression and accessibility).
+Next, we removed all the features with 0
+standard deviation in either assay.
+Finally, log counts per million (CPM) were computed
+from \code{edgeR} \mike{cite} to account for different library sizes
+in both assays.
 
-Since genes' expression is most \textit{cis}-regulated by chromatin
-accessibility, there is a belief that two modalities would have
-significant high correlation. For the whole gene set, the mean
-correlation of genes and ATAC-seq read counts was 0.33, while the
-subsampling correlation distribution in \cref{fig:suppfig3} A had mean
-0.007 across 1000 times block bootstraps. As expected, RNA and ATAC
-measured at local peaks had similar cell-type-specificity.
+Our expectation was that the two modalities would have
+significantly high correlation for peaks close to genes ($le 1kb$).
+For the whole gene set, the mean
+correlation of gene RNA-seq and peak ATAC-seq read counts was 0.33, while the
+bootstrap sampling correlation distribution in \cref{fig:suppfig3}A
+had a mean correlation of 0.007 for $R = 1,000$.
+Therefore, as expected, RNA and ATAC
+measured at nearby peaks had similar cell-type-specificity.
 Additionally, the average gene-peaks correlation per gene can be
-computed and compared to a bootstrap distribution to identify 5644
+computed and compared to a bootstrap distribution to identify 5,644
 gene-promoter pairs that were significantly correlated across cell
-types, among which 5591 genes had only one pair, 25 genes had 2 pairs.
+types. Among these 5,591 genes had only one paired promoter, while 25
+genes had 2 nearby promoters (peaks of accessibility within 1kb of the
+TSS). \mike{distance was calculated from TSS right?}
+%Those significant pairs could provide important insights into
+%perturbation experiments for validation.
+Two examples of the most significant gene-peak pairs are shown in
+\cref{fig:suppfig3}B-C.
 
-Those significant pairs could provide important insights into
-perturbation experiments for validation. Two examples were shown in
-\cref{fig:suppfig3}B-C. The block below shows example code for running
-analysis.
+The following code is an example of how such an analysis can be
+performed with \bootranges and \plyranges. \mike{what is x and y?}
 
 \begin{lstlisting}[language=R]
-# split sparse count matrix into NumericList
+# split count matrix into NumericList metadata and sort
 x <- x_Granges %>%
-  mutate(counts_X = NumericList(asplit(x.cpm, 1)))%>% sort()
+  mutate(counts_X = NumericList(asplit(x.cpm, 1))) %>% sort()
 y <- y_Granges %>%
   mutate(counts_y = NumericList(asplit(y.cpm, 1))) %>% sort()
-# First standardize read counts for fast correlation computation
-x$counts1 <- NumericList(lapply(x$counts_X,function(z)(z-mean(z))/sd(z)))
-y$counts2 <- NumericList(lapply(y$counts_y,function(z)(z-mean(z))/sd(z)))
 
-bootranges <- bootRanges(y,blockLength = 5e5, R=100)
-  
+# standardize read counts for fast correlation computation
+x$counts_x <- NumericList(lapply(x$counts_X, function(z) (z-mean(z))/sd(z)))
+y$counts_y <- NumericList(lapply(y$counts_y, function(z) (z-mean(z))/sd(z)))
+
+# generate block bootstrap regions for 'y'
+boots <- bootRanges(y, blockLength = 5e5, R = 100)
+
 # for standardized x and y:
-correlation = function(x,y) 1/(length(x)-1) * sum(x*y)
-## extract bootstrap summary statistics
-boot_stats<-x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
+correlation <- function(x,y) 1/(length(x)-1) * sum(x*y)
+
+# extract bootstrap summary statistics
+boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
   plyranges::mutate(rho = correlation(counts_x, counts_y)) %>%
   plyranges::group_by(iter) %>%
   plyranges::summarise(meanCor = mean(rho)) 
