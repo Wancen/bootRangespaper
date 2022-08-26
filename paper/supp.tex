@@ -189,23 +189,19 @@ centromeres, and telomeres from UCSC,
 as provided in the \code{excluderanges} Bioconductor package
 \citep{excluderanges}.
 
-\subsection{Assessment of \bootranges}
+\subsection{Assessment of significance via bootstrap}
 
 Suppose we are interested in computing and assessing the significance
 of the overlap between one feature
 \mike{set of regions? are we not using feature anymore?}
-$\bm{x}$, denoted by $T_1, ..., T_\alpha$ with lengths $\tau_1,...,
-\tau_\alpha$, and the feature $\bm{y}$, denoted by $Q_1, ..., Q_\beta$
-with lengths $\rho_1, ..., \rho_\beta$.
+$\bm{x}$ and another feature $\bm{y}$.
 
-Then, the region overlap is
-defined as $s_{obs} \equiv \frac{1}{\alpha}\sum_{t=1}^\alpha V_t$,
-where $V_t=1-\prod_{k\in (T_t+\theta)}(1-J_k)$ and $J_k=1$ if position
-$k$ belongs to feature $\bm{y}$ and 0 otherwise.
-
-$\theta$ is the
-shift among feature $\bm{x}$ and $\bm{y}$, such as 1kb when linking
-promoters to gene.
+We compute the overlap $s_{obs}$, i.e. the number of 
+features in $\bm{x}$ that overlapped a feature in $\bm{y}$.
+This statistic can vary in many ways, including counting fraction of
+overlap, restricting by the amount of overlap, and allowing for a gap
+between the features, e.g. we may allow 1 kb of gap to connect local
+chromatin accessibility peaks to transcription start sites (TSS).
 
 After block bootstrapping, we generate $R$ new
 sets of null ranges $\bm{y'}$ within $R\times \frac{n}{L_b}$ blocks.
