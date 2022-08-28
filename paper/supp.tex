@@ -282,17 +282,19 @@ $r \gets 1$\\
 \begin{algorithm}
 \SetNoFillComment
 \caption{Segmented block bootstrap with proportional block length}\label{alg:framework}
-\KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of total genome ($L_C$),
-  Bootstrap iterations ($R$), Segmentation regions with $L_j$ representing each ranges width
-  and $\alpha_i$ representing ranges belong to state $i$}
+\KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of total genome ($L_G$),
+  Bootstrap iterations ($R$), Segmentation states $\mathcal S$,
+  Segmentation regions $\mathcal{R}_s$ (the set of all regions
+  belonging to state $s$), and with $L_r^s$ representing the width of region $r$
+  in state $s$}
 \KwResult{$\texttt{bootRanges}$ object}
 $r \gets 1$\\
 \While{$r \leq R$}{
-  \ForEach{segmentation state $i$}{
-    $L_s^i \gets \sum_{j\in \alpha_i} L_j$ \\
-    $L_b^i \gets L_b \cdot L_s^i / L_C$ \\
-    $n_b^i \gets \sum_{j\in \alpha_i} \text{ceiling}(L_{j} / L_b^i)$ \\
-    \texttt{rearranged blocks} $\gets$ Generate $n_b^i$ tiling blocks start site \\
+  \ForEach{segmentation state $s \in \mathcal{S}$}{
+    $L_s \gets \sum_{r \in \mathcal{R}_s} L_r^s$ \\
+    $L_b^s \gets L_b \cdot L_s / L_G$ \\
+    $n_b^s \gets \sum_{r \in \mathcal{R}_s} \text{ceiling}(L_r^s / L_b^s)$ \\
+    \texttt{rearranged blocks} $\gets$ Generate $n_b^s$ consecutive tiling blocks along $\mathcal{R}_s$ \\
     \texttt{random blocks} $\gets$ Generate $n_b^i$ blocks start site with replacement and and number of blocks per ranges is proportional to $L_j$ \\
     \textbf{Return:} rearranged and random  block start and chromosome names
   }
