@@ -47,6 +47,7 @@
 
 
 \usepackage[ruled,vlined,linesnumbered,noresetcount]{algorithm2e}
+
 \newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
 \SetCommentSty{mycommfont}
 \usepackage{float}
@@ -247,78 +248,81 @@ distribution should be scaled by $\sqrt{L_b}$ \mike{in the case of
 a segmented bootstrap with proportion block length? should we cite
 Bickel for this fact?}
 
-\subsection{Swapping algorithm}\label{sec:algorithm}
+\subsection{Block bootstrapping algorithm in \bootranges}\label{sec:algorithm}
 
 \begin{algorithm}[H]
-  \SetAlgoLined
-  \KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of
-    chromosome $c$ ($L_c$), Total number of chromosomes ($C$),
-    Bootstrap iterations ($R$), Type ($permute$ or $bootstrap$),
-    Excluded regions ($\bm{e}$)}
-  \KwResult{$\texttt{bootRanges}$ object, contains the bootstrapped
-    region sets from each iteration, concatenated across $R$ total
-    iterations. Iteration and $L_b$ recorded as metadata}
-  $r \gets 1$\\
-  \While{$r \leq R$}{
-    \texttt{rearranged blocks} $\gets$ Generate consecutive tiling
-    blocks with width = $L_b$ (except last tile per chromosome which
-    is cut to fit $L_c$ for chromosome $c$)\\
-    \uIf{permutation}{
-\texttt{random blocks} $\gets$ Sample blocks without replacement from rearranged blocks
-}\ElseIf{bootstrap}{ 
-         $n_b \gets \sum_{c=1}^{C} \text{ceiling}(L_c / L_b)$\\
-         \texttt{random blocks} $\gets$ Sample $n_b$ blocks with
-         replacement from the genome, where sampling probability per
-         chromosome is proportional to $L_c$\\
-      }
-\texttt{bootstrap[r]} $\gets$ Shift regions in $\bm{y}$ that fall in the \texttt{random blocks} to their
-respective positions in the \texttt{rearranged blocks}\\
-\texttt{bootstrap[r]} $\gets$ Trimming applied to any
-regions in \texttt{bootstrap[r]} that extend past chromosome end or into
-excluded regions $\bm{e}$
+\SetAlgoLined
+\caption{Un-segmented block bootstrap / permutation} \label{alg:supp_unseg}  
+\KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of
+  chromosome $c$ ($L_c$), Total number of chromosomes ($C$),
+  Bootstrap iterations ($R$), Type ($permute$ or $bootstrap$),
+  Excluded regions ($\bm{e}$)}
+\KwResult{$\texttt{bootRanges}$ object, with the bootstrapped
+  region sets from each iteration, concatenated across $R$ total
+  iterations. Iteration and $L_b$ recorded as metadata}
+$r \gets 1$\\
+\While{$r \leq R$}{
+  \texttt{rearranged blocks} $\gets$ Generate consecutive tiling
+  blocks with width = $L_b$ (except last tile per chromosome which
+  is cut to fit $L_c$ for chromosome $c$)\\
+  \uIf{permutation}{
+    \texttt{random blocks} $\gets$ Sample blocks without replacement from rearranged blocks
+  }\ElseIf{bootstrap}{ 
+    $n_b \gets \sum_{c=1}^{C} \text{ceiling}(L_c / L_b)$\\
+    \texttt{random blocks} $\gets$ Sample $n_b$ blocks with
+    replacement from the genome, where sampling probability per
+    chromosome is proportional to $L_c$\\
+  }
+  \texttt{bootstrap[r]} $\gets$ Shift regions in $\bm{y}$ that fall in the \texttt{random blocks} to their
+  respective positions in the \texttt{rearranged blocks}, trimming applied to any
+  regions that extend past chromosome end or into excluded regions $\bm{e}$
 }
-\caption{Un-segmented block bootstrap / permutation} \label{alg:supp_unseg}
 \end{algorithm}
 
 \begin{algorithm}
 \SetNoFillComment
 \caption{Segmented block bootstrap with proportional block length}\label{alg:framework}
-  \KwData{Feature GRanges($\bm{y}$), Block length ($L_b$), Length of total genome ($L_C$), Bootstrap times ($R$), Segmentation GRanges with $L_j$ represents each ranges width and $\alpha_i$ represents ranges belong to state $i$}
-  \KwResult{$\bm{bootRanges}$ object, a GRanges object with all the ranges concatenated, and iteration and block length indicated by metadata columns}
+\KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of total genome ($L_C$),
+  Bootstrap iterations ($R$), Segmentation regions with $L_j$ representing each ranges width
+  and $\alpha_i$ representing ranges belong to state $i$}
+\KwResult{$\texttt{bootRanges}$ object}
+$r \gets 1$\\
 \While{$r \leq R$}{
-\For{each segmentation state $i$}{
-        $L_s^i = \sum_{j\in \alpha_i} L_j$ \\
-         $L_b^i = L_b * L_s^i / L_C$ \\
-         $n_b^i = \sum_{j\in \alpha_i} \text{ceiling}(L_{j} / L_b^i)$ \\
-	\textbf{rearranged blocks:} Generate $n_b^i$ tiling blocks start site \\
-         \textbf{random blocks:} Generate $n_b^i$ blocks start site with replacement and and number of blocks per ranges is proportional to $L_j$ \\
-         \textbf{Return:} rearranged and random  block start and chromosome names
-    }
-Construct random blocks Granges\\
-Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
+  \ForEach{segmentation state $i$}{
+    $L_s^i \gets \sum_{j\in \alpha_i} L_j$ \\
+    $L_b^i \gets L_b \cdot L_s^i / L_C$ \\
+    $n_b^i \gets \sum_{j\in \alpha_i} \text{ceiling}(L_{j} / L_b^i)$ \\
+    \texttt{rearranged blocks} $\gets$ Generate $n_b^i$ tiling blocks start site \\
+    \texttt{random blocks} $\gets$ Generate $n_b^i$ blocks start site with replacement and and number of blocks per ranges is proportional to $L_j$ \\
+    \textbf{Return:} rearranged and random  block start and chromosome names
+  }
+  Construct random blocks Granges\\
+  Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \end{algorithm}
 
 \begin{algorithm}
 \SetNoFillComment
-\caption{Segmented block bootstrap with fixed block length across chromosome}\label{alg:supp_fixedlb}
-  \KwData{Feature GRanges($\bm{y}$), Block length ($L_b$), Length of total genome ($L_C$), Bootstrap times ($R$), Segmentation GRanges with $L_j$ represents each ranges width and $\beta$ represents total number of ranges}
-  \KwResult{$\bm{bootRanges}$ object, a GRanges object with all the ranges concatenated, and iteration and block length indicated by metadata columns}
+\caption{Segmented block bootstrap with fixed block length}\label{alg:supp_fixedlb}
+\KwData{Regions ($\bm{y}$), Block length ($L_b$), Length of total genome ($L_C$),
+  Bootstrap iterations ($R$), Segmentation regions with $L_j$ representing each ranges width
+  and $\beta$ representing total number of ranges}
+\KwResult{$\texttt{bootRanges}$}
+$r \gets 1$\\
 \While{$r \leq R$}{
-         $n_{j} = \text{ceiling}(L_{j} / L_b)$ \\
-         $n_b = \sum_{j=1}^{\beta} n_j$ \\
-         \textbf{rearranges blocks:} Generate $n_b$ tiling blocks start site by order with width = $L_b$  \\
- 	\textbf{random blocks:} Generate $n_b$ blocks start site with replacement and number of blocks per ranges is proportional to $L_j$ \\
-\For{each segmentation state $i$}{
-         Identify rearranged blocks that are in state $i$  \\
-	Identify random blocks that are in state $i$ \\
-         \textbf{Return:} random block start sites and chromosome names, rearranged block start sites and chromosome names
-    }
-Construct random blocks Granges \\
-Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
+  $n_{j} \gets \text{ceiling}(L_{j} / L_b)$ \\
+  $n_b \gets \sum_{j=1}^{\beta} n_j$ \\
+  \texttt{rearranged blocks} $\gets$ Generate $n_b$ tiling blocks start site by order with width = $L_b$  \\
+  \texttt{random blocks} $\gets$ Generate $n_b$ blocks start site with replacement and number of blocks per ranges is proportional to $L_j$ \\
+  \ForEach{segmentation state $i$}{
+    Identify rearranged blocks that are in state $i$  \\
+    Identify random blocks that are in state $i$ \\
+    \textbf{Return:} random block start sites and chromosome names, rearranged block start sites and chromosome names
+  }
+  Construct random blocks Granges \\
+  Move features in $\bm{y}$ that fall into random blocks to rearranged blocks given the shift as difference between random blocks and rearranged blocks start sites
 }
 \end{algorithm}
-
 
 \section{Supplementary Results} \label{sec:results}
 
