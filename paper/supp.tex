@@ -206,11 +206,12 @@ to connect local chromatin accessibility peaks to transcription start
 sites (TSS).
 
 Via block bootstrap resampling, we generate $R$ new
-sets of regions $\bm{y_r}$ within $R \times \frac{n}{L_b}$ blocks, for
-a total genome size of $n$.
-\mike{can we define R x n / L\_b as a new variable so you can use it without
+sets of regions $\bm{y_r}$ within $R \times \frac{L_G}{L_b}$ blocks, for
+a genome length of of $L_G$.
+\mike{can we define R x L\_G / L\_b as a new variable so you can use it without
   having to write it out again. Also do you need to account for the
   fact that blocks don't evenly divide the chromosomes? e.g. ceiling()?}
+For details see \cref{alg:unseg} and \creg{alg:seg}.
 
 We can perform either genome-wise, block-wise, or region-wise analysis
 based on the question to be addressed. For example, if we want to test
@@ -226,7 +227,7 @@ We use the overlaps per bootstrap sample $\bm{y_r}$ to calculate the
 overlap statistics $s_{1}, s_{2}, \dots, s_{R}$
 to derive a genome-wise empirical \textit{p}-value
 $= \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or
-$s_{1}, s_{2},..., s_{R\times \frac{n}{L_b}}$.
+$s_{1}, s_{2},..., s_{R\times \frac{L_G}{L_b}}$.
 
 Alternatively, we could use $z$ score to measure the
 distance between $s_{obs}$ and the
@@ -283,7 +284,7 @@ Concatenate \texttt{bootstrap} regions across iterations $r$\\
 \begin{algorithm}
 \SetNoFillComment
 \caption{Segmented block bootstrap with fixed or proportional block length}\label{alg:seg}
-\KwData{Regions ($\bm{y}$), Maximal block length ($L_b$), Length of total genome ($L_G$),
+\KwData{Regions ($\bm{y}$), Maximal block length ($L_b$), Length of genome ($L_G$),
   Bootstrap iterations ($R$), Type ($fixed$ or $proportional$),
   Segmentation states $\mathcal S$,
   Segmentation regions $\mathcal{A}_s$ (the set of all regions
