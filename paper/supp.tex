@@ -410,7 +410,7 @@ or two that briefly says how this code relates to the above paragraph?}
 performed as the downstream task of \bootranges. Suppose $x$ is DE genes and $bootRanges$ is bootstrapped DA peaks. For each gene within each iteration, we extract total number of peaks that overlap with the gene. Then, after fitting splines, we predict 2000 overlap counts on original logFC range, and obtain the predictions that belong to the specified range.}
 \begin{lstlisting}[language=R]
 boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
-  plyranges::group_by(id.x,iter) %>%
+  plyranges::group_by(id.x, iter) %>%
   plyranges::summarize(count = plyranges::n(), logFC = max(logFC)) %>%
   as.data.frame() %>%
   tidyr::complete(`id.x`, iter, fill=list(count = 0)) %>%
