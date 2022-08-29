@@ -106,7 +106,7 @@ database.
 Methods following this strategy include
 LOLA \citep{sheffield2016lola} using Fisher's exact test, 
 Poly-Enrich \citep{lee2020poly} using a likelihood ratio test based on
-a Negative Binomial likelihood, \wancen{and matchRanges utilizing covariate matching method.}
+a Negative Binomial likelihood, \wancen{and matchRanges \citep{Davis2022matchranges} utilizing covariate matching method.}
 Another strategy is to permute or shuffle the genomic regions, possibly considering an
 exclusion list of regions where the original region set should not be
 re-located. Example methods belonging to this category include
@@ -154,17 +154,15 @@ Roadmap Epigenomics data \citep{ernst2012chromhmm}.
 CBS and HMM
 have R package implementations, and so we incorporated these
 into a utility function in \nullranges, \texttt{segmentDensity()}.
-CBS, implemented in the \textit{DNAcopy} package, was used to recursively split
-chromosomes into subsegments with similar density, in this case based
-on gene count per megabase. We then used k-means to cluster
+\wancen{CBS, implemented in the \textit{DNAcopy} package, was used to recursively split
+chromosomes into subsegments with similar density. In this case, the process was based on the square root of gene count per megabase to avoid heavy tailed density distribution.}. We then used k-means to cluster
 chromosome subsegments into groups with similar gene
 density. Typically this would result in genome segmentations with
 about three states, corresponding to low, medium, and high gene
 density. 
 HMM was used to model the genes per megabase as an emission
 density \mike{how many states} \wancen{usually in three states}. We then used the
-Viterbi algorithm for the hidden state decoding. \mike{can you talk
-about the normalization of the gene counts used to run the HMM?}
+Viterbi algorithm for the hidden state decoding. 
 Roadmap segmentations derived by ChromHMM \citep{ernst2012chromhmm} were
 downloaded from
 \url{https://egg2.wustl.edu/roadmap/web_portal/}. ChromHMM is based on
@@ -184,8 +182,8 @@ Simple region shuffling was performed by placing regions of interest
 uniformly in acceptance regions with probability proportional to the
 original SNP count per chromosome. For the paper, we defined
 acceptance regions as the inverse of
-ENCODE excluded regions \mike{cite Kundaje paper for this, see
-Mikhail's vignette for which one to cite} \wancen{No matter which one, only one paper was cited from Mikhail's vignette, \citep{amemiya2019encode}},
+ENCODE excluded regions \wancen{\citep{amemiya2019encode}} \mike{cite Kundaje paper for this, see
+Mikhail's vignette for which one to cite} \wancen{No matter which one, only this paper was cited from Mikhail's vignette},
 centromeres, and telomeres from UCSC,
 as provided in the \code{excluderanges} Bioconductor package
 \citep{excluderanges}.
@@ -243,8 +241,45 @@ Note that, if block-wise analysis is preferred, the SD of bootstrap
 distribution should be scaled by $\sqrt{L_b}$ \mike{in the case of
 a segmented bootstrap with proportion block length? should we cite
 Bickel for this fact?} 
-\wancen{I derived this conclusion to make genome-wise and block-wise z score comparative. Because the $\bar{s}$ is similar to both analysis, then only changes come from SD. In simulation practice, I found out they ususally scaled by $\sqrt{L_b}$. But in theory, as $\text{SD}_R$ is for genome-wise standard deviation, then $\text{SD}_{R_b} = \sqrt{\frac{1}{R_b-1} \sum_{r=1}^{R_b} [s_r - \bar{s}]^2}
+\wancen{I derived this conclusion to make genome-wise and block-wise z score comparative. Because the $\bar{s}$ is similar to both analysis, then only changes come from SD. In simulation practice, I found out they approximately scaled by $\sqrt{L_b}$. But in theory, as $\text{SD}_R$ is for genome-wise standard deviation, then $\text{SD}_{R_b} = \sqrt{\frac{1}{R_b-1} \sum_{r=1}^{R_b} [s_r - \bar{s}]^2}
 \approx \sqrt{\frac{L_b}{L_G}} \times \sqrt{\frac{1}{R}\sum_{r=1}^{R_b} [s_r - \bar{s}]^2}$. Actually, I am not sure should we mention that in text.}
+
+\subsection{$L_b$ selection}\label{sec:length}
+
+We considered two aspects of the block bootstrap datasets to select
+block length $L_b$.
+First, following \citet{bickel2010subsampling}, we tried to find $L_b$
+that provided the minimum value of a pseudo-metric,
+
+$$ d^*(v)= \left| \sqrt{\frac{L_{v-1}}{L_v}} [\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})] \right|,$$
+where $\mathcal{L}_{L_v}$ is the distribution of the test statistic at
+block length $L_v$, $v = 1,2,\dots,V$, $V$ is the number of candidate
+block lengths, and $\text{IQR}(\mathcal{L})$ is the interquartile
+range of a distribution $\mathcal{L}$.
+Another aspect for block length selection is evaluating the
+conservation of the spatial pattern. In order to provide robust
+statistical inference in terms of significance testing,
+generated null models, \wancen{same as bootstrap distribution}, should have similar spatial properties with
+the original sets, e.g. inter-region distances. 
+We used the Earth's Mover
+Distance (EMD) to quantify the similarity of the distributions of
+inter-region distances between the original and null models, resulting 
+in values from zero (identical distributions) to one (totally disjoint
+distributions) \citep{emd}.
+The EMD between two distributions is proportional to
+the minimum amount of ``work'' required to change one distribution ($y$)
+into the other ($y'$). Here $y$ and $y'$ are the histograms of
+original and null model inter-region distance.
+We observed that EMD always decreased as $L_b$ increased, because more
+neighboring regions' distances were preserved in the
+block bootstrap with larger blocks (block boundaries break original
+distances).
+However, $L_b$ cannot be too large and close to $L_s$.
+Otherwise, the randomization of blocks would not
+be effective: the blocks will not sufficiently shuffle regions across
+segments within a particular segmentation state.
+Hence, we decided an optimal $L_b$ falls in the range where EMD
+was around elbow of the line plot for this aspect. 
 
 \subsection{Block bootstrapping algorithm in \bootranges}\label{sec:algorithm}
 
@@ -316,64 +351,26 @@ Concatenate \texttt{bootstrap} regions across iterations $r$\\
 \citep{gwascatalog} on September 22, 2021. We only extracted single
 nucleotide variants associated with ``total cholesterol''. Liver ATAC-seq peaks
 \citep{CURRIN20211169} aggregated from 20 samples were downloaded from
-the GEO accession: GSE164870.
-Genomic coordinates of consensus peaks were converted from hg19 to
+the GEO accession: GSE164870. \wancen{All the peaks here were filtered by FDR $\leq 0.05$.}
+Then, genomic coordinates of consensus peaks were converted from hg19 to
 hg38 using \code{liftOver} to obtain 221,606 peaks.
 
 \mike{what about distance btwn peak and gene for an overlap? was there
 a minimal FDR or p-value associated with the 221k peaks? maybe find
 the largest adjusted p-value or check the GEO page to see what was
-used to define this set}
+used to define this set} \wancen{I check the largest FDR is 0.049}
 
-\subsubsection{$L_b$ selection}\label{sec:length}
-
-\mike{is this section just specific to the Liver ATAC analysis? or if it's
-  more general should we move it to a different place in the Supplement?}
-
-We considered two aspects of the block bootstrap datasets to select
-block length $L_b$.
-First, following \citet{bickel2010subsampling}, we tried to find $L_b$
-that provided the minimum value of a pseudo-metric,
-
-$$ d^*(v)= \left| \sqrt{\frac{L_{v-1}}{L_v}} [\text{IQR}(\mathcal{L}_{L_v})-\text{IQR}(\mathcal{L}_{L_{v-1}})] \right|,$$
-where $\mathcal{L}_{L_v}$ is the distribution of the test statistic at
-block length $L_v$, $v = 1,2,\dots,V$, $V$ is the number of candidate
-block lengths, and $\text{IQR}(\mathcal{L})$ is the interquartile
-range of a distribution $\mathcal{L}$.
-We found that $d^*$ had
+Based on the $L_b$ selection criteria, we found that $d^*$ had
 smaller values in most cases when $L_b \in [300kb,800kb]$
-(\cref{fig:suppfig0}A).
-Another aspect for block length selection is evaluating the
-conservation of the spatial pattern. In order to provide robust
-statistical inference in terms of significance testing,
-generated \mike{bootstrap?}\wancen{Yes, do we need to mention bootstrapped between "generated null"?} null sets should have similar spatial properties with
-the original sets, e.g. inter-region distances.
-We used the Earth's Mover
-Distance (EMD) to quantify the similarity of the distributions of
-inter-region distances between the original and \mike{bootstrap?}
-null models, resulting 
-in values from zero (identical distributions) to one (totally disjoint
-distributions) \citep{emd}.
-The EMD between two distributions is proportional to
-the minimum amount of ``work'' required to change one distribution ($y$)
-into the other ($y'$). Here $y$ and $y'$ are the histograms of
-original and \mike{bootstrap?}
-null model inter-region distance with bin size = 0.3 \mike{why this number?} 
-\wancen{we have to specify a number otherwise histogram will automatically choose different bin size for null distributions generated from different $L_b$ and $L_s$ settings. 0.3 was chosen by visualization that looks good for all settings}.
-We observed that EMD always decreased as $L_b$ increased, because more
-neighboring regions' distances were preserved in the
-block bootstrap with larger blocks (block boundaries break original
-distances).
-However, $L_b$ cannot be too large and close to $L_s$.
-Otherwise, the randomization of blocks would not
-be effective: the blocks will not sufficiently shuffle regions across
-segments within a particular segmentation state.
-Hence, we decided an optimal $L_b$ falls in the range where EMD
-was around elbow of the line plot. Considering this aspect of
-inter-region distances, $L_b \in [300kb,600kb]$ was
+(\cref{fig:suppfig0}A). When quantify the similarity of the distributions of
+inter-region distances between the original and 
+null models using EMD, we derived the histograms of
+original and
+null model inter-region distance with bin size = 0.3 under various $L_b$ and $L_s$ settings. \mike{why this number?} 
+\wancen{we have to specify a number otherwise histogram will automatically choose different bin size for null sets generated from different $L_b$ and $L_s$ settings. 0.3 was chosen by visualization that looks good for all settings}. Under this aspect, $L_b \in [200kb,600kb]$ was
 shown to be a good range by visualization of density plot
 (\cref{fig:suppfig0}B) and according to the elbow of the EMD statistic
-(\cref{fig:suppfig0}C).
+(\cref{fig:suppfig0}C). Combining two aspects, we concluded that $[300kb,600kb]$ was a good range for block length.
 
 \subsection{Enrichment analysis of macrophage ATAC-seq and gene expression}\label{sec:splines}
 
@@ -404,13 +401,13 @@ was used to choose the optimal value for the smoothing parameter,
 $\lambda$. Then, the \code{tidymv} package was used to predict and
 extract the fitted value. \mike{more description on the conditional
   distributions in Fig 2C?} 
-\wancen{For each generated null set, we found all the predicted values into the range (-8,10) with 1 as the increment. Then conditional density plots can be plotted across all null sets. Here, $z$ measured the distance between predicted overlap counts using observed sets and the null sets.}
+\wancen{For each generated null set, we found all the predicted overlap counts for logFC falling into the range (-8,10) with 1 as the increment. Then, conditional density plots can be plotted across all null sets. Additionally, we used $z$ score to measure the distance of predicted overlap counts between observed sets and the null sets in terms of SD.}
 
 \mike{below, what is x? what is bootRanges? why max LFC? why length =
   2000? can you provide a sentence
 or two that briefly says how this code relates to the above paragraph?}
-\wancen{The following code shows how the analysis of Fig 2C can be
-performed as the downstream task of \bootranges. Suppose $x$ is DE genes and $bootRanges$ is bootstrapped DA peaks. For each gene within each iteration, we extract total number of peaks that overlapped with it. Then, fitting splines, predicting 2000 overlap counts on original logFC range, and finding the predictions belongs to the specified range.}
+\wancen{The following code shows how the analysis of Fig 2C is
+performed as the downstream task of \bootranges. Suppose $x$ is DE genes and $bootRanges$ is bootstrapped DA peaks. For each gene within each iteration, we extract total number of peaks that overlap with the gene. Then, after fitting splines, we predict 2000 overlap counts on original logFC range, and obtain the predictions that belong to the specified range.}
 \begin{lstlisting}[language=R]
 boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
   plyranges::group_by(id.x,iter) %>%
@@ -513,7 +510,7 @@ boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
   spatial distribution of the original set via block
   bootstrapping. Median EMD shown as text in each panel. C) Median
   EMD over $L_b$ where EMD quantified the similarity of inter-region
-  distance distributions between \mike{bootstrap?} nulls sets and observed sets.}
+  distance distributions between nulls sets and observed sets.}
 \label{fig:suppfig0}
 \end{figure*}
 
@@ -521,15 +518,17 @@ boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
 \centering
 \includegraphics[scale=0.3]{Figures/zscore.jpeg}
 \caption{
-  $z$ scores over thresholds for liver ATAC-seq and macrophage experiments.
-  The $z$ scores indicated the distance of the observed overlap
-  count in terms of standard deviations from the 
-  bootstrap distribution of the overlap count ($R = 1,000$).
-  A) \textit{z} score over -log10 (\textit{p}-value) \wancen{of SNPs} \mike{of
+  $z$ scores against thresholds for liver ATAC-seq and macrophage experiments.
+%  The $z$ scores indicated the distance of the observed overlap
+%  statistics in terms of standard deviations from the 
+%  bootstrap distribution of the overlap count ($R = 1,000$).
+  A) \wancen{\textit{z} score against SNPs -log10 (\textit{p}-value)  in the liver
+  dataset. The penalized splines was fitted on the top 1800 SNPs and was used to predict the overlap rate for the -log10 (\textit{p}-value) falling into the range (5,20) with 1 as increment for both observed and null sets data. Then, $z$ scores, indicating the distance of the predicted overlap rate between the observed set and
+null sets($R = 1,000$) in terms of SD, was derived.} \mike{of
     what? need to explain again what you are doing here, ... when
-    thresholding ... by p-value and computing overlap} in the liver
-  dataset. B) \textit{z} score over gene expression logFC of the
-  macrophage dataset.}
+    thresholding ... by p-value and computing overlap} B) \textit{z} score against gene expression logFC of the
+  macrophage dataset. The penalized splines was fitted on all DE genes and was used to predict the overlap count for the logFC falling into the range (-8,10) with 1 as increment for both observed and null sets data. Then, $z$ scores, indicating the distance of the predicted overlap count between the observed set and
+null sets($R = 1,000$) in terms of SD, was derived.}
 \label{fig:suppfig2}
 \end{figure*}
 
