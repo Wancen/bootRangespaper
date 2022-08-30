@@ -1,7 +1,7 @@
 \section{Introduction}
 
 In genomic analysis, to assess whether
-there is an significant association between two sets of ranges, 
+there is a significant association between two sets of ranges, 
 one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
@@ -143,8 +143,8 @@ during enrichment analyses. We tested this on a dataset of differential chromati
 \citep{alasoo2018shared,lee2020fluent}.
 A generalized linear model (GLM) with penalized splines was
 fit to the overlap count over gene logFC, both for the original
-data and to each of the bootstrap datasets.
-Conditional densities of splines fit to bootstrap data
+data and to each of the generated null sets.
+Conditional densities of splines fit to null sets
 were computed at various thresholds to reveal how
 the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
