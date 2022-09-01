@@ -106,7 +106,9 @@ database.
 Methods following this strategy include
 LOLA \citep{sheffield2016lola} using Fisher's exact test, 
 Poly-Enrich \citep{lee2020poly} using a likelihood ratio test based on
-a Negative Binomial likelihood, and matchRanges \citep{Davis2022matchranges} utilizing covariate matching method.
+a Negative Binomial likelihood, and matchRanges
+\citep{Davis2022matchranges}
+utilizing a covariate-based matching method.
 Another strategy is to permute or shuffle the genomic regions, possibly considering an
 exclusion list of regions where the original region set should not be
 re-located. Example methods belonging to this category include
@@ -155,10 +157,13 @@ CBS and HMM
 have R package implementations, and so we incorporated these
 into a utility function in \nullranges, \texttt{segmentDensity()}.
 CBS, implemented in the \textit{DNAcopy} package, was used to recursively split
-chromosomes into subsegments with similar density. In this case, the process was based on the square root of gene count per megabase to avoid heavy tailed density distribution. We then used k-means to cluster
+chromosomes into subsegments with similar density. In this case, the
+process was based on the square root of gene count per megabase to
+stabilize variance and reduce the heavy right tail of the
+distribution. We then used k-means to cluster
 chromosome subsegments into groups with similar gene
-density. Typically this would result in genome segmentations with
-about three states, corresponding to low, medium, and high gene
+density. We found that it was effective to cluster genome segmentations into
+three states, corresponding to low, medium, and high gene
 density. 
 HMM was used to model the genes per megabase as an emission
 density with pre-defined number of states. We found that three provided effective segmentation. 
@@ -192,7 +197,6 @@ as provided in the \code{excluderanges} Bioconductor package
 Suppose we are interested in computing and assessing the significance
 of the overlap between one set of regions
 $\bm{x}$ and another set of regions $\bm{y}$.
-
 We compute the overlap $s_{obs}$, i.e. the total number of 
 regions in $\bm{x}$ that overlapped a region in $\bm{y}$.
 This statistic can vary in many ways, including computing the fraction of
@@ -200,11 +204,9 @@ basepair overlap, restricting by a minimal amount of overlap, and
 allowing for a gap between the regions, e.g. we may allow 1 kb of gap
 to connect local chromatin accessibility peaks to transcription start
 sites (TSS).
-
 Via block bootstrap resampling, we generate $R$ new
-sets of regions $\bm{y_r}$ within $R_b = R \times \sum_{c=1}^{C} ceiling(L_c / L_b)$ blocks, for the chromosome $c$ length $L_c$.
+sets of regions $\bm{y_r}$ within $R_b = R \times \sum_{c=1}^{C} \textrm{ceiling}(L_c / L_b)$ blocks, for the chromosome $c$ length $L_c$.
 For details see \cref{alg:unseg} and \cref{alg:seg}.
-
 We can perform either genome-wise, block-wise, or region-wise analysis
 based on the question to be addressed. For example, if we want to test
 the significance of the genome-wide amount of overlap, we would compare
@@ -213,18 +215,15 @@ test the significance of the number of overlaps for a particular
 block or even a particular region, we could use a lower $R$ as there
 will be many more bootstrapped blocks and bootstrapped regions for a
 block-wise or region-wise analysis.
-
 Without loss of generality, we will consider the genome-wise case.
 We use the overlaps per bootstrap sample $\bm{y_r}$ to calculate the
 overlap statistics $s_{1}, s_{2}, \dots, s_{R}$
 to derive a genome-wise empirical \textit{p}-value
 $= \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}}$ or
 $s_{1}, s_{2},..., s_{R_b}$ for block-wise analysis.
-
 Alternatively, we could use $z$ score to measure the
 distance between $s_{obs}$ and the
 set of $\{s_r\}$ in terms of standard deviations (SD).
-
 Specifically, the
 $z$ score in \cref{fig:result} is calculated by
 
@@ -236,9 +235,15 @@ is the sample mean of the overlap statistic $s_r$ over the $R$
 bootstrap samples and 
 $\text{SD}_R = \sqrt{\frac{1}{R-1} \sum_{r=1}^R [s_r - \bar{s}]^2}$ is
 the sample standard deviation. 
-Note that, if block-wise analysis is preferred as in \citet{bickel2010subsampling}, we found out the SD of block-wise bootstrap distribution should be approximately scaled by $\sqrt{L_b}$ in simulation in order to make genome-wise and block-wise $z$ score comparative. In theory, the $\bar{s}$ is approximate same in both analysis, but SD is different. As $\text{SD}_R$ is for genome-wise SD, then block-wise SD is $\text{SD}_{R_b} = \sqrt{\frac{1}{R_b-1} \sum_{r=1}^{R_b} [s_r - \bar{s}]^2}
-\approx \sqrt{\frac{L_b}{L_G}} \times \sqrt{\frac{1}{R}\sum_{r=1}^{R_b} [s_r - \bar{s}]^2}$, for the whole genome length $L_G$. 
-
+Note that, if block-wise analysis is preferred as in
+\citet{bickel2010subsampling}, we found out the SD of block-wise
+bootstrap distribution should be approximately scaled by $\sqrt{L_b}$
+in simulation in order to make genome-wise and block-wise $z$ score
+comparative. In theory, the $\bar{s}$ is approximately the same in
+both analyses, but the SD is different. As $\text{SD}_R$ captures
+genome-wise SD, then block-wise SD is
+$\text{SD}_{R_b} = \sqrt{\frac{1}{R_b-1} \sum_{r=1}^{R_b} [s_r - \bar{s}]^2} \approx \sqrt{\frac{L_b}{L_G}} \times \sqrt{\frac{1}{R}\sum_{r=1}^{R_b} [s_r - \bar{s}]^2}$,
+for the whole genome length $L_G$.
 
 \subsection{$L_b$ selection}\label{sec:length}
 
@@ -255,8 +260,10 @@ range of a distribution $\mathcal{L}$.
 Another aspect for block length selection is evaluating the
 conservation of the spatial pattern. In order to provide robust
 statistical inference in terms of significance testing,
-generated null models, same as bootstrap distribution, should have similar spatial properties with
-the original sets, e.g. inter-region distances. 
+the generated null models should have
+similar spatial properties with 
+the original sets, e.g. inter-region distances. Here we use
+``null models'' interchangeably with block bootstrapped data.
 We used the Earth's Mover
 Distance (EMD) to quantify the similarity of the distributions of
 inter-region distances between the original and null models, resulting 
@@ -347,7 +354,7 @@ Concatenate \texttt{bootstrap} regions across iterations $r$\\
 \citep{gwascatalog} on September 22, 2021. We only extracted single
 nucleotide variants associated with ``total cholesterol''. Liver ATAC-seq peaks
 \citep{CURRIN20211169} aggregated from 20 samples were downloaded from
-the GEO accession: GSE164870. All the peaks here were filtered by FDR adjust \textit{p}-value $\leq 0.05$.
+the GEO accession: GSE164870. All the peaks here were filtered by FDR adjusted \textit{p}-value $\leq 0.05$.
 Then, genomic coordinates of consensus peaks were converted from hg19 to
 hg38 using \code{liftOver} to obtain 221,606 peaks.
 
@@ -357,7 +364,9 @@ smaller values in most cases when $L_b \in [300kb,800kb]$
 inter-region distances between the original and 
 null models using EMD, we derived the histograms of
 original and
-null model inter-region distance with bin size = 0.3 under various $L_b$ and $L_s$ settings. Under this aspect, $L_b \in [200kb,600kb]$ was
+null model inter-region distance with bin size = 0.3 under various
+$L_b$ and $L_s$ settings.
+For this aspect, $L_b \in [200kb,600kb]$ was
 shown to be a good range by visualization of density plot
 (\cref{fig:suppfig0}B) and according to the elbow of the EMD statistic
 (\cref{fig:suppfig0}C). Combining two aspects, we concluded that $[300kb,600kb]$ was a good range for block length.
@@ -391,22 +400,23 @@ was used to choose the optimal value for the smoothing parameter,
 $\lambda$. Then, the \code{tidymv} package was used to predict and
 extract the fitted value. 
 For each generated null set, we found all the predicted overlap counts
-for logFC falling into the range (-8,10) with 1 as the
+for genes with logFC falling in the range (-8,10) with 1 as the
 increment. Then, conditional density plots can be plotted across all
-null sets. Additionally, we used $z$ score to measure the distance of
+null sets. Additionally, we used a $z$ score to measure the distance of
 predicted overlap counts between observed sets and the null sets in
-terms of SD.
+terms of SD of the conditional null set (conditioning on logFC bin).
 
 The following code shows how the analysis of Fig 2C is performed as
-the downstream task of \bootranges. Suppose $x$ is DE genes and
-$bootRanges$ is bootstrapped DA peaks. For each gene within each
-iteration, we extract total number of peaks that overlap with that
+the downstream task following \bootranges. Suppose $x$ contains the DE genes and
+$bootRanges$ contains the bootstrapped DA peaks. For each gene within each
+iteration, we extract the total number of peaks that overlap with that
 gene and that gene's logFC
 (below, \texttt{max} is used to reduce a set
 of repeated, identical values to a single numeric).
 Then, after fitting splines, we predict
-2000 overlap counts on original logFC range, and obtain the
-predictions that belong to the specified range.
+overlap counts for a 2,000 point grid spanning the original logFC range.
+These spline-predicted values are those used to define the conditional
+density.
 
 \begin{lstlisting}[language=R]
 boot_stats <- x %>% plyranges::join_overlap_inner(bootRanges) %>%
@@ -459,7 +469,8 @@ Additionally, the average gene-peaks correlation per gene can be
 computed and compared to a bootstrap distribution to identify 5,644
 gene-promoter pairs that were significantly correlated across cell
 types. Among these, 5,591 genes had only one paired promoter, while 25
-genes had 2 nearby promoters (peaks of accessibility within gene's 1kb intervals). 
+genes had 2 nearby promoters (peaks of accessibility within 1kb of the
+body of a gene). 
 %Those significant pairs could provide important insights into
 %perturbation experiments for validation.
 Two examples of the most significant gene-peak pairs are shown in
@@ -504,8 +515,8 @@ boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
   log2(inter-region distance+1) density plots over various $L_b$ and
   segmentation settings. Red curve represents the observed regions'
   log2(inter-region distance+1) density. The more
-  null sets' density
-  plots overlapped with observed regions, the better we conserved the
+  a particular null set's density
+  plot overlapped with observed regions, the better we conserved the
   spatial distribution of the original set via block
   bootstrapping. Median EMD shown as text in each panel. C) Median
   EMD over $L_b$ where EMD quantified the similarity of inter-region
