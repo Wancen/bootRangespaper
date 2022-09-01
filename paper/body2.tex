@@ -42,7 +42,7 @@ We demonstrate how \bootranges can be incorporated into complex
 downstream analyses, including choosing the thresholds during
 enrichment analysis and single-cell multi-omics.
 
-\vspace*{-20pt}
+%\vspace*{-20pt}
 
 \section{Features}
 
@@ -72,17 +72,17 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 %\vspace{-0.5cm}
 \begin{figure}[t]
 \centering% default with `floatrow`
-\setlength{\abovecaptionskip}{-0.05cm}
-\includegraphics[scale=0.65]{Figures/bootRanges.jpg}
+%\setlength{\abovecaptionskip}{-0.05cm}
+\includegraphics[scale=0.9]{Figures/bootRanges.jpg}
 \caption{Overview of \bootranges workflow.
   A) Bootstrapping blocks of length $L_b$.
   B) Testing overlaps of ranges in \bm{$x$} with ranges in
   \bm{$y$}, comparing to a bootstrap distribution.} 
 \label{fig:framework}
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 \end{figure}
 
-\vspace*{-.5cm}
+%\vspace*{-.5cm}
 \section{Application}
 
 We first applied \bootranges to determine the significance of the
@@ -95,7 +95,7 @@ the variance of the
 bootstrap statistics distribution and the resulting $z$ score varied greatly
 (\cref{fig:result}A-B).
 We used the $z$ score to measure the distance between the observed
-statistics and bootstrap distribution in terms of standard deviations.
+value and bootstrap distribution in terms of standard deviations.
 Overlap rate was defined as the proportion of
 SNPs that had peaks within 10kb.
 That the variance of the distribution in \cref{fig:result}A for the
@@ -154,12 +154,12 @@ were optimized thresholds where the $z$ score was highest
 (\cref{fig:suppfig2}B).
 
 %\vspace{-0.5cm}
-\newpage
-\begin{figure}[t]
+%\newpage
+\begin{figure}[htbp]
 \centering% default with `floatrow`
-\setlength{\abovecaptionskip}{-0.1cm}
-\setlength{\belowcaptionskip}{-0.1cm}
-\includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
+%\setlength{\abovecaptionskip}{-0.1cm}
+%\setlength{\belowcaptionskip}{-0.1cm}
+\includegraphics[scale=0.09]{Figures/fig2_3.jpeg}
 \caption{
   Parameter selection and overlap analysis.
   A) Variance of the rate of overlaps and,
@@ -172,7 +172,7 @@ were optimized thresholds where the $z$ score was highest
   Conditional densities are colored by the $z$ score for the overlap.
 }
 \label{fig:result}
-\vspace{-.7cm}
+%\vspace{-.7cm}
 \end{figure}
 
 %We demonstrate using \bootranges to motivate the choice of thresholds 
@@ -234,7 +234,7 @@ block bootstrap the genome using \bootranges was 0.30s and
 7.56s.
 
 
-\vspace*{-20pt}
+%\vspace*{-20pt}
 \section{Conclusion}
 
 \bootranges efficiently generates null models of genomic ranges preserving 
@@ -244,13 +244,18 @@ It has great flexibility in various disciplines (e.g. identify
 putative transcription factor binding site according to enriched peak
 regions).
 
-% All of the R code and data used in this paper are available at the
-% following repository: 
-% \url{https://github.com/Wancen/bootRangespaper}.
+\section*{Data availability}
+ All of the R code and data used in this paper are available at the
+ following repository: 
+ \url{https://github.com/Wancen/bootRangespaper}.
+Companion website: \url{https://nullranges.github.io/nullranges}
+%\vspace*{-20pt}
 
-\vspace*{-20pt}
+\section*{Acknowledgements}
+We thank Herve Pages for writting the prototype efficient vectorized code for bootstrapping, 
+Haiyan Huang and Nancy Zhang for giving us insight into GSC methods, and Tim Triche for helpful feedback and suggestions.
 
 \section*{Funding}
 CZI EOSS and R01-HG009937 to M.I.L, NIH R35-GM128645 to D.H.P.
 
-\vspace*{-20pt}
+%\vspace*{-20pt}
