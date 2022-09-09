@@ -293,7 +293,7 @@ was around elbow of the line plot for this aspect.
   chromosome $c$ ($L_c$), Total number of chromosomes ($C$),
   Bootstrap iterations ($R$), Type ($permute$ or $bootstrap$),
   Excluded regions ($\bm{e}$)}
-\KwResult{$\texttt{bootRanges}$ object, with the bootstrapped
+\KwResult{$\texttt{BootRanges}$ object, with the bootstrapped
   region sets from each iteration, concatenated across $R$ total
   iterations. Iteration and $L_b$ recorded as metadata}
 $r \gets 1$\\
@@ -325,7 +325,7 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
   Segmentation regions $\mathcal{A}_s$ (the set of all ranges
   belonging to state $s$), and with $L_a^s$ representing the width of region $a$
   in state $s$, Excluded regions ($\bm{e}$)}
-\KwResult{$\texttt{bootRanges}$ object}
+\KwResult{$\texttt{BootRanges}$ object}
 $r \gets 1$\\
 \While{$r \leq R$}{
   \ForEach{segmentation state $s \in \mathcal{S}$}{
