@@ -61,9 +61,9 @@ relatively homogeneous segments within which to sample blocks
 The input for the workflow is region sets \bm{$x$} and
 \bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
-Given a segmentation and block length $L_b$, a \bootranges
+Given a segmentation and block length $L_b$, a \textit{BootRanges}
 object is generated, which concatenates ranges across bootstrap
-iterations. This \bootranges object can be manipulated with \plyranges
+iterations. This \textit{BootRanges} object can be manipulated with \plyranges
 to derive the bootstrap distribution of test statistics $\{s_r\}$ and a
 bootstrap p-value:
 $ \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}} $ (\cref{fig:framework}B).
@@ -213,7 +213,8 @@ were optimized thresholds where the $z$ score was highest
 %% were displayed by conditional density plot 
 
 We applied \bootranges to
-Chromium Single Cell Multiome
+%Chromium Single Cell Multiome
+single cell multiome
 ATAC-seq and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
 modalities for all pairs of genes and peaks, across
 14 cell types (pseudo-bulk). Across all genes, we observed
