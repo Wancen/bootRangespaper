@@ -74,10 +74,9 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.05cm}
 \includegraphics[scale=0.65]{Figures/bootRanges.jpg}
-\caption{Overview of \bootranges workflow.
-  A) Bootstrapping blocks of length $L_b$.
-  B) Testing overlaps of ranges in \bm{$x$} with ranges in
-  \bm{$y$}, comparing to a bootstrap distribution.} 
+\caption{Schematic overview.
+  A) Bootstrapping blocks of length $L_b$ \wancen{from randomly selected position and move to a tile block across chromosome within same states. Each small rectangle represents a feature. Color represents states. Can we say we interchangeably use the terms "ranges” and “features” in the reminder of the paper?} 
+  B) \wancen{Workflow of testing null hypothesis of true biological question between \bm{$x$} and \bm{$y$} using \bootranges. Derive \bootranges of \bm{$y$}, calculating the distribution of interested statistics between \bm{$x$} and \bootranges. Permutation test can be performed to access the null hypothesis}} 
 \label{fig:framework}
 \vspace{-0.5cm}
 \end{figure}
