@@ -35,7 +35,7 @@ degenes_macrophage2<-promoters(degenes_macrophage, 10e3, 10e3)
 # seqlengths(da_peaks) <- seqlengths(genes_macrophage)
 
 ## load da_peaks and de_genes directly without preprocessing
-load(file = "C:/Users/wancen/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage.rda")
+load(file = "~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage.rda")
 
 ## Segmentation on gene density
 ah <- AnnotationHub()
@@ -124,5 +124,5 @@ s2 <- data.frame(z=z,logFC=seq(-8,10,1)) %>%
   theme(legend.position="right",
         panel.grid.minor = element_blank(),
         panel.border = element_rect(fill = 'transparent'))
-save(y,p4,z,s2, file = "C:/Users/wancen/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage_summary.rda")
-load(file = "C:/Users/wancen/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage_summary.rda")
+save(y,p4,z,s2, file = "~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage_summary.rda")
+load(file = "~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/macrophage_summary.rda")

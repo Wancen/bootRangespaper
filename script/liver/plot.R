@@ -1,5 +1,5 @@
 library(tidyverse)
-l<- lapply(list.files(path="C:/Users/wancen/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/csv/", full=TRUE), function(f) {
+l<- lapply(list.files(path="~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/csv/", full=TRUE), function(f) {
   read.csv(f, header=FALSE)
 })
 dat <- do.call(rbind, l[c(1:10,12:81)])
