@@ -285,6 +285,7 @@ Hence, we decided an optimal $L_b$ falls in the range where EMD
 was around elbow of the line plot for this aspect. 
 
 \subsection{Block bootstrapping algorithm in \bootranges}\label{sec:algorithm}
+\wancen{Proportional length blocks are theoretical advantageous to accurate estimate null distribution (\citet{bickel2010subsampling}). However, in practice, if the segments are very heterogeneous in size, smaller size segments will construct too short blocks. When considering segmentation or un-segmented, segmentation are always preferred given the heterogeneity of large-scale genomic sequences. If only want to block bootstrap on a small pieces of genomic, un-segmented algorithm may be sufficient. And \cite{bickel2010subsampling} have demonstrate the advantages of using segmentation by simulation. Block bootstrap will be preferred over permutation as it better provides the uncertainty of the statistics distribution in the observed data. }
 
 \begin{algorithm}[H]
 \SetNoFillComment
