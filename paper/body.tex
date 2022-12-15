@@ -43,8 +43,8 @@ motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex
 downstream analyses, including choosing the thresholds during
 enrichment analysis and single-cell multi-omics.
-
-\vspace*{-20pt}
+\rev{\bootranges is distributed as part of the \nullranges R/Bioconductor package.
+If directly controlling for nuisance covariates when building background sets is of interest, the sister function \matchranges may be more appropriate.}
 
 \section{Features}
 
@@ -53,13 +53,13 @@ since the distribution of ranges in the genome exhibits multi-scale
 structure, we follow the logic of \citet{bickel2010subsampling} and consider to
 perform block bootstrapping within \textit{segments} of the genome, which are
 more homogeneous in their range density.
-\rev{A simple ``unsegmented'' block bootstrap is additionally implemented but not generally recommended.}
-We consider various genome segmentation procedures
-or annotations, e.g. Giemsa bands or published segmentations
-(see Supplementary for details).
+\rev{A simple ``unsegmented'' block bootstrap is additionally implemented but the segmented version is generally recommended.}
+We consider various genome segmentation procedures, \rev{segmenting on gene density},
+or \rev{pre-existing} annotations, e.g. Giemsa bands or published segmentations.
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
-relatively homogeneous segments within which to sample blocks
-(\cref{fig:framework}A). 
+relatively homogeneous segments \rev{from which} to sample blocks
+(\cref{fig:framework}A).
+\rev{Blocks are sampled across segments that are in the same segmentation \textit{state} (see Supplementary for details).}
 The input for the workflow is region sets \bm{$x$} and
 \bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
@@ -80,10 +80,10 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
   A) Bootstrapping blocks of length $L_b$ \wancen{from randomly selected position and move to a tile block across chromosome within same states. Color represents segmentation states.} 
   B) \wancen{Workflow of testing null hypothesis of true biological question between \bm{$x$} and \bm{$y$} using \bootranges. First, deriving \bootranges of \bm{$y$}. Then, calculating the distribution of interested statistics between \bm{$x$} and \bootranges. Finally, permutation test can be performed to access the null hypothesis.}} 
 \label{fig:framework}
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 \end{figure}
 
-\vspace*{-.5cm}
+%\vspace*{-.5cm}
 \section{Application}
 \subsection{Test for association between SNPs and peaks}
 
@@ -145,7 +145,7 @@ overestimate significance leading to misinterpretation of enrichment.
   Conditional densities are colored by the $z$ score for the overlap.
 }
 \label{fig:result}
-\vspace{-.5cm}
+%\vspace{-.5cm}
 \end{figure}
 
 %% z score, independent of number of bootstraps, was used to measure the
@@ -238,8 +238,7 @@ block bootstrap the genome using \bootranges was 0.30s and
 0.37s with overlap computation. A comparable analysis with GSC took
 7.56s.
 
-
-\vspace*{-20pt}
+%\vspace*{-20pt}
 \section{Conclusion}
 
 \bootranges efficiently generates null models of genomic ranges preserving 
@@ -249,13 +248,13 @@ It has great flexibility in various disciplines (e.g. identify
 putative transcription factor binding site according to enriched peak
 regions).
 
-% All of the R code and data used in this paper are available at the
-% following repository: 
-% \url{https://github.com/Wancen/bootRangespaper}.
+All of the R code and data used in this paper are available at the
+following repository: 
+\url{https://github.com/Wancen/bootRangespaper}.
 
-\vspace*{-20pt}
+%\vspace*{-20pt}
 
 \section*{Funding}
 CZI EOSS and R01-HG009937 to M.I.L, NIH R35-GM128645 to D.H.P.
 
-\vspace*{-20pt}
+%\vspace*{-20pt}
