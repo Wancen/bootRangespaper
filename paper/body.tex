@@ -1,8 +1,9 @@
 \section{Introduction}
 
 In genomic analysis, to assess whether
-there is a significant association between two sets of ranges, 
+there is a significant association between two sets of genomic ranges, 
 one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
+\rev{Here we use the term ``ranges'' to denote a set of genomic features defined by sequence name (e.g. chromosome), starting basepair, ending basepair, and optionally strand and other metadata variables}.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
 and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
@@ -10,7 +11,7 @@ suggest mechanisms underlying the GWAS trait.
 Such analyses rely on specifying a null distribution, where one
 strategy is to uniformly shuffle one set of the
 genomic ranges in the genome, possibly considering a set of
-excluded regions.
+excluded regions \rev{where ranges should not be placed}.
 However, uniformly distributed null sets will not exhibit the
 clumping property common with genomic regions.
 Using an overly simplistic null distribution that doesn't take into
@@ -18,12 +19,12 @@ account local dependencies could result in misleading conclusions.
 More sophisticated methods exist, for example
 GAT, which allows for controlling by local GC content
 \citep{GAT_2013}, and regioneR, which implements a circular shift to
-preserve clumping property\citep{gel2016regioner}.
+preserve the clumping property \citep{gel2016regioner}.
 The block bootstrap \citep{politis1999subsampling}
 provides an alternative, where one instead generates
-random sets by sampling large blocks of ranges from the
-original set with replacement, as proposed for 
-genomic ranges by \citet{bickel2010subsampling} in Genome Structure
+random sets of ranges by sampling large blocks of ranges from the
+original set with replacement, as originally proposed for 
+genomic data by \citet{bickel2010subsampling} in Genome Structure
 Correlation (GSC).
 Using the block bootstrap is more
 computationally intensive than simple shuffling, and so GSC implements
@@ -31,8 +32,9 @@ a strategy of swapping pairs of blocks to compute overlaps, while
 avoiding a genome-scale bootstrap.
 
 Here we describe the \bootranges software, with efficient
-vectorized code for performing block bootstrap sampling of genomic ranges.
-%\granges \citep{lawrence2013software} objects.
+vectorized code for performing block bootstrap sampling of genomic ranges
+\rev{stored as \granges objects in R/Bioconductor}
+\citep{lawrence2013software}.
 \bootranges is part of a modular analysis workflow, where bootstrapped
 ranges can be analyzed at block or genome scale using tidy
 analysis with \plyranges \citep{lee2019plyranges}.
@@ -46,12 +48,12 @@ enrichment analysis and single-cell multi-omics.
 
 \section{Features}
 
-\bootranges offers a simple ``unsegmented'' block bootstrap as well as
-a ``segmented'' block bootstrap:
+\bootranges offers a ``segmented'' block bootstrap:
 since the distribution of ranges in the genome exhibits multi-scale
 structure, we follow the logic of \citet{bickel2010subsampling} and consider to
 perform block bootstrapping within \textit{segments} of the genome, which are
-more homogeneous in their feature density.
+more homogeneous in their range density.
+\rev{A simple ``unsegmented'' block bootstrap is additionally implemented but not generally recommended.}
 We consider various genome segmentation procedures
 or annotations, e.g. Giemsa bands or published segmentations
 (see Supplementary for details).
