@@ -71,19 +71,35 @@ bootstrap p-value:
 $ \frac{1}{R} \sum_{r=1}^R \mathbb{I}_{\{s_r > s_\text{obs}\}} $ (\cref{fig:framework}B).
 The \bootranges algorithms are explained schematically in Supplementary \cref{sec:algorithm}.
 
-%\vspace{-0.5cm}
+
 \begin{figure}[t]
-\centering% default with `floatrow`
+\centering
 \setlength{\abovecaptionskip}{-0.05cm}
 \includegraphics[scale=0.16]{Figures/bootRanges.jpg}
-\caption{Schematic overview.
-  A) Bootstrapping blocks of length $L_b$ \wancen{from randomly selected position and move to a tile block across chromosome within same states. Color represents segmentation states.} 
-  B) \wancen{Workflow of testing null hypothesis of true biological question between \bm{$x$} and \bm{$y$} using \bootranges. First, deriving \bootranges of \bm{$y$}. Then, calculating the distribution of interested statistics between \bm{$x$} and \bootranges. Finally, permutation test can be performed to access the null hypothesis.}} 
+\caption{
+  \mike{change X and Y in plot to be consistent with caption and supplement: \bm{$x$} and \bm{$y$}?}
+  \rev{Schematic overview of the segmented block bootstrap 
+  for assessing significance of an observed statistic.
+  A) In each bootstrap sample, 
+  new sets of ranges are created by resampling blocks of length 
+  $L_b$, with replacement, from the original set \bm{$y$}. 
+  Color represents genome segmentation states, such that blocks 
+  may be sampled across chromosome, from within the same 
+  segmentation state.
+  B) Workflow for testing association between 
+  ranges in \bm{$x$} and \bm{$y$},  
+  e.g. counting the number of overlapping ranges. 
+  First, $R$ bootstrap samples of \bm{$y$} are 
+  generated and stored as a \textit{BootRanges} object.
+  Then, the bootstrap distribution of test statistics 
+  (e.g. count of overlaps) 
+  between \bm{$x$} and \textit{BootRanges} is computed.
+  Finally, the observed overlap statistic between \bm{$x$} and \bm{$y$} 
+  is compared to the bootstrap distribution.}}
 \label{fig:framework}
-%\vspace{-0.5cm}
 \end{figure}
 
-%\vspace*{-.5cm}
+
 \section{Application}
 \subsection{Test for association between SNPs and peaks}
 
@@ -91,10 +107,16 @@ We first applied \bootranges to determine the significance of the
 overlap of liver ATAC-seq
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
 bootstrapping the SNPs to assess significance.
-\wancen{As seen in applications of \citet{bickel2010subsampling}, the effect
-of segmentation did not greatly alter conclusions. While observed overlap was significant across many combinations of
-various segmentation methods and $L_b$ according to empirical p-value, the variance of the
-bootstrap statistics distribution and the resulting $z$ score varied greatly across segmentation choice, though depending on block length (\cref{fig:result}A-B). It may vary more in other contexts. }
+\mike{Why do we say this? Maybe drop this sentence? 
+``As reported by \citet{bickel2010subsampling}, the effect
+of segmentation did not greatly alter conclusions.''}
+\rev{While the observed overlap was significant across many combinations of
+various segmentation methods and $L_b$ according to empirical p-value, 
+the variance of the bootstrap statistics distribution 
+and the resulting $z$ score varied across 
+segmentation choice, though varying more across block length 
+(\cref{fig:result}A-B). The effect of segmentation may be stronger 
+in other contexts.}
 We used the $z$ score to measure the distance between the observed
 statistics and bootstrap distribution in terms of standard deviations.
 Overlap rate was defined as the proportion of
@@ -105,14 +127,19 @@ ranges are inhomogeneous and
 bootstrapping with respect to a genome
 segmentation may be a more appropriate choice
 \citep{bickel2010subsampling}. 
-% inhomogeneous and segmentation could alleviate the scenario.
 The decreasing trend using pre-defined segmentation from
 Roadmap Epigenomics indicated too many short segments,
 where $L_b$ is too close to $L_s$ for effective block randomization.
-To choose an optimal segmentation, \wancen{we considered the variance of the bootstrap distribution become stable as $L_b$ increases(\cref{fig:result}A). To choose an optimal $L_b$ range,
-two aspects were considered:
-provided minimum value of a scaled version of the changes in the variance of test statistic distribution over $L_b$ as recommended previously \citep{bickel2010subsampling},
-and the original inter-range distances distribution were preserved (Supplementary \cref{sec:length}).}
+\rev{To chose an optimal segmentation, 
+we noted those for which the variance of the bootstrap distribution 
+becomes stable as $L_b$ increases (\cref{fig:result}A).
+To choose an optimal $L_b$ range, two aspects were considered:
+1) we sought a minimum value of a scaled version of the change 
+in the variance of bootstrap statistics distribution across $L_b$, 
+as recommended previously \citep{bickel2010subsampling},
+and 2) we assessed whether the distribution of inter-range distances  
+was preserved, when comparing to the original ranges 
+(Supplementary \cref{sec:length}).}
 Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
 shown to be a good range for segment and block
 lengths (\cref{fig:suppfig0}A-C, and Supplementary \cref{sec:liveratac}).
@@ -159,7 +186,7 @@ overestimate significance leading to misinterpretation of enrichment.
 %% the null hypothesis, in this case, although the z score varies greatly
 %% among the different segmentations and block lengths.
 
-\subsection{Choosing optimal threshold for enrichment analysis}
+\subsection{Choosing thresholds for enrichment analysis}
 We demonstrated using \bootranges to motivate the choice of data-driven thresholds 
 during enrichment analyses. We tested this on a dataset of differential chromatin accessibility and gene expression 
 \citep{alasoo2018shared,lee2020fluent} and previous liver ATAC-seq.
@@ -170,10 +197,14 @@ Conditional densities of splines fit to null sets
 were computed at various thresholds to reveal how
 the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
-(\cref{fig:result}C). \wancen{ We show that in fact the observed enrichment with respect to bootstrapped ranges varies over the logFC threshold. Instead of arbitrary logFC cutoff, 
-these analyses suggested that SNPs -log10 (\textit{p}-value) $= 8$ and gene expression $|\textrm{logFC}| = 2$ and were optimized thresholds where the $z$ score was highest
+(\cref{fig:result}C). 
+\rev{The observed enrichment with respect to bootstrapped ranges 
+varies over the logFC threshold. Instead of picking an arbitrary logFC cutoff, 
+these analyses suggested that SNPs with -log10 (\textit{p}-value) $> 8$ and 
+genes with $|\textrm{logFC}| > 2$ were sets where the $z$ score reflected 
+strong separation of the observed statistic from the bootstrap statistic 
+distribution
 (\cref{fig:suppfig2}).}
-
 
 
 %We demonstrate using \bootranges to motivate the choice of thresholds 
@@ -230,7 +261,23 @@ identify gene-promoter pairs that were significantly correlated across
 cell types (\cref{fig:suppfig3}B-C).
 
 \subsection{Simulation}
-\wancen{To assess the accuracy of estimating statistics, we compared \bootranges result with shuffling in simulation to complement previous real data findings. Details are in \cref{sec:sim}. We showed that \bootranges can achieve low false positive rate (FPR) as desired. While shuffling generate distribution of statistics with similar mean as original distribution, but smaller variance. Therefore the FPR are relatively high and will overestimate how unlikely the observed statistics is (\cref{fig:simulation}).}
+
+\rev{To assess the accuracy of the bootstrap distribution in capturing
+the true null distribution, we generated a simulation in which
+there was no true association between $\bm{x}$ and $\bm{y}$. 
+We compared the bootstrap distribution using \bootranges 
+with that using shuffling. Details are provided in \cref{sec:sim}. 
+Given that there is no true association, we would expect false
+positive rate (FPR) $\approx \alpha$, 
+the threshold for significance, if the randomization method was 
+successfully approximating the generating distribution of $\bm{y}$.
+We found that \bootranges could achieve an FPR near $\alpha$. 
+Shuffling however generated a distribution of statistics
+with similar mean as the original distribution, but with much lower
+variance.
+Therefore the FPR for shuffling in this simulation was relatively high 
+and would lead to overestimation of the signifance of the overlap 
+(\cref{fig:simulation}).}
 
 To compare speed, we ran \bootranges and GSC on
 ENCODE kidney and bladder ChIP-seq. The average time to
