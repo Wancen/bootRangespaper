@@ -11,7 +11,7 @@ suggest mechanisms underlying the GWAS trait.
 Such analyses rely on specifying a null distribution, where one
 strategy is to uniformly shuffle one set of the
 genomic ranges in the genome, possibly considering a set of
-excluded regions \rev{where ranges should not be placed}.
+excluded regions \rev{where ranges should not be placed} \citep{excluderanges}.
 However, uniformly distributed null sets will not exhibit the
 clumping property common with genomic regions.
 Using an overly simplistic null distribution that doesn't take into
@@ -45,8 +45,8 @@ downstream analyses, including choosing the thresholds during
 enrichment analysis and single-cell multi-omics.
 \rev{\bootranges is distributed as part of the \nullranges R/Bioconductor package.
 If directly controlling for nuisance covariates when building
-background sets is of interest, the sister function \matchranges may
-be more appropriate, see the package documentation for an overview of
+background sets is of interest, the sister function \matchranges \citep{Davis2022matchranges}
+may be more appropriate, see the package documentation for an overview of
 \bootranges and \matchranges.}
 
 \section{Features}
@@ -110,9 +110,9 @@ We first applied \bootranges to determine the significance of the
 overlap of liver ATAC-seq
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
 bootstrapping the SNPs to assess significance.
-\mike{Why do we say this? Maybe drop this sentence? 
-``As reported by \citet{bickel2010subsampling}, the effect
-of segmentation did not greatly alter conclusions.''}
+%% \mike{Why do we say this? Maybe drop this sentence? 
+%% ``As reported by \citet{bickel2010subsampling}, the effect
+%% of segmentation did not greatly alter conclusions.''}
 \rev{While the observed overlap was significant across many combinations of
 various segmentation methods and $L_b$ according to empirical p-value, 
 the variance of the bootstrap statistics distribution 
