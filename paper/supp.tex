@@ -377,30 +377,73 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
 
 \subsection{Simulation} \label{sec:sim}
 \rev{
-  A small window of chromosome 4 was selected as one ranges set
-  $\bm{x}$. Then we make 50 ranges sets $\bm{y}s$ whose features
-  located in clumps. The number of gene within each cluster $\sim
-  poisson(5)$ and the start position is uniformly chosen within a
-  relatively larger window. Therefore, we would expect there is no
-  association between $\bm{x}$ and $\bm{y}$. In order to compare the
+  In order to demonstrate how block bootstrapping can more effectively
+  capture the variance of the null distribution of a test statistic,
+  a 20 Mb window of human chromosome 4 was chosen, clustered ranges
+  generated in this window, and various comparisons made by
+  overlapping with genes in this window (from the Bioconductor package
+  \textit{TxDb.Hsapiens.UCSC.hg38.knownGene} v3.16).
+  The genes in this window represented the range
+  set $\bm{x}$, and the simulated, clustered ranges represented the
+  range set $\bm{y}$.
+  To simulate clustered ranges, 60 central positions were chosen
+  uniformly from the entire 20 Mb window, and
+  for each position, $n_{\textrm{ranges}}$ ranges
+  were generated, with $n_{\textrm{ranges}} \sim \textrm{Pois}(5)$.
+  For each position, the ranges were uniformly placed within 20 kb
+  from the central position. Further, the ranges were generated with a
+  metadata column ``score'', such that ranges within a cluster had
+  similar score (simulated as Normal, with a common mean).
+  Therefore, we would expect there is no
+  association between $\bm{x}$ and $\bm{y}$, but that, by chance
+  sometime the overlap of these two sets would be large, given the
+  clustered nature of $\bm{y}$.
+  The same simulation parameters were used to draw 50 iterations of
+  range sets $\bm{y}$ for assessing the shape of the null
+  distribution.}
+  
+\rev{
+  In order to compare the
   accuracy of shuffling and block bootstrapping, we shuffled and block
-  bootstrapped 50 times within a relatively larger window. One
-  realization is shown in (\cref{fig:simulation} A). Two situations of
-  interested statistics are considered. One is simply based on genomic
-  location - total number of overlaps, another one is based on the
-  metadata column of one ranges set - total score. We computed those
-  statistics between $\bm{x}$ and simulated, shuffling, bootstrapping
-  dataset across 50 iterations (\cref{fig:simulation} B, C). In both
-  case, the distribution of statistics using simulated dataset are
-  highly overlapped with block bootstrapping. While shuffling generate
-  distribution of statistics with similar mean, but smaller
-  variance. To access the accuracy, we take the right 5\% tail of
-  shuffling and found out 26\% simulation distribution falls in it,
-  which represent a high false positive rate(FPR). When we take the
-  tight 5\% of bootstrapping, FPR is around 6\% that as we
-  desired. Therefore, we conclude that shuffling will overestimate how
-  unlikely the observed statistics is and lead to misinterpretation of
-  enrichment.
+  bootstrapped a single simulation iteration (e.g. $\bm{y}_1$).
+  50 iterations of shuffling and block bootstrapping were performed of
+  $\bm{y}_1$.
+  One realization of shuffling and block bootstrapping each are shown
+  in the top two tracks of \cref{fig:simulation}A.
+  Two types of test statistics were considered.
+  First, we considered
+  the total number of overlaps with genes $\bm{x}$.
+  Second, based upon the metadata column ``score'',
+  we considered the sum of ``score'' for overlapping ranges in
+  $\bm{y}$ per range in $\bm{x}$.
+  We computed those two types of
+  statistics between $\bm{x}$ and the simulated, shuffled, and bootstrapped
+  ranges across 50 iterations (\cref{fig:simulation}B-C). For both
+  types of test statistic, the distribution of statistics using the
+  block bootstrap was similar in shape compared
+  to the distribution of the original, simulated dataset.
+  However, simple shuffling generated distributions with similar mean
+  but smaller variance. Again, this was because the shuffled data did
+  not exhibit the clustering property of the original data, so small
+  and large numbers of overlaps with $\bm{x}$ as would be seen in the
+  original data $\bm{y}$ were not observed with shuffled data.}
+
+\rev{
+  To quantitatively access accuracy, we considered the right 5\% tail of
+  the test statistic distribution from shuffling, and observed that 26\%
+  of the simulation distribution fell to the right of this
+  threshold, for the total number of overlaps statistic.
+  This can be taken as an estimate of the 
+  false positive rate (FPR), as the simulation reflected the null
+  distribution of no association, and values exceeding the upper tail
+  of the shuffled distribution would be considered statistically
+  significant under this paradigm.
+  When we considered the
+  right 5\% tail of the test statistic distribution from block
+  bootstrapping, the estimated FPR was around 6\%, close to the
+  desired $\alpha = 5\%$.
+  Therefore, we concluded from this simulation that shuffling would
+  overestimate significance of these two types of overlap statistics.
 }
 
 \subsection{Overlap analysis of liver ATAC-seq peaks with GWAS SNPs} \label{sec:liveratac}
