@@ -136,7 +136,6 @@ accomplished by resampling blocks.
 
 In this work, we segmented the genome based on gene density. We
 downloaded the Ensembl v86 genes \citep{ensemblTrimmedEntry} 
-%\wancen{should we use this reference instead? \citep{EnsDb.Hsapiens.v86}}, 
 and counted the 
 number of genes per million base pairs. We then supplied this vector
 of counts to various methods for segmentation. We sought to define
@@ -285,7 +284,34 @@ Hence, we decided an optimal $L_b$ falls in the range where EMD
 was around elbow of the line plot for this aspect. 
 
 \subsection{Block bootstrapping algorithm in \bootranges}\label{sec:algorithm}
-\wancen{Segmentation with proportional length blocks are theoretical advantageous to accurate estimate null distribution (\citet{bickel2010subsampling}). However, in practice, if the segments are very heterogeneous in size, smaller size segments will construct too short blocks. When considering segmentation or un-segmented, segmentation are always preferred given the heterogeneity of large-scale genomic sequences. If the purpose is block bootstrapping on a small pieces of genomic, un-segmented algorithm may be sufficient. And \cite{bickel2010subsampling} have demonstrate the advantages of using segmentation by simulation. If un-segmented is considered to use, block bootstrap will be preferred over permutation as it better provides the uncertainty of the statistics distribution in the observed data by allowing repetitive resampling. }
+
+\rev{We first introduce a few choices regarding bootstrapping
+  algorithms implemented in \bootranges, and provide recommendations.
+  Proportional length blocks were introduced by
+  \citet{bickel2010subsampling} to estimate the null distribution of
+  base-pair overlap test statistics across a segmented genome. It is
+  theoretically motivated to have the blocks scale with the overall
+  extent of the segment state. However, in practice, if the genome
+  segmentation states are very heterogeneous in size (e.g. orders of magnitude
+  differences), then the blocks constructed via the proportional
+  length method for the smaller segmentation states can be too short
+  to effectively capture inter-range distances. We therefore recommend
+  proportional length blocks unless some segmentation states have a
+  much smaller extent than others, in which case fixed length blocks
+  can be used.
+  When considering the use of segmentation or not, segmentation is
+  generally preferred given the heterogeneity of structure across the
+  entire genome.
+  \citet{bickel2010subsampling}
+  demonstrated the advantages of using segmentation via simulation.
+  If the purpose is block bootstrapping ranges within a smaller set of
+  sequences, such as transcripts, then the unsegmented algorithm would
+  be sufficient. 
+  Finally, for the unsegmented bootstrap, the block bootstrap will be
+  preferred over block permutation, as the latter provides additional
+  variance with respect to e.g. the total number and repetition of
+  individual input ranges per iteration.
+}
 
 \begin{algorithm}[H]
 \SetNoFillComment
