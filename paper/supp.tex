@@ -430,9 +430,10 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
 
 \rev{
   To quantitatively access accuracy, we considered the right 5\% tail of
-  the test statistic distribution from shuffling, and observed that 26\%
+  the test statistic distribution from shuffling, and observed that 24\%
   of the simulation distribution fell to the right of this
-  threshold, for the total number of overlaps statistic.
+  threshold, for the total number of overlaps statistic, and 16\% for the 
+  sum of ``score" statistic.
   This can be taken as an estimate of the 
   false positive rate (FPR), as the simulation reflected the null
   distribution of no association, and values exceeding the upper tail
@@ -440,7 +441,7 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
   significant under this paradigm.
   When we considered the
   right 5\% tail of the test statistic distribution from block
-  bootstrapping, the estimated FPR was around 6\%, close to the
+  bootstrapping, the estimated FPRs were around 4\% and 6\% for two statistics, respectively, close to the
   desired $\alpha = 5\%$.
   Therefore, we concluded from this simulation that shuffling would
   overestimate significance of these two types of overlap statistics.

@@ -108,6 +108,7 @@ res_true <- sum(gr_res$ave_score, na.rm = TRUE)
 
 library(tibble)
 library(ggplot2)
+library(ggsci)
 # inner instead of left: leaves out no-overlap genes
 g %>% join_overlap_inner(gr) %>%
   mutate(type = "original") %>%
@@ -119,7 +120,7 @@ g %>% join_overlap_inner(gr) %>%
   geom_jitter()
 
 # adding more draws from the distribution for simulated features
-
+set.seed(123)
 niter <- 50
 sim_list <- replicate(niter, {
   makeClusterRanges(chrom, rng_big, n=300, lambda=5, seqlens)
@@ -160,13 +161,13 @@ res <- g %>% join_overlap_left(all) %>%
   summarize(sumOverlaps = sum(n_overlaps))
 
 ## mean overlap peaks per gene
-res <- g %>% join_overlap_left(all) %>%
-  group_by(symbol, iter, type) %>%
-  summarize(sumOverlaps = sum(!is.na(id))) %>%
-  as_tibble()%>%
-  tidyr::complete(iter, symbol,type, fill=list(sumOverlaps = 0))
+# res <- g %>% join_overlap_left(all) %>%
+#   group_by(symbol, iter, type) %>%
+#   summarize(sumOverlaps = sum(!is.na(id))) %>%
+#   as_tibble()%>%
+#   tidyr::complete(iter, symbol,type, fill=list(sumOverlaps = 0))
 
-res_wide <- spread(res,type,sumOverlaps)
+res_wide <- tidyr::spread(res,type,sumOverlaps)
 res %>%
   ggplot(aes(type, sumOverlaps)) +
   geom_violin() +
@@ -192,12 +193,7 @@ percentile(shuffle_0.95)
 # show table of features per iteration
 head(table(all$iter, all$type))
 
-# look at ave_score
-res <- g %>% join_overlap_inner(all) %>%
-  group_by(symbol, iter, type) %>%
-  summarize(sum_score = sum(score)) %>%
-  as_tibble()
-
+# look at a type of statistics from metadata
 # final plot of distributions:
 # multiple draws, shuffling one instance, bootstrapping one instances
 
@@ -207,12 +203,10 @@ res_long <- g %>% join_overlap_inner(all) %>%
   as_tibble()
 
 res_long %>%
-  ggplot(aes(type, sum_score)) +
+  ggplot(aes(type, sumScore)) +
   geom_violin() +
   geom_boxplot() +
   geom_jitter(width=.25, alpha=.15)
-
-res_wide <- spread(res_long,type,sum_score)
 
 p2 <- ggplot(res_long)+
   geom_density(aes(sumScore, fill = type),alpha=0.4)+
@@ -223,6 +217,14 @@ p2 <- ggplot(res_long)+
   theme(legend.position="right",
         panel.grid.minor = element_blank(),
         panel.border = element_rect(fill = 'transparent'))
+
+res_wide <- tidyr::spread(res_long,type,sumScore)
+
+shuffle_0.95 <- quantile(res_wide$shuffle, 0.95,na.rm = T)
+blockboot_0.95 <- quantile(res_wide$block_bootstrap, 0.95, na.rm = T)
+percentile <- ecdf(res_wide$sim)
+percentile(blockboot_0.95)
+percentile(shuffle_0.95)
 
 library(patchwork)
 jpeg(file="plots/simulation.jpeg",width = 10, height = 4,units = "in",res=450)

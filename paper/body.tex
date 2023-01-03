@@ -37,7 +37,7 @@ vectorized code for performing block bootstrap sampling of genomic ranges
 \citep{lawrence2013software}.
 \bootranges is part of a modular analysis workflow, where bootstrapped
 ranges can be analyzed at block or genome scale using tidy
-analysis with \plyranges \citep{lee2019plyranges}.
+analysis with \plyranges \citep{lee2019plyranges} \wancen{should we mention tidySummarizedExperiment?}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex
@@ -78,9 +78,8 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \begin{figure}[t]
 \centering
 \setlength{\abovecaptionskip}{-0.05cm}
-\includegraphics[scale=0.16]{Figures/bootRanges.jpg}
+\includegraphics[scale=0.16]{Figures/bootRanges.jpeg}
 \caption{
-  \mike{change X and Y in plot to be consistent with caption and supplement: \bm{$x$} and \bm{$y$}?}
   \rev{Schematic overview of the segmented block bootstrap 
   for assessing significance of an observed statistic.
   A) In each bootstrap sample, 
