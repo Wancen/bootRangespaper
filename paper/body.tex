@@ -35,9 +35,10 @@ Here we describe the \bootranges software, with efficient
 vectorized code for performing block bootstrap sampling of genomic ranges
 \rev{stored as \granges objects in R/Bioconductor}
 \citep{lawrence2013software}.
-\bootranges is part of a modular analysis workflow, where bootstrapped
+\rev{bootranges is part of a modular analysis workflow, where bootstrapped
 ranges can be analyzed at block or genome scale using tidy
-analysis with \plyranges \citep{lee2019plyranges} \wancen{should we mention tidySummarizedExperiment?}.
+analysis with packages including \plyranges \citep{lee2019plyranges}, and \tidybulk \citep{mangiola2021tidybulk}.}
+%%\rev{and \tidybulk \citep{mangiola2021tidybulk}}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex

@@ -86,7 +86,7 @@ rna$counts1 <- NumericList(lapply(rna$counts1, function(z) (z-mean(z))/sd(z)))
 rna$counts1 <- NumericList(lapply(rna$counts1, scale))
 promoter$counts2 <- NumericList(lapply(promoter$counts2, function(z) (z-mean(z))/sd(z)))
 
-load(file = "C:/Users/wancen/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/sc_omics.rda")
+load(file = "~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/sc_omics.rda")
 
 cor_gr<- rna %>% join_overlap_inner(promoter, maxgap=1000) %>%
   mutate(rho = 1/13 * sum(counts1 * counts2)) %>%
