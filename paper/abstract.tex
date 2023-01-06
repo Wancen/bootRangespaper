@@ -1,8 +1,14 @@
 \abstract{
 \bootranges provides fast functions for generation of
-bootstrapped genomic ranges representing the null hypothesis in enrichment
-analysis. \wancen{As part of a modular workflow, it has great flexibility to compute interested test statistic by incorporating other packages}. We show that shuffling or permutation schemes may result in
-overly narrow test statistic null distributions \wancen{and would lead to overestimation of the significance}, while creating new
+block bootstrapped genomic ranges representing the null hypothesis in
+enrichment analysis.
+\rev{As part of a modular workflow, \bootranges offers greater
+flexibility for computing various test statistics leveraging other
+Bioconductor packages}.
+We show that shuffling or permutation schemes may result in
+overly narrow test statistic null distributions
+\rev{and over-estimation of statistical significance},
+while creating new
 range sets with a block bootstrap preserves local genomic correlation
 structure and generates more reliable null distributions.  It can also
 be used in more complex analyses, such as accessing correlations

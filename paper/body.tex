@@ -35,9 +35,10 @@ Here we describe the \bootranges software, with efficient
 vectorized code for performing block bootstrap sampling of genomic ranges
 \rev{stored as \granges objects in R/Bioconductor}
 \citep{lawrence2013software}.
-\rev{bootranges is part of a modular analysis workflow, where bootstrapped
+\rev{\bootranges is part of a modular analysis workflow, where bootstrapped
 ranges can be analyzed at block or genome scale using tidy
-analysis with packages including \plyranges \citep{lee2019plyranges}, and \tidybulk \citep{mangiola2021tidybulk}.}
+analysis with packages including \plyranges \citep{lee2019plyranges},
+and \tidybulk \citep{mangiola2021tidybulk}.}
 %%\rev{and \tidybulk \citep{mangiola2021tidybulk}}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
@@ -57,13 +58,16 @@ since the distribution of ranges in the genome exhibits multi-scale
 structure, we follow the logic of \citet{bickel2010subsampling} and consider to
 perform block bootstrapping within \textit{segments} of the genome, which are
 more homogeneous in their range density.
-\rev{A simple ``unsegmented'' block bootstrap is additionally implemented but the segmented version is generally recommended.}
-We consider various genome segmentation procedures, \rev{segmenting on gene density},
-or \rev{pre-existing} annotations, e.g. Giemsa bands or published segmentations.
+\rev{A simple ``unsegmented'' block bootstrap is additionally
+  implemented but the segmented version is generally recommended.  We
+  consider various genome segmentation procedures, segmenting on gene
+  density, or pre-existing annotations}, e.g. Giemsa bands or
+published segmentations.
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
-relatively homogeneous segments \rev{from which} to sample blocks
+relatively homogeneous segments from which to sample blocks
 (\cref{fig:framework}A).
-\rev{Blocks are sampled across segments that are in the same segmentation \textit{state} (see Supplementary for details).}
+\rev{Blocks are sampled across segments that are in the same
+  segmentation \textit{state} (see Supplementary for details).} 
 The input for the workflow is region sets \bm{$x$} and
 \bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
@@ -114,7 +118,7 @@ bootstrapping the SNPs to assess significance.
 %% ``As reported by \citet{bickel2010subsampling}, the effect
 %% of segmentation did not greatly alter conclusions.''}
 \rev{While the observed overlap was significant across many combinations of
-various segmentation methods and $L_b$ according to empirical p-value, 
+various segmentation methods and $L_b$ according to typical p-value cutoff,
 the variance of the bootstrap statistics distribution 
 and the resulting $z$ score varied across 
 segmentation choice, though varying more across block length 
@@ -269,11 +273,12 @@ cell types (\cref{fig:suppfig3}B-C).
 the true null distribution, we generated a simulation in which
 there was no true association between $\bm{x}$ and $\bm{y}$. 
 We compared the bootstrap distribution using \bootranges 
-with that using shuffling. Details are provided in \cref{sec:sim}. 
+with that using shuffling. Details are provided in Supplementary
+\cref{sec:sim}. 
 Given that there is no true association, we would expect false
 positive rate (FPR) $\approx \alpha$, 
 the threshold for significance, if the randomization method was 
-successfully approximating the generating distribution of $\bm{y}$.
+successfully approximating the data generating distribution for $\bm{y}$.
 We found that \bootranges could achieve an FPR near $\alpha$. 
 Shuffling however generated a distribution of statistics
 with similar mean as the original distribution, but with much lower
@@ -298,8 +303,9 @@ It has great flexibility in various disciplines (e.g. identify
 putative transcription factor binding site according to enriched peak
 regions).
 
-All of the R code and data used in this paper are available at the
-following repository: 
+\bootranges is distributed in the \nullranges Bioconductor package,
+while all of the R scripts and data used in this paper are available
+at the following GitHub repository: 
 \url{https://github.com/Wancen/bootRangespaper}.
 
 %\vspace*{-20pt}
