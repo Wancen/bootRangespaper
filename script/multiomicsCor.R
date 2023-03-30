@@ -83,7 +83,7 @@ promoter <- promoter_Granges[-which(promoter.sd==0)] %>%
 
 ## use join_overlap_inner to separate read counts all=0 from non-overlaping
 rna$counts1 <- NumericList(lapply(rna$counts1, function(z) (z-mean(z))/sd(z)))
-rna$counts1 <- NumericList(lapply(rna$counts1, scale))
+# rna$counts1 <- NumericList(lapply(rna$counts1, scale))
 promoter$counts2 <- NumericList(lapply(promoter$counts2, function(z) (z-mean(z))/sd(z)))
 
 load(file = "~/OneDrive - University of North Carolina at Chapel Hill/Lab/project2/data/sc_omics.rda")

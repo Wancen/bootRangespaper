@@ -285,7 +285,7 @@ was around elbow of the line plot for this aspect.
 
 \subsection{Block bootstrapping algorithm in \bootranges}\label{sec:algorithm}
 
-\rev{We first introduce a few choices regarding bootstrapping
+We first introduce a few choices regarding bootstrapping
   algorithms implemented in \bootranges, and provide recommendations.
   Proportional length blocks were introduced by
   \citet{bickel2010subsampling} to estimate the null distribution of
@@ -311,7 +311,7 @@ was around elbow of the line plot for this aspect.
   preferred over block permutation, as the former captures additional
   variance with respect to e.g. the total number and repetition of
   individual input ranges per iteration.
-}
+
 
 \begin{algorithm}[H]
 \SetNoFillComment
@@ -376,7 +376,7 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
 \section{Supplementary Results} \label{sec:results}
 
 \subsection{Simulation} \label{sec:sim}
-\rev{
+
   In order to demonstrate how block bootstrapping can more effectively
   capture the variance of the null distribution of a test statistic,
   a 20 Mb window of human chromosome 4 was chosen, clustered ranges
@@ -400,9 +400,9 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
   clustered nature of $\bm{y}$.
   The same simulation parameters were used to draw 50 iterations of
   range sets $\bm{y}$ for assessing the shape of the null
-  distribution.}
+  distribution.
   
-\rev{
+
   In order to compare the
   accuracy of shuffling and block bootstrapping, we shuffled and block
   bootstrapped a single simulation iteration (e.g. $\bm{y}_1$).
@@ -426,9 +426,9 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
   but smaller variance. Again, this was because the shuffled data did
   not exhibit the clustering property of the original data, so small
   and large numbers of overlaps with $\bm{x}$ as would be seen in the
-  original data $\bm{y}$ were not observed with shuffled data.}
+  original data $\bm{y}$ were not observed with shuffled data.
 
-\rev{
+
   To quantitatively access accuracy, we considered the right 5\% tail of
   the test statistic distribution from shuffling, and observed that 24\%
   of the simulation distribution fell to the right of this
@@ -445,7 +445,7 @@ Concatenate \texttt{bootstrap} ranges across iterations $r$\\
   desired $\alpha = 5\%$.
   Therefore, we concluded from this simulation that shuffling would
   overestimate significance of these two types of overlap statistics.
-}
+
 
 \subsection{Overlap analysis of liver ATAC-seq peaks with GWAS SNPs} \label{sec:liveratac}
 
@@ -607,7 +607,7 @@ boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
 \begin{figure*}[htbp]
 \centering
 \includegraphics[scale=0.2]{Figures/simulation.jpg}
-\caption{\rev{Comparison of shuffling and block bootstrapping in
+\caption{Comparison of shuffling and block bootstrapping in
     simulation. A) Visualization of one iteration of the simulation. The
     bottom set of genes is $\bm{x}$, ``original'' is a simulated
     range set $\bm{y}$, which is generated independently of
@@ -622,7 +622,7 @@ boot_stats <- x %>% plyranges::join_overlap_inner(boots, maxgap=1000) %>%
     were repeatedly sampled from a single simulation of $\bm{y}$.
     C) Density plots of summed scores for overlapping ranges,
     between $\bm{x}$ and simulated $\bm{y}$, shuffled, and
-    bootstrapped samples across 50 iterations.}
+    bootstrapped samples across 50 iterations.
 }
 \label{fig:simulation}
 \end{figure*}

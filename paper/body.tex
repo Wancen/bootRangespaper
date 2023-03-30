@@ -3,7 +3,7 @@
 In genomic analysis, to assess whether
 there is a significant association between two sets of genomic ranges, 
 one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
-\rev{Here we use the term ``ranges'' to denote a set of genomic features defined by sequence name (e.g. chromosome), starting basepair, ending basepair, and optionally strand and other metadata variables}.
+Here we use the term ``ranges'' to denote a set of genomic features defined by sequence name (e.g. chromosome), starting basepair, ending basepair, and optionally strand and other metadata variables.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
 and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
@@ -11,7 +11,7 @@ suggest mechanisms underlying the GWAS trait.
 Such analyses rely on specifying a null distribution, where one
 strategy is to uniformly shuffle one set of the
 genomic ranges in the genome, possibly considering a set of
-excluded regions \rev{where ranges should not be placed} \citep{excluderanges}.
+excluded regions where ranges should not be placed \citep{excluderanges}.
 However, uniformly distributed null sets will not exhibit the
 clumping property common with genomic regions.
 Using an overly simplistic null distribution that doesn't take into
@@ -33,23 +33,23 @@ avoiding a genome-scale bootstrap.
 
 Here we describe the \bootranges software, with efficient
 vectorized code for performing block bootstrap sampling of genomic ranges
-\rev{stored as \granges objects in R/Bioconductor}
+stored as \granges objects in R/Bioconductor
 \citep{lawrence2013software}.
-\rev{\bootranges is part of a modular analysis workflow, where bootstrapped
+\bootranges is part of a modular analysis workflow, where bootstrapped
 ranges can be analyzed at block or genome scale using tidy
 analysis with packages including \plyranges \citep{lee2019plyranges},
-and \tidybulk \citep{mangiola2021tidybulk}.}
+and \tidybulk \citep{mangiola2021tidybulk}.
 %%\rev{and \tidybulk \citep{mangiola2021tidybulk}}.
 We provide recommendations for genome segmentation and block length
 motivated by analysis of example datasets.
 We demonstrate how \bootranges can be incorporated into complex
 downstream analyses, including choosing the thresholds during
 enrichment analysis and single-cell multi-omics.
-\rev{\bootranges is distributed as part of the \nullranges R/Bioconductor package.
+\bootranges is distributed as part of the \nullranges R/Bioconductor package.
 If directly controlling for nuisance covariates when building
 background sets is of interest, the sister function \matchranges \citep{Davis2022matchranges}
 may be more appropriate, see the package documentation for an overview of
-\bootranges and \matchranges.}
+\bootranges and \matchranges.
 
 \section{Features}
 
@@ -58,16 +58,16 @@ since the distribution of ranges in the genome exhibits multi-scale
 structure, we follow the logic of \citet{bickel2010subsampling} and consider to
 perform block bootstrapping within \textit{segments} of the genome, which are
 more homogeneous in their range density.
-\rev{A simple ``unsegmented'' block bootstrap is additionally
+A simple ``unsegmented'' block bootstrap is additionally
   implemented but the segmented version is generally recommended.  We
   consider various genome segmentation procedures, segmenting on gene
-  density, or pre-existing annotations}, e.g. Giemsa bands or
+  density, or pre-existing annotations, e.g. Giemsa bands or
 published segmentations.
 The genome segments define large (e.g. on the order of ${\sim}1$ Mb),
 relatively homogeneous segments from which to sample blocks
 (\cref{fig:framework}A).
-\rev{Blocks are sampled across segments that are in the same
-  segmentation \textit{state} (see Supplementary for details).} 
+Blocks are sampled across segments that are in the same
+  segmentation \textit{state} (see Supplementary for details).
 The input for the workflow is region sets \bm{$x$} and
 \bm{$y$}, with optional metadata columns that can be
 used for computing a more complex test statistic than overlaps.
@@ -85,7 +85,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \setlength{\abovecaptionskip}{-0.05cm}
 \includegraphics[scale=0.16]{Figures/bootRanges.jpeg}
 \caption{
-  \rev{Schematic overview of the segmented block bootstrap 
+  Schematic overview of the segmented block bootstrap 
   for assessing significance of an observed statistic.
   A) In each bootstrap sample, 
   new sets of ranges are created by resampling blocks of length 
@@ -102,7 +102,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
   (e.g. count of overlaps) 
   between \bm{$x$} and \textit{BootRanges} is computed.
   Finally, the observed overlap statistic between \bm{$x$} and \bm{$y$} 
-  is compared to the bootstrap distribution.}}
+  is compared to the bootstrap distribution.}
 \label{fig:framework}
 \end{figure}
 
@@ -117,13 +117,13 @@ bootstrapping the SNPs to assess significance.
 %% \mike{Why do we say this? Maybe drop this sentence? 
 %% ``As reported by \citet{bickel2010subsampling}, the effect
 %% of segmentation did not greatly alter conclusions.''}
-\rev{While the observed overlap was significant across many combinations of
+While the observed overlap was significant across many combinations of
 various segmentation methods and $L_b$ according to typical p-value cutoff,
 the variance of the bootstrap statistics distribution 
 and the resulting $z$ score varied across 
 segmentation choice, though varying more across block length 
 (\cref{fig:result}A-B). The effect of segmentation may be stronger 
-in other contexts.}
+in other contexts.
 We used the $z$ score to measure the distance between the observed
 statistics and bootstrap distribution in terms of standard deviations.
 Overlap rate was defined as the proportion of
@@ -137,7 +137,7 @@ segmentation may be a more appropriate choice
 The decreasing trend using pre-defined segmentation from
 Roadmap Epigenomics indicated too many short segments,
 where $L_b$ is too close to $L_s$ for effective block randomization.
-\rev{To chose an optimal segmentation, 
+To chose an optimal segmentation, 
 we noted those for which the variance of the bootstrap distribution 
 becomes stable as $L_b$ increases (\cref{fig:result}A).
 To choose an optimal $L_b$ range, two aspects were considered:
@@ -146,7 +146,7 @@ in the variance of bootstrap statistics distribution across $L_b$,
 as recommended previously \citep{bickel2010subsampling},
 and 2) we assessed whether the distribution of inter-range distances  
 was preserved, when comparing to the original ranges 
-(Supplementary \cref{sec:length}).}
+(Supplementary \cref{sec:length}).
 Here $L_s \approx 2$ Mb and $L_b \in [300\textrm{kb},600\textrm{kb}]$ was 
 shown to be a good range for segment and block
 lengths (\cref{fig:suppfig0}A-C, and Supplementary \cref{sec:liveratac}).
@@ -205,13 +205,13 @@ were computed at various thresholds to reveal how
 the threshold choice would affect the
 variance of the bootstrap density and the resulting $z$ score
 (\cref{fig:result}C). 
-\rev{The observed enrichment with respect to bootstrapped ranges 
+The observed enrichment with respect to bootstrapped ranges 
 varies over the logFC threshold. Instead of picking an arbitrary logFC cutoff, 
 these analyses suggested that SNPs with -log10 (\textit{p}-value) $> 8$ and 
 genes with $|\textrm{logFC}| > 2$ were sets where the $z$ score reflected 
 strong separation of the observed statistic from the bootstrap statistic 
 distribution
-(\cref{fig:suppfig2}).}
+(\cref{fig:suppfig2}).
 
 
 %We demonstrate using \bootranges to motivate the choice of thresholds 
@@ -269,7 +269,7 @@ cell types (\cref{fig:suppfig3}B-C).
 
 \subsection{Simulation}
 
-\rev{To assess the accuracy of the bootstrap distribution in capturing
+To assess the accuracy of the bootstrap distribution in capturing
 the true null distribution, we generated a simulation in which
 there was no true association between $\bm{x}$ and $\bm{y}$. 
 We compared the bootstrap distribution using \bootranges 
@@ -285,7 +285,7 @@ with similar mean as the original distribution, but with much lower
 variance.
 Therefore the FPR for shuffling in this simulation was relatively high 
 and would lead to overestimation of the significance of the overlap 
-(\cref{fig:simulation}).}
+(\cref{fig:simulation}).
 
 To compare speed, we ran \bootranges and GSC on
 ENCODE kidney and bladder ChIP-seq. The average time to
