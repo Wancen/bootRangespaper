@@ -42,3 +42,4 @@ vignettes/*.pdf
 paper/.DS_Store
 
 *.gz
+*.zip
