@@ -3,7 +3,9 @@
 In genomic analysis, to assess whether
 there is a significant association between two sets of genomic ranges, 
 one must choose an appropriate null model \citep{reviewdilemma2014,kanduri2018}.
-Here we use the term ``ranges'' to denote a set of genomic features defined by sequence name (e.g. chromosome), starting basepair, ending basepair, and optionally strand and other metadata variables.
+Here we use the term ``ranges'' to denote a set of genomic features
+defined by sequence name (e.g. chromosome), starting basepair, ending
+basepair, and optionally strand and other metadata variables.
 For example, an enrichment of ATAC-seq peaks near certain genes
 may indicate a regulatory relationship \citep{lee2020fluent}, 
 and enrichment of GWAS SNPs near tissue-specific ATAC-seq peaks may
@@ -83,7 +85,7 @@ The \bootranges algorithms are explained schematically in Supplementary \cref{se
 \begin{figure}[t]
 \centering
 \setlength{\abovecaptionskip}{-0.05cm}
-\includegraphics[scale=0.16]{Figures/bootRanges.jpeg}
+\includegraphics[width=.5\textwidth]{Figures/bootRanges.jpeg}
 \caption{
   Schematic overview of the segmented block bootstrap 
   for assessing significance of an observed statistic.
@@ -114,9 +116,6 @@ We first applied \bootranges to determine the significance of the
 overlap of liver ATAC-seq
 \citep{CURRIN20211169} with SNPs associated with total cholesterol,
 bootstrapping the SNPs to assess significance.
-%% \mike{Why do we say this? Maybe drop this sentence? 
-%% ``As reported by \citet{bickel2010subsampling}, the effect
-%% of segmentation did not greatly alter conclusions.''}
 While the observed overlap was significant across many combinations of
 various segmentation methods and $L_b$ according to typical p-value cutoff,
 the variance of the bootstrap statistics distribution 
@@ -160,13 +159,11 @@ consistent with previous conclusions that shuffling may
 overestimate significance leading to misinterpretation of enrichment.
 
 
-%\vspace{-0.5cm}
-% \newpage
 \begin{figure}[H]
 \centering% default with `floatrow`
 \setlength{\abovecaptionskip}{-0.1cm}
 \setlength{\belowcaptionskip}{-0.1cm}
-\includegraphics[scale=0.06]{Figures/fig2_3.jpeg}
+\includegraphics[width=.5\textwidth]{Figures/fig2_3.jpeg}
 \caption{
   Parameter selection and overlap analysis.
   A) Variance of the rate of overlaps and,
@@ -179,19 +176,7 @@ overestimate significance leading to misinterpretation of enrichment.
   Conditional densities are colored by the $z$ score for the overlap.
 }
 \label{fig:result}
-%\vspace{-.5cm}
 \end{figure}
-
-%% z score, independent of number of bootstraps, was used to measure the
-%% distance between the expected value and the observed one according to
-%% the standard deviations.
-%% the $z = 4.10$ if look at circular binary search(CBS)
-%% \citep{cbs} segmentation method with $L_s = 2e6$ and
-%% $L_b=5e5$(\cref{fig:result}B).
-%% As seen in applications of \citet{bickel2010subsampling}, the effect
-%% of segmentation did not greatly alter conclusions, e.g. rejection of
-%% the null hypothesis, in this case, although the z score varies greatly
-%% among the different segmentations and block lengths.
 
 \subsection{Choosing thresholds for enrichment analysis}
 We demonstrated using \bootranges to motivate the choice of data-driven thresholds 
@@ -213,47 +198,8 @@ strong separation of the observed statistic from the bootstrap statistic
 distribution
 (\cref{fig:suppfig2}).
 
-
-%We demonstrate using \bootranges to motivate the choice of thresholds 
-%that are applied to genomic regions during enrichment analyses.
-%We tested this on the aforementioned liver ATAC-seq example, and on a
-%dataset of differential chromatin accessibility and gene expression 
-%\citep{alasoo2018shared,lee2020fluent}.
-%A generalized linear model (GLM) with penalized regression splines was
-%fit to the overlap rate or count over the $-\log_{10}(p)$ or
-%gene logFC, both for the original
-%data and to each of the bootstrap datasets.
-%Condition densities of splines fit to bootstrap data
-%were computed at various thresholds to reveal how
-%the threshold choice would affect the
-%variance of the bootstrap density and the resulting $z$ score
-%(\cref{fig:result}C-D).
-%These analyses suggested that $-\log_{10}(p) = 8$ and
-%$|\textrm{logFC}| = 2$
-%are optimized thresholds where the $z$ score was highest
-%(\cref{fig:suppfig2}A-B).
-
-%We found that the $z$ score was highest when $-\log_{10}(p) = 8$
-%(\cref{fig:suppfig2}A),
-%and when $\textrm{|logFC|} = 2$(\cref{fig:suppfig2}B).
-%(\cref{fig:suppfig2}B).
-%% from \textit{gam} function in the
-%% \emph{mgcv} R package were fitted and \textit{predict\_gam} function
-%% in the \emph{tidymv} R package were predicted on observed and each
-%% null sets.
-%% $$
-%% \setlength{\abovedisplayskip}{3pt}
-%% \setlength{\belowdisplayskip}{3pt}
-%% log \left( \frac{\pi}{1-\pi} \right) = \beta_0  + f (-log_{10}p), log(\mu) = \beta_0 + f (log_{FC})
-%% $$ 
-%% for rate and count-based statistic, separately.
-%% All generated 95\%
-%% percentile intervals at the same time across a range of effect sizes
-%% were displayed by conditional density plot 
-
 \subsection{Identification of gene-promoter pairs by single-cell multi-omics}
 We applied \bootranges to
-%Chromium Single Cell Multiome
 single cell multiome
 ATAC-seq and RNA-seq, to assess the correlation ($\rho$) of log counts for the two
 modalities for all pairs of genes and peaks, across
@@ -293,7 +239,6 @@ block bootstrap the genome using \bootranges was 0.30s and
 0.37s with overlap computation. A comparable analysis with GSC took
 7.56s.
 
-%\vspace*{-20pt}
 \section{Conclusion}
 
 \bootranges efficiently generates null models of genomic ranges preserving 
@@ -308,9 +253,5 @@ while all of the R scripts and data used in this paper are available
 at the following GitHub repository: 
 \url{https://github.com/Wancen/bootRangespaper}.
 
-%\vspace*{-20pt}
-
 \section*{Funding}
 CZI EOSS and R01-HG009937 to M.I.L, NIH R35-GM128645 to D.H.P.
-
-%\vspace*{-20pt}
